@@ -3,35 +3,68 @@
 //error_reporting( E_ALL );
 //ini_set( 'display_errors', 1 );
 
-if ( ! defined('ONAPPCDN_FILE_NAME') )
-    define("ONAPPCDN_FILE_NAME", "onappcdn.php");
-
-if ( ! defined('ONAPP_WRAPPER_INIT') )
-    define('ONAPP_WRAPPER_INIT', dirname(__FILE__).'/../../../includes/wrapper/OnAppInit.php');
-
-if ( file_exists( ONAPP_WRAPPER_INIT ) )
-    require_once ONAPP_WRAPPER_INIT;
-
 require_once dirname(__FILE__).'/lib.php';
 
-load_language();
+loadcnd_language();
 
 function onappcdn_ConfigOptions() {
     global $packageconfigoption, $_GET, $_POST, $_LANG;
-
     $serviceid = $_GET["id"] ? $_GET["id"] : $_POST["id"];
     $serviceid = addslashes($serviceid);
 
-    $configarray = array();
 
-    if ( ! file_exists( ONAPP_WRAPPER_INIT ) ) {
+/// BEGIN Load Servers details ///
+/////////////////////////////////
+
+    $sql_servers_result = full_query(
+        "SELECT 
+            id, name, ipaddress, hostname, password, username
+        FROM
+            tblservers
+        WHERE type = 'onappcdn'"
+    );
+
+    $onapp_servers = array();
+
+    while ( $server = mysql_fetch_assoc($sql_servers_result)) {
+        $js_onappServers[$server['id']] = $server['name'];
+
+        $server_credentials[$server['id']]['hostname']  = $server['hostname'];
+        $server_credentials[$server['id']]['ipaddress'] = $server['ipaddress'];
+        $server_credentials[$server['id']]['username'] = $server['username'];
+        $server_credentials[$server['id']]['password']  = decrypt( $server['password'] );
+    }
+
+    // Error if not found onapp server
+    if ( ! $js_onappServers )
         return array(
-            sprintf(
-                "%s " . realpath( dirname(__FILE__).'/../../../' ) . "/includes",
-                $_LANG['onappcdnwrappernotfound']
-            ) => array()
+            "<b class='red'>" . $_LANG["onapperrcantfoundactiveserver"] . "</b>" => array()
+    );
+
+/// END Load Servers details ///
+///////////////////////////////
+
+/// Get OnApp Instance /////////////
+///////////////////////////////////
+    
+    $ipaddress = $server_credentials[$packageconfigoption[1]]['ipaddress'];
+    $hostname  = $server_credentials[$packageconfigoption[1]]['hostname'];
+    $username  = $server_credentials[$packageconfigoption[1]]['username'];
+    $password  = $server_credentials[$packageconfigoption[1]]['password'];
+
+    if ( $username && $password ) {
+        $onapp_instance = new OnApp_Factory(
+            ( $ipaddress ) ? $ipaddress : $hostname,
+            $username,
+            $password
         );
     }
+
+/// END Get OnApp Instance /////////
+///////////////////////////////////
+   
+/// Create Tables ////////////
+/////////////////////////////
 
     $table_result = onappcdn_createTables();
 
@@ -43,12 +76,176 @@ function onappcdn_ConfigOptions() {
             ) => array()
         );
 
-//    # Should return an array of the module options for each product - maximum of 24
-print_r($packageconfigoption); 
-    $configarray = array(
-        "Package Configuration Options" => array( "Type" => "text" ),
+/// END Create Tables ////////
+/////////////////////////////
+
+/// BEGIN Load Server Groups Rels ///
+////////////////////////////////////
+
+    $query = "SELECT * FROM tblservergroupsrel";
+    $result = full_query( $query );
+
+    if ( mysql_num_rows($result) > 0 ) {
+        while( $row = mysql_fetch_assoc($result) ) {
+            $js_serverGroupsRels[$row['groupid']][] = $row['serverid'];
+        }
+    }
+    else
+        $js_serverGroupsRels = array();
+    
+/// END Load Server Groups Rels ///
+//////////////////////////////////
+
+/// BEGIN Load Billing Plans ///
+///////////////////////////////
+
+    if ( $onapp_instance ) {
+        $bplan = $onapp_instance->factory( 'BillingPlan' );
+
+        $bplans = $bplan->getList();
+
+        $js_bplanOptions = '';
+
+        if ( ! empty ( $bplans ) ) {
+            foreach ( $bplans as $_plan ) {
+                $js_bplanOptions .= "    billingPlans[$_plan->_id] = '".addslashes($_plan->_label)."';\n";
+            }
+        }
+    }
+    
+// END Load Billing Plans  //
+////////////////////////////
+
+/// BEGIN Load User Groups ///
+/////////////////////////////
+
+    if ( $onapp_instance ) {
+        $ugroup = $onapp_instance->factory( 'UserGroup' );
+
+        $ugroups = $ugroup->getList();
+
+        $js_ugroupOptions = "    userGroups[0] = '';\n";
+
+        if ( ! empty ( $ugroups ) ) {
+            foreach ( $ugroups as $_group ) {
+                $js_ugroupOptions .= "    userGroups[$_group->_id] = '".addslashes($_group->_label)."';\n";
+            }
+        }
+    }
+
+/// END Load User Groups  ///
+////////////////////////////
+
+/// BEGIN Load Roles ///
+///////////////////////
+    
+    if ( $onapp_instance ) {
+        $role = $onapp_instance->factory( 'Role' );
+
+        $roles = $role->getList();
+
+        $role_ids = array();
+        $js_roleOptions = '';
+
+        if ( ! empty ( $roles ) ) {
+            foreach ( $roles as $_role) {
+                $js_roleOptions .= "    userRoles[$_role->_id] = '".addslashes($_role->_label)."';\n";
+            }
+        }
+    }
+    
+/// END Load Roles     //////
+////////////////////////////
+
+/// Data check ///
+/////////////////
+
+    // check config json
+    if ( $packageconfigoption[2] != '' &&
+        ! json_decode( htmlspecialchars_decode ( $packageconfigoption[2] ) ) )
+    {
+        return array(
+            "<b class='red'>" . $_LANG["onappcdnerrorinvalidconfigjson"] . "</b>" => array()
+        );
+    }
+    
+    // Check wrapper
+    if ( ! file_exists( ONAPP_WRAPPER_INIT ) ) {
+        return array(
+            sprintf(
+                "%s " . realpath( dirname(__FILE__).'/../../../' ) . "/includes",
+                $_LANG['onappcdnwrappernotfound']
+            ) => array()
+        );
+    }
+
+/// Localization ///
+///////////////////
+    
+    $js_localization_array = array(
+        'servers',
+        'billingplans',
+        'timezones',
+        'usergroups',
+        'userroles',
+        'usersproperties',
+        'cdnresourceproperties',
+        'noserverselected',
     );
 
+    $js_localization_string = '';
+
+    foreach ($js_localization_array as $string)
+        if (isset($_LANG['onappcdn'.$string]))
+            $js_localization_string .= "    LANG['onappcdn$string'] = '".$_LANG['onappcdn'.$string]."';\n";
+
+/// END Localization ///
+///////////////////////
+
+/// Javascript ///
+/////////////////
+        
+    $javascript = "
+        <link rel=\"stylesheet\" type=\"text/css\" href=\"../modules/servers/onappcdn/includes/style.css\" />
+        <script type=\"text/javascript\" src=\"../modules/servers/onappcdn/includes/js/onappcdn.js\"></script>
+        <script type=\"text/javascript\" src=\"../modules/servers/onappcdn/includes/js/tz.js\"></script>
+        <script type=\"text/javascript\">
+        
+            var servers         = " . json_encode( $js_onappServers ) . "
+            var serverGroupRels = " . json_encode( $js_serverGroupsRels ) . "
+
+            var LANG = new Array()
+                $js_localization_string
+            var billingPlans = new Array()
+                $js_bplanOptions
+            var userGroups = new Array()
+                $js_ugroupOptions
+            var userRoles = new Array()
+                $js_roleOptions
+        </script>
+    ";
+
+/// END Javascript ///
+/////////////////////
+
+/// Passing data to the view ///
+///////////////////////////////
+    $configarray = array();
+    
+    $configarray = array(
+        "&nbsp" => array(
+            "Type" => "text" ),
+        "&nbsp" => array(
+            "Type" => "text" ),
+        "&nbsp;" => array(
+            "Type"        => "text",
+            "Description" => "\n$javascript",
+        )
+    );
+
+/// End Pass Data to the view ///
+////////////////////////////////
+    
     return $configarray;
 }
 
@@ -313,3 +510,5 @@ function onappcdn_UsageUpdate($params) {
 //        ),array("server"=>$serverid,"domain"=>$values['domain']));
 //    }
 }
+
+

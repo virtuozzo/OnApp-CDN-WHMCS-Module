@@ -3,4 +3,12 @@ $_LANG["onappcdn"] = "OnApp CDN";
 $_LANG["onappcdnerrtablecreate"] = "Error creating %s table";
 $_LANG["onappcdnwrappernotfound"] = "Wrapper not found. Download the freshest
 Wrapper from http://onapp.com/downloads/. And put it into ";
-
+$_LANG["onappcdnerrorinvalidconfigjson"] = "Fatal Error Invalid JSON config string in database";
+$_LANG["onappcdnservers"] = "Servers";
+$_LANG["onappcdnbillingplans"] = "Billing Plans";
+$_LANG["onappcdntimezones"] = "Time Zones";
+$_LANG["onappcdnusergroups"] = "User Groups";
+$_LANG["onappcdnuserroles"] = "User Roles";
+$_LANG["onappcdnusersproperties"] = "Users Properties";
+$_LANG["onappcdncdnresourceproperties"] = "CDN Resource Properties";
+$_LANG["onappcdnnoserverselected"] = "Error No CDN Server Selected";
