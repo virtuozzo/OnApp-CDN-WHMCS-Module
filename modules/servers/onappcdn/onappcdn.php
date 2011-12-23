@@ -5,7 +5,7 @@
 
 require_once dirname(__FILE__).'/lib.php';
 
-loadcnd_language();
+loadcdn_language();
 
 function onappcdn_ConfigOptions() {
     global $packageconfigoption, $_GET, $_POST, $_LANG;
