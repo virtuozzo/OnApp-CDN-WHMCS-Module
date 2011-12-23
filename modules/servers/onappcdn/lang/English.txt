@@ -11,4 +11,6 @@ $_LANG["onappcdnusergroups"] = "User Groups";
 $_LANG["onappcdnuserroles"] = "User Roles";
 $_LANG["onappcdnusersproperties"] = "Users Properties";
 $_LANG["onappcdncdnresourceproperties"] = "CDN Resource Properties";
-$_LANG["onappcdnnoserverselected"] = "Error No CDN Server Selected";
+$_LANG["onappcdnnoserverselected"] = "No CDN Server Selected";
+$_LANG["onappcdnerrcantfoundactiveserver"] = "Could not found active CDN server";
+$_LANG["onappcdnnologindatainserversettings"] = "No login data in server settings";

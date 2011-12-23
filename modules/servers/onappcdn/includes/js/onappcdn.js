@@ -252,9 +252,16 @@ $('select[name="time_zone_id"]').val(timeZoneId)
 /// Error Handling ///
 /////////////////////
 
-if ( ! serverId || serverId == 0 || serverId == -1  ) { console.log('here')
+if ( ! serverId || serverId == 0 || serverId == -1  ) {
     secondTable.find('tr').hide()
-    secondTable.append('<tr><td>' + LANG['onappcdnnoserverselected'] + '</td></tr>')
+    secondTable.append('<tr class="trcdnerror"><td><b class="cdnerrors">' + LANG['onappcdnnoserverselected'] + '</b></td></tr>')
+}
+
+if ( cdnErrors ) {
+    secondTable.find('tr[class!="trcdnerror"]').hide()
+    for ( var idx in cdnErrors ) {
+        secondTable.append('<tr><td><b class="cdnerrors">' + cdnErrors[idx] + '</b></td></tr>')
+    }
 }
 
 /// END Error Handling ///

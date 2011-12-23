@@ -38,7 +38,7 @@ function onappcdn_ConfigOptions() {
     // Error if not found onapp server
     if ( ! $js_onappServers )
         return array(
-            "<b class='red'>" . $_LANG["onapperrcantfoundactiveserver"] . "</b>" => array()
+            "<b class='cdnerrors'>" . $_LANG["onappcdnerrcantfoundactiveserver"] . "</b>" => array()
     );
 
 /// END Load Servers details ///
@@ -52,12 +52,22 @@ function onappcdn_ConfigOptions() {
     $username  = $server_credentials[$packageconfigoption[1]]['username'];
     $password  = $server_credentials[$packageconfigoption[1]]['password'];
 
-    if ( $username && $password ) {
+    if ( $username && $password && ( $hostname || $ipaddress )  ) {
+
         $onapp_instance = new OnApp_Factory(
             ( $ipaddress ) ? $ipaddress : $hostname,
             $username,
             $password
         );
+
+        if ( $onapp_instance->getErrorsAsArray() ) {
+            foreach( $onapp_instance->getErrorsAsArray() as $error ) {
+                $js_Errors[] = $error;
+            }
+        }
+    }
+    else {
+        $js_Errors[] = $_LANG["onappcdnnologindatainserversettings"];
     }
 
 /// END Get OnApp Instance /////////
@@ -165,7 +175,7 @@ function onappcdn_ConfigOptions() {
         ! json_decode( htmlspecialchars_decode ( $packageconfigoption[2] ) ) )
     {
         return array(
-            "<b class='red'>" . $_LANG["onappcdnerrorinvalidconfigjson"] . "</b>" => array()
+            "<b class='cdnerrors'>" . $_LANG["onappcdnerrorinvalidconfigjson"] . "</b>" => array()
         );
     }
     
@@ -213,6 +223,7 @@ function onappcdn_ConfigOptions() {
         
             var servers         = " . json_encode( $js_onappServers ) . "
             var serverGroupRels = " . json_encode( $js_serverGroupsRels ) . "
+            var cdnErrors       = " . json_encode( $js_Errors ) . "
 
             var LANG = new Array()
                 $js_localization_string
