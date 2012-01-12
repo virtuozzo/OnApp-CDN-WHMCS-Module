@@ -1,7 +1,4 @@
 <?php
-error_reporting( E_ALL );
-ini_set( 'display_errors', 1 );
-
 $time_zone = array();
 
 $time_zone[] = array("International Date Line West", "(GMT-11:00) International Date Line West");
@@ -147,10 +144,15 @@ $time_zone[] = array("Solomon Is.", "(GMT+12:00) Solomon Is.");
 $time_zone[] = array("Wellington", "(GMT+12:00) Wellington");
 $time_zone[] = array("Nukualofa", "(GMT+13:00) Nuku\'alofa");
 
-$output = '<option value=""></option>';
+$output = "    timeZones[0] = ''\n";
 
 foreach ($time_zone as $value)
-    $output .= '<option value="'.$value[0].'">'.$value[1].'</option>';
+    $output .= '    timeZones[\''.$value[0].'\'] = "'.$value[1]."\";\n";
 ?>
-var OnAppUsersTZs;
-OnAppUsersTZs = '<?php echo $output ?>';
+var timeZones = new Array();
+<?php echo $output ?>
+
+$(document).ready(function(){
+   input = $('input[name="packageconfigoption[5]"]');
+   input.parent().html("<select name='packageconfigoption[5]'><option value='"+input.val()+"' selected='selected'><option></select>")
+});
