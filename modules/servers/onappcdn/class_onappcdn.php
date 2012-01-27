@@ -14,13 +14,12 @@ class OnAppCDN {
 
     public  $error;
 
-    function __construct( $serviceid = null ) {
+    function __construct( $serviceid = null ) {// print('<pre>');print_r($GLOBALS); die();
         if ( is_null( $serviceid ) )
             $serviceid = self::get_value('id');
-
-        if ( ! is_numeric( $serviceid ) || ! in_array( $serviceid, $this->getUserServisesIds() ) )
+        if ( ! is_numeric ( $serviceid ) )
             die('Invalid token');
-
+            
         $this->serviceid = $serviceid;
     }
 
@@ -408,8 +407,11 @@ WHERE
      *
      * @return array User's servises Ids
      */
-    private function getUserServisesIds () {
-        $userid = ( is_numeric( $_SESSION[uid] ) ) ? $_SESSION[uid] : 0;
+    public function getUserServisesIds () {
+        $userid = $_SESSION['uid'];
+        
+        if ( ! isset( $userid ) || ! is_numeric( $userid ) )
+            return array();
         
         $sql = "
             SELECT
@@ -453,12 +455,19 @@ WHERE
         $server = $this->getServer();
         
         $this->onapp = new OnApp_Factory(
-            ( $server['ipaddress'] ) ? $server['ipaddress'] : $server['hostname'],
+            $server['address'],
             $user['email'],
             $user['password']
         );
 
         return $this->onapp;
+    }
+
+    /**
+     *
+     */
+    public function getServiceId () {
+        return $this->serviceid;
     }
 
 }

@@ -21,22 +21,40 @@ class OnAppCDNResources extends OnAppCDN {
 
         $response  = $resource->getResponse();
 
-        if ( $response['info']['http_code'] == 302 ) {
-            $resources = NULL;
-        }
+        $resources_enabled = ( $response['info']['http_code'] == 302 ) ? false : true;
 
         $this->show_template(
             'onappcdn/cdn_resources',
             array(
-                'id'         =>  parent::get_value('id'),
-                'resources'  =>  $resources,
-                'server'     =>  $server,
-                'user'       =>  $user,
-                'test_value' =>  'onappcdn/resources.tpl',
-                'errors'     =>  implode( PHP_EOL, $errors ),
+                'id'                =>  parent::get_value('id'),
+                'resources'         =>  $resources,
+                'resources_enabled' =>  $resources_enabled,
+                'errors'            =>  implode( PHP_EOL, $errors ),
             )
         );
+    }
+
+   /**
+     *
+     */
+    protected function details () {
+        $onapp = $this->getOnAppInstance();
+
+        if ( $onapp->getErrorsAsArray() )
+            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+
+        $_resource  = $onapp->factory('CDNResource', true );
         
+        $resource   = $_resource->load( parent::get_value( 'resource_id' ) );
+
+        $this->show_template(
+            'onappcdn/cdn_resources/details',
+            array(
+                'id'                =>  parent::get_value('id'),
+                'resource'          =>  $resource,
+                'errors'            =>  implode( PHP_EOL, $errors ),
+            )
+        );
     }
 
     /**
@@ -52,10 +70,7 @@ class OnAppCDNResources extends OnAppCDN {
         $resource  = $onapp->factory('CDNResource', true );
 
         $resource->enable();
-
-        print('<pre>');
-        print_r($resource);
-        die();
+        $this->show();
 
     }
 
@@ -79,6 +94,8 @@ class OnAppCDNResources extends OnAppCDN {
     protected function add () {
         echo __METHOD__;
     }
+
+
     
 }
 

@@ -23,5 +23,29 @@ $_LANG["onappcdnresourcesenabledescription"] = "Click the link below to enable t
 $_LANG["onappcdnenable"] = "Enable CDN";
 $_LANG["onappcdnbwstatistics"] = "Bandwidth Statistics";
 $_LANG["onappcdncreate"] = "Create CDN";
+$_LANG["onappcdnproductservice"] = "Product / Service";
+$_LANG["onappcdnresourcesnotfound"] = "Resources not found";
 
 
+
+
+$_LANG["onappcdnhostname"] = "CDN Hostname";
+$_LANG["onappcdnoriginsites"] = "Origin Sites";
+$_LANG["onappcdntype"] = "Type";
+$_LANG["onappcdnlast24cost"] = "Last 24h Cost";
+$_LANG["onappcdnnewresource"] = "New CDN Resource";
+
+
+$_LANG["onappcdnresourcedescription"] = "A CDN resource is a specific server with content an end user wants to distribute via the CDN. To view details and manage settings, click a CDN resource label. Use the icons on the right, to edit or delete a resource.";
+$_LANG["onappcdnresourcedetailsdescription"] = "The Edge Groups and hostname details for the CDN Resource. Note that you must follow the instructions in the DNS Settings section otherwise your CDN settings will not affect your web site.";
+
+
+
+$_LANG["onappcdnadvanceddetails"] = "Advanced Details";
+$_LANG["onappcdnprefetch"] = "Prefetch";
+$_LANG["onappcdnpurge"] = "Purge";
+$_LANG["onappcdnbillingstatistics"] = "Billing Statistics";
+
+$_LANG["onappcdninstructionssettings"] = "Instructions and Basic Settings";
+$_LANG["onappcdnedit"] = "Edit";
+$_LANG["onappcdndelete"] = "Delete";

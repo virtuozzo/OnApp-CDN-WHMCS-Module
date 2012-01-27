@@ -22,11 +22,9 @@ else {
 }
 
 $page   = OnAppCDN::get_value( 'page' );
-$action = OnAppCDN::get_value( 'action' );
-
 $page   = ( $page )   ? $page    : 'default';
-$action = ( $action ) ? $action  : 'show';
 
+// Register pages
 $pages = array(
     'advanced_details'     =>  'AdvancedDetails',
     'bandwidth_statistics' =>  'BandwidthStatistics',
@@ -37,6 +35,10 @@ $pages = array(
     'settings'             =>  'Settings',
 );
 
+$action = OnAppCDN::get_value( 'action' );
+$action = ( $action ) ? $action  : 'show';
+
+// Register actions
 $actions = array(
     'default'              => array('create'),
     'advanced_details'     => array(),
@@ -44,7 +46,7 @@ $actions = array(
     'billing_statistics'   => array(),
     'prefetch'             => array('prefetch'),
     'purge'                => array('purge'),
-    'resources'            => array('enable', 'edit', 'delete', 'add'),
+    'resources'            => array('enable', 'edit', 'delete', 'add', 'details'),
     'settings'             => array(),
 );
 
@@ -57,4 +59,9 @@ $name = array_key_exists($page, $pages) ? 'OnAppCDN'. $pages[$page] : 'OnAppCDND
 require_once ONAPPCDN_DIR. 'controllers' .DS. $name . '.php';
 
 $class = new $name;
+
+// Verify whether User can access service
+if ( ! in_array( $class->getServiceId(), $class->getUserServisesIds() ) )
+    die('Invalid Token');
+
 $class->runAction($action);
