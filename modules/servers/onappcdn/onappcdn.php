@@ -1,12 +1,13 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-//error_reporting( E_ALL );
-//ini_set( 'display_errors', 1 );
+error_reporting( E_ALL );
+ini_set( 'display_errors', 1 );
 
 require_once dirname(__FILE__).'/class_onappcdn.php';
 
 OnAppCDN::loadcdn_language();
-OnAppCDN::init_wrapper();
+$init_wrapper = OnAppCDN::init_wrapper();
+if ( ! defined('ONAPPCDN_FILE_NAME') ) define('ONAPPCDN_FILE_NAME', 'onappcdn.php' );
 
 function onappcdn_ConfigOptions() {
     global $packageconfigoption, $_GET, $_POST, $_LANG;
@@ -301,6 +302,25 @@ function onappcdn_UnsuspendAccount($params) {
         $result = $onappcdn->unsuspend_user();
 
     return $result;
+}
+
+function onappcdn_ClientArea( $params ) {
+    global $_LANG;
+
+    if ( ! $init_wrapper = OnAppCDN::init_wrapper() )
+        return
+            sprintf(
+                "%s ",
+                $_LANG['onapponmaintenance']
+     );
+    
+    $onappcdn = new OnAppCDN( $params['serviceid']);
+    $user = $onappcdn->get_user();
+    
+    if ( ! is_null($user["onapp_user_id"]) )
+        return '<a href="' . ONAPPCDN_FILE_NAME . '?page=resources&id=' . $params['serviceid'] . '">' . $_LANG["onappcdnresources"] . '</a>';
+    else
+        return '<a href="' . ONAPPCDN_FILE_NAME . '?page=default&id=' . $params['serviceid'] . '&action=create_cdn">' . $_LANG["onappcdncreate"] . '</a>';
 }
 /*
 function onappcdn_ChangePassword($params) {

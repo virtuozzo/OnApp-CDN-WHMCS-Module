@@ -10,18 +10,22 @@ class OnAppCDN {
     private $created;
     private $server;
     private $user;
+    private $onapp;
 
-    public $error;
+    public  $error;
 
-    function __construct($serviceid) {
-        if( is_numeric($serviceid) )
-            $this->serviceid = $serviceid;
-        else
-            die('$serviceid is not a number or a numeric string');
+    function __construct( $serviceid = null ) {
+        if ( is_null( $serviceid ) )
+            $serviceid = self::get_value('id');
+
+        if ( ! is_numeric( $serviceid ) || ! in_array( $serviceid, $this->getUserServisesIds() ) )
+            die('Invalid token');
+
+        $this->serviceid = $serviceid;
     }
 
     public function get_user() {
-        if (! is_null($this->user) )
+        if (! is_null( $this->user ) )
             return $this->user;
 
         $sql      = "select * from tblonappcdnclients where service_id = " . $this->serviceid;
@@ -32,7 +36,7 @@ class OnAppCDN {
         return $user;
     }
 
-    private function getServer() {
+    protected function getServer() {
         if (! is_null($this->server) )
             return $this->server;
         $sql = "SELECT
@@ -251,13 +255,19 @@ class OnAppCDN {
  */
     public static function init_wrapper() {
         if ( ! defined('ONAPP_FILE_NAME') )
-            define("ONAPP_FILE_NAME", "onapp.php");
+            define("ONAPP_FILE_NAME", "onappcdn.php");
 
         if ( ! defined('ONAPP_WRAPPER_INIT') )
             define('ONAPP_WRAPPER_INIT', dirname(__FILE__).'/../../../includes/wrapper/OnAppInit.php');
 
-        if ( file_exists( ONAPP_WRAPPER_INIT ) )
+        if ( file_exists( ONAPP_WRAPPER_INIT ) ) {
             require_once ONAPP_WRAPPER_INIT;
+        }
+        else {
+            return false;
+        }
+
+        return true;
     }
 
 /**
@@ -358,5 +368,97 @@ WHERE
         return $servers;
     }
 
+    public function show () {
+        die('You need to define function show in class' . __CLASS__);
+    }
+
+    /**
+ * Renders clientarea view
+     *
+     * @global <type> $_LANG
+     * @global <type> $breadcrumbnav
+     * @global <type> $smartyvalues
+     * @global <type> $CONFIG
+     * @param <type> $templatefile
+     * @param <type> $values
+     */
+    protected function show_template($templatefile, $values) {
+        global $_LANG, $breadcrumbnav, $smartyvalues, $CONFIG;
+        self::loadcdn_language();
+
+        $pagetitle = $_LANG["clientareatitle"];
+        $pageicon = "images/support/clientarea.gif";
+        $values['_LANG'] = $_LANG;
+
+        initialiseClientArea( $pagetitle, $pageicon, $breadcrumbnav);
+
+        $smartyvalues = $values;
+
+        if ($CONFIG['SystemSSLURL'])
+            $smartyvalues['systemurl'] = $CONFIG['SystemSSLURL'] . '/';
+        else if ($CONFIG['SystemURL'] != 'http://www.yourdomain.com/whmcs')
+            /* Do not change this URL!!! - Otherwise WHMCS Failed ! */
+            $smartyvalues['systemurl'] = $CONFIG['SystemURL'] . '/';
+        
+        outputClientArea($templatefile);
+    }
+
+    /**
+     * Gets Services Ids of currently loged in user
+     *
+     * @return array User's servises Ids
+     */
+    private function getUserServisesIds () {
+        $userid = ( is_numeric( $_SESSION[uid] ) ) ? $_SESSION[uid] : 0;
+        
+        $sql = "
+            SELECT
+                h.id
+            FROM
+                tblhosting as h
+            LEFT JOIN
+                tblproducts as p ON h.packageid = p.id
+            WHERE
+                h.userid = $userid AND
+                p.servertype = 'onappcdn'
+        ";
+
+        $result = full_query( $sql );
+
+        if ( ! $result && mysql_num_rows($result) < 1 )
+            return array();
+
+        while ( $row = mysql_fetch_assoc($result) )
+            $servicesIds[] = $row['id'];
+
+        return $servicesIds;
+    }
+    
+    /**
+     * Launchs particular action
+     *
+     * @param string $action
+     */
+    public function runAction( $action ) {
+        $this->$action();
+    }
+
+    /**
+     * Gets OnApp class instance
+     *
+     * @return object OnApp Instance
+     */
+    protected function getOnAppInstance() {
+        $user   = $this->get_user();
+        $server = $this->getServer();
+        
+        $this->onapp = new OnApp_Factory(
+            ( $server['ipaddress'] ) ? $server['ipaddress'] : $server['hostname'],
+            $user['email'],
+            $user['password']
+        );
+
+        return $this->onapp;
+    }
 
 }

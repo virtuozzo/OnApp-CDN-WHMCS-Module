@@ -17,3 +17,11 @@ $_LANG["onappcdnnologindatainserversettings"] = "No login data in server setting
 $_LANG["onappcdservernnotdefined"] = "Not defined";
 $_LANG["onappcdnerrcantfoundactiveserverforgroup"] = "There are no active OnApp CDN servers for this Server group.<br /> Please choose another Server Group and save the changes";
 $_LANG["onappcdnwrongserverconfig"] = "Wrong OnApp CDN server configuration";
+
+$_LANG["onappcdnresources"] = "CDN Resources";
+$_LANG["onappcdnresourcesenabledescription"] = "Click the link below to enable the CDN features on your account.";
+$_LANG["onappcdnenable"] = "Enable CDN";
+$_LANG["onappcdnbwstatistics"] = "Bandwidth Statistics";
+$_LANG["onappcdncreate"] = "Create CDN";
+
+
