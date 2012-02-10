@@ -1,11 +1,16 @@
-{if $resources_enabled eq false}
-
-{if isset($error)}
-
-<div class="errorbox">
-    {$error}
-</div>
+{if isset($errors)}
+    <div class="errorbox">
+        {$errors}
+    </div>
 {/if}
+
+{if isset($messages)}
+    <div class="successbox">
+        {$messages}
+    </div>
+{/if}
+
+{if $resources_enabled eq false}
 
 <div class="description">
    {$_LANG.onappcdnresourcesenabledescription}
@@ -34,7 +39,6 @@
     </tr>
     {if count($resources) > 0}
         {foreach item=resource from=$resources}
-
         <tr>
             <td>
                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=details&resource_id={$resource->_id}">
@@ -43,7 +47,7 @@
             </td>
             <td>
                 {foreach item=origin from=$resource->_origins_for_api}
-                    {$origin->value}
+                    {$origin->_value}
                 {/foreach}
             </td>
             <td>{$resource->_resource_type}</td>
