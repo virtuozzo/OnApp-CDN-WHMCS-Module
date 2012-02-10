@@ -8,3 +8,26 @@
 .fieldlabel {
     width:100px;
 }
+
+textarea {
+    font-weight:bold
+}
+
+div#content_left input[type=text] {
+    width:250px;
+}
+div#content_left select {
+    width:260px;
+}
+
+.label_width{
+    width:200px
+}
+
+table#passwords_table th {
+    background: #cccccc;
+}
+
+table#passwords_table td input[type=text] {
+    width:100%;
+}
