@@ -17,7 +17,6 @@ $_LANG["onappcdnnologindatainserversettings"] = "No login data in server setting
 $_LANG["onappcdservernnotdefined"] = "Not defined";
 $_LANG["onappcdnerrcantfoundactiveserverforgroup"] = "There are no active OnApp CDN servers for this Server group.<br /> Please choose another Server Group and save the changes";
 $_LANG["onappcdnwrongserverconfig"] = "Wrong OnApp CDN server configuration";
-
 $_LANG["onappcdnresources"] = "CDN Resources";
 $_LANG["onappcdnresourcesenabledescription"] = "Click the link below to enable the CDN features on your account.";
 $_LANG["onappcdnenable"] = "Enable CDN";
@@ -25,27 +24,73 @@ $_LANG["onappcdnbwstatistics"] = "Bandwidth Statistics";
 $_LANG["onappcdncreate"] = "Create CDN";
 $_LANG["onappcdnproductservice"] = "Product / Service";
 $_LANG["onappcdnresourcesnotfound"] = "Resources not found";
-
-
-
-
 $_LANG["onappcdnhostname"] = "CDN Hostname";
 $_LANG["onappcdnoriginsites"] = "Origin Sites";
 $_LANG["onappcdntype"] = "Type";
 $_LANG["onappcdnlast24cost"] = "Last 24h Cost";
 $_LANG["onappcdnnewresource"] = "New CDN Resource";
-
-
 $_LANG["onappcdnresourcedescription"] = "A CDN resource is a specific server with content an end user wants to distribute via the CDN. To view details and manage settings, click a CDN resource label. Use the icons on the right, to edit or delete a resource.";
 $_LANG["onappcdnresourcedetailsdescription"] = "The Edge Groups and hostname details for the CDN Resource. Note that you must follow the instructions in the DNS Settings section otherwise your CDN settings will not affect your web site.";
-
-
-
 $_LANG["onappcdnadvanceddetails"] = "Advanced Details";
 $_LANG["onappcdnprefetch"] = "Prefetch";
 $_LANG["onappcdnpurge"] = "Purge";
 $_LANG["onappcdnbillingstatistics"] = "Billing Statistics";
-
 $_LANG["onappcdninstructionssettings"] = "Instructions and Basic Settings";
 $_LANG["onappcdnedit"] = "Edit";
 $_LANG["onappcdndelete"] = "Delete";
+$_LANG["onappcdnresourcedeletesuccessfully"] = "Resource has been deleted successfully";
+$_LANG["onappcdnresourcedetails"] = "CDN Resource Details";
+$_LANG["onappcdnresourcetype"] = "Resource Type";
+$_LANG["onappcdnreference"] = "CDN Reference";
+$_LANG["onappcdnstatus"] = "CDN Status";
+$_LANG["onappcdnorigins"] = "Origins";
+$_LANG["onappcdnresourcepath"] = "Resource Path";
+$_LANG["onappcdndnssettings"] = "DNS Settings";
+$_LANG["onappcdnedgegroups"] = "Edge Groups";
+$_LANG["onappcdnresourceadddescription"] = "Provide the details for a CDN Resource and select at least one Edge Group.";
+$_LANG["onappcdnnewresource"] = "New CDN Resource";
+$_LANG["onappcdnresourceproperties"] = "CDN Resource Properties";
+$_LANG["onappcdnresourcepropertiesinfo"] = "The CDN hostname and origin site must be the domain name only";
+$_LANG["onappcdnadvancedsettings"] = "Advanced Settings";
+$_LANG["onappcdnedgegroups"] = "Edge Groups";
+$_LANG["onappcdnhttpprefetch"] = "HTTP Prefetch";
+$_LANG["onappcdnprefetchinfo"] = "This tool allows HTTP Pull content to be pre-populated to the CDN. Recommended only if files especially large.";
+$_LANG["onappcdnresourceproperties"] = "Cdn Resource Properties";
+$_LANG["onappcdnprefetchinfo1"] = "Specify paths on the CDN Resource (not the origin) to prefecth, one per line.";
+$_LANG["onappcdnpathtoprefetch"] = "Paths to Prefetch";
+$_LANG["onappcdnprefetchsuccessfully"] = "The prefetch request was successfully issued";
+$_LANG["onappcdndnssettingsinfo"] = "Add a CNAME for the CDN Hostname which can then be used to view the contents.";
+$_LANG["onappcdnresourceadvanceddetails"] = "Advanced CDN Resource Details";
+$_LANG["onappcdnresourceadvancedstatus"] = "Advanced CDN Status";
+$_LANG["onappcdnresourceadvancedstatusinfo"] = "The list of settings specified as advanced when you created a CDN Resource.";
+$_LANG["onappcdnpublishername"] = "Publisher Name";
+$_LANG["onappcdnipaccess"] = "Ip Access";
+$_LANG["onappcdnipaccesspolicy"] = "Ip Access Policy";
+$_LANG["onappcdncountryaccess"] = "Country Access";
+$_LANG["onappcdncountryaccesspolicy"] = "Country Access Policy";
+$_LANG["onappcdnurlsigning"] = "Url Signing";
+$_LANG["onappcdnurlsigningkey"] = "Url Signing Key";
+$_LANG["onappcdnpasswords"] = "Passwords";
+$_LANG["onappcdnunauthorizedhtml"] = "Unauthorized Html";
+$_LANG["onappcdncacheexpiry"] = "Cache Expiry";
+$_LANG["onappcdnurlsigningenabled"] = "Url Signing Enabled";
+$_LANG["onappcdnhotlinkpolicy"] = "Hotlink Policy";
+$_LANG["onappcdnpasswordon"] = "Password On";
+$_LANG["onappcdnyes"] = "YES";
+$_LANG["onappcdnno"] = "NO";
+$_LANG["onappcdnresourceslist"] = "Resources List";
+$_LANG["onappcdncreateresource"] = "Create CDN Resource";
+
+$_LANG["onappcdndisabled"] = "Disabled";
+$_LANG["onappcdnallowbydefault"] = "Allow by Default";
+$_LANG["onappcdnblockbydefault"] = "Block by Default";
+$_LANG["onappcdnexceptfordomains"] = "Except for domains";
+$_LANG["onappcdnurlsigninginfo"] = "Protect your files from unauthorized
+    access with a key and optionally an expiration time. A signed URL looks 
+    like `http://example.com/filename?secure=DMF1ucDxtqgxwYQ==,1322659070`.";
+$_LANG["onappcdnenableurlsigning"] = "Enable URL Signing";
+$_LANG["onappcdncacheexpiryinfo"] = "Cache expiry is set in minutes.";
+$_LANG["onappcdnpassword"] = "Password";
+$_LANG["onappcdnenablepassword"] = "Enable Password";
+$_LANG["onappcdnusername"] = "Username";
+$_LANG["onappcdnresourcecreatedsuccessfully"] = "CDN Resource was successfully created.";
