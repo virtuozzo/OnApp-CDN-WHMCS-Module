@@ -14,7 +14,7 @@ class OnAppCDN {
 
     public  $error;
 
-    function __construct( $serviceid = null ) {// print('<pre>');print_r($GLOBALS); die();
+    function __construct( $serviceid = null ) {
         if ( is_null( $serviceid ) )
             $serviceid = self::get_value('id');
         if ( ! is_numeric ( $serviceid ) )
@@ -33,6 +33,33 @@ class OnAppCDN {
 
         $this->user = $user;
         return $user;
+    }
+
+    protected function getWhmcsClientDetails () {
+        $sql = "
+            SELECT
+                h.userid as clientid,
+                c.currency,
+                currencies.prefix as currencyprefix,
+                currencies.code as currencycode,
+                currencies.rate as currencyrate,
+                currencies.default as ifdefaultcurrency
+            FROM
+                tblhosting as h
+            LEFT JOIN
+                tblclients as c
+                ON h.userid = c.id
+            LEFT JOIN
+                tblcurrencies as currencies
+                ON currencies.id = c.currency
+            WHERE
+                h.id = $this->serviceid
+        ";
+
+        $result = full_query( $sql );
+        $client_details = mysql_fetch_assoc( $result );
+
+        return $client_details;
     }
 
     protected function getServer() {
@@ -455,9 +482,9 @@ WHERE
         $server = $this->getServer();
         
         $this->onapp = new OnApp_Factory(
-            $server['address'],
-            $user['email'],
-            $user['password']
+           $server['address'],
+           $user['email'],
+           $user['password']
         );
 
         return $this->onapp;
