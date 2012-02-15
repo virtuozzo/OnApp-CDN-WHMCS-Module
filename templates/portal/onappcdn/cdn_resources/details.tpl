@@ -1,7 +1,15 @@
+{/literal}
+
 {if isset($errors)}
-<div class="errorbox">
-    {$errors}
-</div>
+    <div class="errorbox">
+        {$errors}
+    </div>
+{/if}
+
+{if isset($messages)}
+    <div class="successbox">
+        {$messages}
+    </div>
 {/if}
 
 <div class="contentbox">
@@ -22,7 +30,7 @@
 {$_LANG.onappcdnhostname}     - {$resource->_cdn_hostname} <br />
 {$_LANG.onappcdnresourcetype} - {$resource->_resource_type} <br />
 {$_LANG.onappcdnreference}    - {$resource->_aflexi_resource_id} <br />
-<!-- {$_LANG.onappcdnstatus}       -  <br /> -->
+{$_LANG.onappcdnstatus}       - {$resource->_status} <br />
 
 <h2>{$_LANG.onappcdnorigins}</h2>
 
@@ -52,13 +60,16 @@
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
     
-    {foreach item=baseresource from=$baseresources}
-        {if $baseresource->_resource_name eq "edge_group"}
+    {foreach item=group from=$edge_group_baseresources}
             <tr>
-                <td valign="top"><b>{$baseresource->_label}</b></td>
-                <td valign="top">Couldn't Cast object without root tag!!</td>
+                <td valign="top"><b>{$group.label}</b></td>
+                <td valign="top">   
+                    {$whmcs_client_details.currencyprefix}{$group.price|round:2} {$whmcs_client_details.currencycode} {$_LANG.onappcdnperGB} <br />
+                    {foreach item=location from=$group.locations}
+                        {$location->_city}, {$location->_country}    <br />
+                    {/foreach}
+                </td>
             </tr>
-        {/if}
     {/foreach}
 
 </table>

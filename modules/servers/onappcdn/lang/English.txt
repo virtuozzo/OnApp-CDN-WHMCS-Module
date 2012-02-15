@@ -94,3 +94,6 @@ $_LANG["onappcdnpassword"] = "Password";
 $_LANG["onappcdnenablepassword"] = "Enable Password";
 $_LANG["onappcdnusername"] = "Username";
 $_LANG["onappcdnresourcecreatedsuccessfully"] = "CDN Resource was successfully created.";
+$_LANG["onappcdnperGB"] = "per GB";
+$_LANG["onappcdnresourceupdatedsuccessfully"] = "CDN Resource was successfully updated.";
+

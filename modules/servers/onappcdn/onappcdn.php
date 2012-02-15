@@ -320,7 +320,7 @@ function onappcdn_ClientArea( $params ) {
     if ( ! is_null($user["onapp_user_id"]) )
         return '<a href="' . ONAPPCDN_FILE_NAME . '?page=resources&id=' . $params['serviceid'] . '">' . $_LANG["onappcdnresources"] . '</a>';
     else
-        return '<a href="' . ONAPPCDN_FILE_NAME . '?page=default&id=' . $params['serviceid'] . '&action=create_cdn">' . $_LANG["onappcdncreate"] . '</a>';
+        return '<a href="' . ONAPPCDN_FILE_NAME . '?page=default&id=' . $params['serviceid'] . '&action=create">' . $_LANG["onappcdncreate"] . '</a>';
 }
 /*
 function onappcdn_ChangePassword($params) {

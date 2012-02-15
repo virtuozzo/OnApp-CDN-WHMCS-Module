@@ -377,17 +377,17 @@ $(document).ready(function(){
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
 
-{foreach item=edge_group from=$edge_groups}
+{foreach item=group from=$edge_group_baseresources}
 
     <tr>
         <td width="200px">
-            {$edge_group->_label} - Billing info goes here
-            {foreach item=location from=$edge_group->_edge_group_locations}
-                <br />{$location->_city}, {$location->_country}
-            {/foreach}
+            {$group.label} - {$whmcs_client_details.currencyprefix}{$group.price|round:2} {$whmcs_client_details.currencycode} {$_LANG.onappcdnperGB} <br />
+                {foreach item=location from=$group.locations}
+                    {$location->_city}, {$location->_country}    <br />
+                {/foreach}
         </td>
         <td>
-            <input id="advanced_settings_input" value="{$edge_group->_id}" type="checkbox" name="new_resource[edge_group_ids][]" />
+            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="new_resource[edge_group_ids][]" />
         </td>
     </tr>
 
