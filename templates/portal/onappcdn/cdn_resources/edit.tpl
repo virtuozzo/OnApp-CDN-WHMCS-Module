@@ -437,7 +437,7 @@ $('#passwords_table').append( passwords_html )
 {foreach item=group from=$edge_group_baseresources}
 
     <tr>
-        <td width="200px">
+        <td>
             {$group.label} - {$whmcs_client_details.currencyprefix}{$group.price|round:2} {$whmcs_client_details.currencycode} {$_LANG.onappcdnperGB} <br />
                 {foreach item=location from=$group.locations}
                     {$location->_city}, {$location->_country}    <br />
@@ -452,6 +452,6 @@ $('#passwords_table').append( passwords_html )
 </table>
 <input type="hidden" name="resource[id]" value="{$resource_id}" />
 <input type="hidden" name="edit" value="1" /> <br /> <br />
-<input type="submit" value="{$_LANG.onappcdncreateresource}" />
+<input type="submit" value="{$_LANG.onappcdnapplychanges}" />
 </form>
 <br /><br />
