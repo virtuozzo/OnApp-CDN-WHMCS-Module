@@ -80,7 +80,6 @@ $_LANG["onappcdnyes"] = "YES";
 $_LANG["onappcdnno"] = "NO";
 $_LANG["onappcdnresourceslist"] = "Resources List";
 $_LANG["onappcdncreateresource"] = "Create CDN Resource";
-
 $_LANG["onappcdndisabled"] = "Disabled";
 $_LANG["onappcdnallowbydefault"] = "Allow by Default";
 $_LANG["onappcdnblockbydefault"] = "Block by Default";
@@ -96,4 +95,10 @@ $_LANG["onappcdnusername"] = "Username";
 $_LANG["onappcdnresourcecreatedsuccessfully"] = "CDN Resource was successfully created.";
 $_LANG["onappcdnperGB"] = "per GB";
 $_LANG["onappcdnresourceupdatedsuccessfully"] = "CDN Resource was successfully updated.";
-
+$_LANG["onappcdnapplychanges"] = "Apply Changes";
+$_LANG["onappcdnbillingstatistics"] = "Billing Statistics";
+$_LANG["onappcdndate"] = "Date";
+$_LANG["onappcdnedgegroup"] = "Edge Group";
+$_LANG["onappcdntraffic"] = "Traffic";
+$_LANG["onappcdncost"] = "Cost";
+$_LANG["onappcdnjumptopage"] = "Jump to Page";
