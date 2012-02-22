@@ -113,3 +113,6 @@ $_LANG["onappcdnpurgeinfo"] = "This tool allows instant removal of HTTP Pull
 $_LANG["onappcdnareyousureyouwantdelete"] = "Are you sure you want to delete?";
 $_LANG["onappcdndetails"] = "Instructions and Basic Settings";
 $_LANG["onappcdnclearbothfields"] = "Clear both fields to remove a user.";
+$_LANG["onappcdnfailedusercreate"] = "Faild to create CDN User - ";
+$_LANG["onappcdnsuccessusercreate"] = "CDN User was created successfully";
+

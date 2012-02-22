@@ -22,7 +22,7 @@ else {
 }
 
 $page   = OnAppCDN::get_value( 'page' );
-$page   = ( $page )   ? $page    : 'default';
+$page   = ( $page )   ? $page    : 'resources';
 
 // Register pages
 $pages = array(
@@ -33,6 +33,8 @@ $pages = array(
     'purge'                =>  'Purge',
     'resources'            =>  'Resources',
     'details'              =>  'Details',
+    'default'              =>  'Default',
+    'error'                =>  'Error'
 );
 
 $action = OnAppCDN::get_value( 'action' );
@@ -48,20 +50,32 @@ $actions = array(
     'prefetch'             => array('prefetch'),
     'purge'                => array('purge'),
     'resources'            => array('enable', 'edit', 'delete', 'add'),
+    'error'                => array(),
 );
 
 if ( ! in_array( $action, $actions[$page] ) && $action != 'show' ) {
-    exit('Not registered action');
+    exit('Invalid Token ( code : 1 )');               // Try to access not registred action
 }
 
-$name = array_key_exists($page, $pages) ? 'OnAppCDN'. $pages[$page] : 'OnAppCDNDefault';
+if ( array_key_exists($page, $pages) ) {
+    $name = 'OnAppCDN'. $pages[$page];
+}
+else {
+    die('Invalid Token ( code : 2 )');               // Try to access not registered controller
+}
 
 require_once ONAPPCDN_DIR. 'controllers' .DS. $name . '.php';
 
 $class = new $name;
 
+$user = $class->get_user();
+
+if ( ! isset( $user['onapp_user_id'] ) && $name != 'OnAppCDNDefault' ) {
+    die('Invalid Token ( code : 3 )');                 // CDN User is not created yet
+}
+
 // Verify whether User can access service
 if ( ! in_array( $class->getServiceId(), $class->getUserServisesIds() ) )
-    die('Invalid Token');
+    die('Invalid Token ( code : 4 )');                // Try to access not own hosting account
 
 $class->runAction($action);
