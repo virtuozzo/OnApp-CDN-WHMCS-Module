@@ -32,7 +32,7 @@ $pages = array(
     'prefetch'             =>  'Prefetch',
     'purge'                =>  'Purge',
     'resources'            =>  'Resources',
-    'settings'             =>  'Settings',
+    'details'              =>  'Details',
 );
 
 $action = OnAppCDN::get_value( 'action' );
@@ -41,13 +41,13 @@ $action = ( $action ) ? $action  : 'show';
 // Register actions
 $actions = array(
     'default'              => array('create'),
+    'details'              => array(),
     'advanced_details'     => array(),
     'bandwidth_statistics' => array(),
     'billing_statistics'   => array(),
     'prefetch'             => array('prefetch'),
     'purge'                => array('purge'),
     'resources'            => array('enable', 'edit', 'delete', 'add', 'details'),
-    'settings'             => array(),
 );
 
 if ( ! in_array( $action, $actions[$page] ) && $action != 'show' ) {

@@ -409,13 +409,25 @@ WHERE
      * @param <type> $values
      */
     protected function show_template($templatefile, $values) {
-        global $_LANG, $breadcrumbnav, $smartyvalues, $CONFIG;
+        global $_LANG, $smartyvalues, $CONFIG;
         self::loadcdn_language();
+
+        $id          = self::get_value('id');
+        $page        = self::get_value('page');
+
+        $breadcrumbnav  = ' <a href="index.php">'.$_LANG["globalsystemname"].'</a>';
+        $breadcrumbnav .= ' &gt; <a href="clientarea.php">'.$_LANG["clientareatitle"].'</a>';
+        $breadcrumbnav .= ' &gt; <a href="' . ONAPP_FILE_NAME . '?page=resources&id=' . $id . '">'.$_LANG["onappcdnresources"].'</a>';
+        if ( $page != 'resources')
+            $breadcrumbnav .=
+                ' &gt; <a href="' . ONAPP_FILE_NAME . '?page='. $page. '&id=' .
+                $id . '&resource_id='. self::get_value('resource_id') .'">'
+                .$_LANG['onappcdn' . str_replace('_', '', $page )].'</a>';
+
 
         $pagetitle = $_LANG["clientareatitle"];
         $pageicon = "images/support/clientarea.gif";
         $values['_LANG'] = $_LANG;
-
         initialiseClientArea( $pagetitle, $pageicon, $breadcrumbnav);
 
         $smartyvalues = $values;
