@@ -230,7 +230,7 @@ $('#passwords_table').append( passwords_html )
 
 <h4>{$_LANG.onappcdnresourceproperties}</h4>
 <hr />
-{$_LANG.onappcdnresourcepropertiesinfo}
+<h5>{$_LANG.onappcdnresourcepropertiesinfo}</h5>
 <form action="" method="post" >
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
@@ -350,7 +350,7 @@ $('#passwords_table').append( passwords_html )
 
     <h4>{$_LANG.onappcdnurlsigning}</h4> <hr />
 
-    {$_LANG.onappcdnurlsigninginfo}
+    <h5>{$_LANG.onappcdnurlsigninginfo}</h5>
 
     <table cellspacing="0" cellpadding="10" border="0" width="100%">
         <tr >
@@ -371,7 +371,7 @@ $('#passwords_table').append( passwords_html )
 
     <h4>{$_LANG.onappcdncacheexpiry}</h4> <hr />
 
-    {$_LANG.onappcdncacheexpiryinfo}
+    <h5>{$_LANG.onappcdncacheexpiryinfo}</h5>
 
     <table cellspacing="0" cellpadding="10" border="0" width="100%">
         <tr>
@@ -384,6 +384,7 @@ $('#passwords_table').append( passwords_html )
     </table>
 
     <h4>{$_LANG.onappcdnpassword}</h4> <hr />
+    <h5>{$_LANG.onappcdnclearbothfields}</h5>
     
     <table cellspacing="0" cellpadding="10" border="0" width="100%">
         <tr>

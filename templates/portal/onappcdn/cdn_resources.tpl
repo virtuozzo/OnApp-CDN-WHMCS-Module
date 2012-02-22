@@ -20,10 +20,11 @@
 
 {else}
 
-  <div class="contentbox">
+<!--  <div class="contentbox">
     <strong>{$LANG.onappcdnresources}</strong>
     | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a>
-  </div>
+  </div> -->
+<h2>{$_LANG.onappcdnresources}</h2>
 
 <div class="description">
    {$_LANG.onappcdnresourcedescription}

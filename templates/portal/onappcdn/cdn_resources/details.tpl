@@ -50,7 +50,7 @@
 
 <h2>{$_LANG.onappcdndnssettings}</h2>
 
-{$_LANG.onappcdndnssettingsinfo} <br /> <br />
+<h5>{$_LANG.onappcdndnssettingsinfo} </h5>
 <b>
    {$resource->_cdn_hostname} IN CNAME {$resource->_aflexi_resource_id}.r.worldcdn.net
 </b>
@@ -73,4 +73,15 @@
     {/foreach}
 
 </table>
+<br />
+
+<form action="" method="get">
+    <input type="hidden" name="action" value="edit" />
+    <input type="hidden" name="page" value="resources" />
+    <input type="hidden" name="resource_id" value="{$resource_id}" />
+    <input type="hidden" name="id" value="{$id}" />
+    <input type="submit" value="{$_LANG.onappcdnedit}"/>
+</form>
+
+<br /><br />
 

@@ -112,3 +112,4 @@ $_LANG["onappcdnpurgeinfo"] = "This tool allows instant removal of HTTP Pull
     Fill in the fields below with URLs of cache content.";
 $_LANG["onappcdnareyousureyouwantdelete"] = "Are you sure you want to delete?";
 $_LANG["onappcdndetails"] = "Instructions and Basic Settings";
+$_LANG["onappcdnclearbothfields"] = "Clear both fields to remove a user.";

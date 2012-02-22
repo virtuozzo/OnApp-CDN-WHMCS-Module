@@ -48,7 +48,7 @@ $(document).ready(function(){
 
 <h2>{$_LANG.onappcdnhttppurge}</h2>
 
-{$_LANG.onappcdnpurgeinfo1}
+<h5>{$_LANG.onappcdnpurgeinfo1}</h5>
 
 <form action="{$smarty.const.ONAPPCDN_FILE_NAME}?page=purge&action=purge&id={$id}&resource_id={$resource_id}" method="post" >
 <table cellspacing="0" cellpadding="10" border="0" width="100%">

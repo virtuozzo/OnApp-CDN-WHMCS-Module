@@ -48,8 +48,7 @@ $(document).ready(function(){
 
 <h2>{$_LANG.onappcdnhttpprefetch}</h2>
 
-<!--<h4>{$_LANG.onappcdnresourceproperties}</h4>-->
-{$_LANG.onappcdnprefetchinfo1}
+<h5>{$_LANG.onappcdnprefetchinfo1}</h5>
 
 <form action="{$smarty.const.ONAPPCDN_FILE_NAME}?page=prefetch&action=prefetch&id={$id}&resource_id={$resource_id}" method="post" >
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
