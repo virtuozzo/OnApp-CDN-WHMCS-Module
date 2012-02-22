@@ -60,6 +60,11 @@ class OnAppCDNDetails extends OnAppCDN {
             }
         }
 
+        if ( isset( $_SESSION['successmessages'] ) ) {
+            $messages = $_SESSION['successmessages'];
+            unset( $_SESSION['successmessages'] );
+        }
+
         $this->show_template(
             'onappcdn/cdn_resources/details',
             array(

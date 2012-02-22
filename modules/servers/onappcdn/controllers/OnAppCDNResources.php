@@ -84,6 +84,7 @@ class OnAppCDNResources extends OnAppCDN {
      */
     protected function edit ( $errors = null, $messages = null ) {
         global $_LANG;
+        $resource_id = parent::get_value( 'resource_id' );
 
         if ( $errors || $messages ) {
             unset( $_POST['edit'] );
@@ -103,8 +104,6 @@ class OnAppCDNResources extends OnAppCDN {
                 $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
             $_resource  = $onapp->factory('CDNResource', true );
-
-            $resource_id = parent::get_value( 'resource_id' );
 
             $resource   = $_resource->load( $resource_id );
 
@@ -226,7 +225,9 @@ class OnAppCDNResources extends OnAppCDN {
 
             if ( ! $errors ) {
                 $messages[] = $_LANG['onappcdnresourceupdatedsuccessfully'];
-                $this->details( $errors, $messages );
+                $_SESSION['successmessages'] = $messages;
+                $url = ONAPPCDN_FILE_NAME . '?page=details&id=' .parent::get_value( 'id' ).'&resource_id=' . $resource_id;
+                $this->redirect($url);
             }
             else {
                 $this->edit( $errors, $messages );

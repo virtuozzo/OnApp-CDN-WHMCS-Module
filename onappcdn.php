@@ -47,7 +47,7 @@ $actions = array(
     'billing_statistics'   => array(),
     'prefetch'             => array('prefetch'),
     'purge'                => array('purge'),
-    'resources'            => array('enable', 'edit', 'delete', 'add', 'details'),
+    'resources'            => array('enable', 'edit', 'delete', 'add'),
 );
 
 if ( ! in_array( $action, $actions[$page] ) && $action != 'show' ) {
