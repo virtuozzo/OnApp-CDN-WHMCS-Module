@@ -2,15 +2,18 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
+    $('#textarea_wrapper').css('widht', '260px')
     $('textarea').val('/home/somefile.jpg').attr( 'disabled', true )
 
-//    $('textarea').blur( function(){
-//       $('textarea').val('/home/somefile.jpg').attr( 'disabled', true )
-//    })
+    $('textarea').blur( function(){
+       if ( $('textarea').val() == '' ) {
+           $('textarea').val('/home/somefile.jpg').attr( 'disabled', true )
+       }
+    })
 
     $('#textarea_wrapper').click( function(){
         if ( $('textarea').attr('disabled') == true ) {
-            $('textarea').val('').removeAttr('disabled')
+            $('textarea').val('').removeAttr('disabled').focus()
         }
     })
 

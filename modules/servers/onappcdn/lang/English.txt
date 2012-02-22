@@ -102,3 +102,11 @@ $_LANG["onappcdnedgegroup"] = "Edge Group";
 $_LANG["onappcdntraffic"] = "Traffic";
 $_LANG["onappcdncost"] = "Cost";
 $_LANG["onappcdnjumptopage"] = "Jump to Page";
+$_LANG["onappcdnhttppurge"] = "HTTP Purge";
+$_LANG["onappcdnpurgeinfo1"] = "Specify paths on the CDN Resource (not the origin) to purge, one per line.";
+$_LANG["onappcdnpathtopurge"] = "Paths to Purge";
+$_LANG["onappcdnpurgesuccessfully"] = "The purge request was successfully issued";
+$_LANG["onappcdnpurgesuccessfully"] = "The purge request was successfully issued";
+$_LANG["onappcdnpurgeinfo"] = "This tool allows instant removal of HTTP Pull
+    cache content in the CDN, if newly updated content have not been reflected.
+    Fill in the fields below with URLs of cache content.";

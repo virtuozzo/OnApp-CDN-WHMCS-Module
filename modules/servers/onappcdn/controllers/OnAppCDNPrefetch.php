@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *  Manages CDN Prefetch
  */
 class OnAppCDNPrefetch extends OnAppCDN {
 
@@ -10,9 +10,11 @@ class OnAppCDNPrefetch extends OnAppCDN {
     }
 
     /**
+     * Displays prefetch form
      *
      * @param string $errors Errors
-     * @param string $messages Errors
+     * @param string $messages Messages
+     * @return void
      */
     public function show( $errors = null, $messages = null ) {
         
@@ -28,8 +30,10 @@ class OnAppCDNPrefetch extends OnAppCDN {
     }
 
     /**
+     * Allows HTTP Pull content to be pre-populated to the CDN.
+     * Recommended only if files especially large.
      *
-     *
+     * @return void
      */
     protected function prefetch () {
         parent::loadcdn_language();
