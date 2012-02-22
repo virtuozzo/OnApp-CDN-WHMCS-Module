@@ -42,16 +42,12 @@
         <tr>
             <td>
                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=details&resource_id={$resource->_id}">
-                   {$resource->_cdn_hostname}
+                   {$resource._cdn_hostname}
                </a>
             </td>
-            <td>
-                {foreach item=origin from=$resource->_origins_for_api}
-                    {$origin->_value}
-                {/foreach}
-            </td>
-            <td>{$resource->_resource_type}</td>
-            <td>{$resource->_last_24h_cost}</td>
+            <td>{$resource._origins_for_api}</td>
+            <td>{$resource._resource_type}</td>
+            <td>{$resource._last_24h_cost}</td>
             <td>
                 <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=edit&resource_id={$resource->_id}">{$_LANG.onappcdnedit}</a> &nbsp
                 <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=delete&resource_id={$resource->_id}">{$_LANG.onappcdndelete}</a>

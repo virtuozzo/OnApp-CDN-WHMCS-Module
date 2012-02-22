@@ -18,6 +18,8 @@ class OnAppCDNResources extends OnAppCDN {
      */
     public function show( $errors = null, $messages = null ) {
         $onapp = $this->getOnAppInstance();
+
+        $whmcs_client_details  =  $this->getWhmcsClientDetails();
         
         if ( $onapp->getErrorsAsArray() )
             $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
@@ -25,6 +27,19 @@ class OnAppCDNResources extends OnAppCDN {
         $resource  = $onapp->factory('CDNResource', true );
 
         $resources = $resource->getList();
+
+        foreach( $resources as $_resources ) {
+            $__resources[ $_resources->_id ]['_last_24h_cost'] =
+                $whmcs_client_details['currencyprefix'] .
+                round( $_resources->_last_24h_cost * $whmcs_client_details['currencyrate'], 2 )
+                . ' ' . $whmcs_client_details['currencycode'];
+            $__resources[ $_resources->_id ]['_resource_type'] = $_resources->_resource_type;
+            $__resources[ $_resources->_id ]['_cdn_hostname'] = $_resources->_cdn_hostname;
+            $__resources[ $_resources->_id ]['_origins_for_api'] = '';
+            foreach( $_resources->_origins_for_api as $origin ) {
+                $__resources[ $_resources->_id ]['_origins_for_api'] = $origin->_value . PHP_EOL;
+            }
+        }
 
         $response  = $resource->getResponse();
 
@@ -34,7 +49,7 @@ class OnAppCDNResources extends OnAppCDN {
             'onappcdn/cdn_resources',
             array(
                 'id'                =>  parent::get_value('id'),
-                'resources'         =>  $resources,
+                'resources'         =>  $__resources,
                 'resources_enabled' =>  $resources_enabled,
                 'errors'            =>  implode( PHP_EOL, $errors ),
                 'messages'          =>  implode( PHP_EOL, $messages ),
