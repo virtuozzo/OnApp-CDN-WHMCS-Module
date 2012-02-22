@@ -38,10 +38,10 @@
         <th>&nbsp;</th>
     </tr>
     {if count($resources) > 0}
-        {foreach item=resource from=$resources}
+        {foreach item=resource key=resource_id from=$resources}
         <tr>
             <td>
-               <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=details&resource_id={$resource->_id}">
+               <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=details&resource_id={$resource_id}">
                    {$resource._cdn_hostname}
                </a>
             </td>
@@ -49,8 +49,8 @@
             <td>{$resource._resource_type}</td>
             <td>{$resource._last_24h_cost}</td>
             <td>
-                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=edit&resource_id={$resource->_id}">{$_LANG.onappcdnedit}</a> &nbsp
-                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=delete&resource_id={$resource->_id}">{$_LANG.onappcdndelete}</a>
+                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=edit&resource_id={$resource_id}">{$_LANG.onappcdnedit}</a> &nbsp
+                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=delete&resource_id={$resource_id}">{$_LANG.onappcdndelete}</a>
             </td>
         </tr>
         {/foreach}
