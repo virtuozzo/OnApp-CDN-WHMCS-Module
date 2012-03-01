@@ -119,6 +119,6 @@ $_LANG["onappcdntotalamount"] = "Total Amount";
 $_LANG["onappcdninvoicedescription"] = "CDN Service";
 $_LANG["onappcdnoutstandingamount"] = "Outstanding Amount";
 $_LANG["onappcdnservicebalance"] = "CDN Service Balance";
-$_LANG["onappcdnservicebalanceinfo"] = "This is negative due balance for all your CDN Resources ( refreshed proximately each 15 min ), which you will be invoiced for at the end of the period.";
+$_LANG["onappcdnservicebalanceinfo"] = "This is negative due balance for all your CDN Resources ( refreshed hourly ), which you will be invoiced for at the end of the period.";
 
 
