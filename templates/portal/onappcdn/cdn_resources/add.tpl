@@ -35,7 +35,7 @@ $(document).ready(function(){
     unauth_textarea.val('<span style="color:red">Invalid username or password</span>').attr( 'disabled', true )
 
     $('#auth_html_wrapper').click( function(){
-        if ( unauth_textarea.attr('disabled') == true ) {
+        if ( unauth_textarea.attr('disabled') == 'disabled' ) {
             unauth_textarea.val('').removeAttr('disabled').focus()
         }
     })
@@ -76,7 +76,7 @@ $(document).ready(function(){
     ip_access.val('10.10.10.10, 20.20.20.0/24, ...').attr( 'disabled', true )
 
     $('#ip_wrapper').click( function(){
-        if ( ip_access.attr('disabled') == true ) {
+        if ( ip_access.attr('disabled') == 'disabled' ) {
             ip_access.val('').removeAttr('disabled').focus()
         }
     })
@@ -95,7 +95,7 @@ $(document).ready(function(){
     domains.val('www.yoursite.com mirror.yoursite.com').attr( 'disabled', true )
 
     $('#domains_wrapper').click( function(){
-        if ( domains.attr('disabled') == true ) {
+        if ( domains.attr('disabled') == 'disabled' ) {
             domains.val('').removeAttr('disabled').focus()
         }
     })
