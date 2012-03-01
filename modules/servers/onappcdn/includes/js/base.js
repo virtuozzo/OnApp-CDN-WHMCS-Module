@@ -26,7 +26,7 @@ $(document).ready(function(){
 
     servergroupObj = $('select[name="servergroup"]').parent().parent();
     serverTitleHTML  = '<td class="fieldlabel">'+serverTitle.html()+'</td>';
-    serverSelectHTML = '<td class="fieldlabel">'+serverSelect.html()+'</td>'
+    serverSelectHTML = '<td class="fieldarea">'+serverSelect.html()+'</td>'
     servergroupObj.after('<tr>'+serverTitleHTML+serverSelectHTML+'</tr>');
 
     serverTitle.remove();

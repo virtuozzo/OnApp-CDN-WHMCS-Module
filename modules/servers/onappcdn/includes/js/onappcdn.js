@@ -64,7 +64,7 @@ $(document).ready(function(){
     userGroupSelect = userGroups.children('td:nth-child(4)');
 
     userGroupTitleHTML = '<td class="fieldlabel">'+userGroupTitle.html()+'</td>';
-    userGroupSelectHTML = '<td class="fieldlabel">'+userGroupSelect.html()+'</td>';
+    userGroupSelectHTML = '<td class="fieldarea">'+userGroupSelect.html()+'</td>';
     userGroups.after('<tr>'+userGroupTitleHTML+userGroupSelectHTML+'</tr>');
 
     userGroupTitle.remove();
