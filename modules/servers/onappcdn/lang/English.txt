@@ -115,4 +115,10 @@ $_LANG["onappcdndetails"] = "Instructions and Basic Settings";
 $_LANG["onappcdnclearbothfields"] = "Clear both fields to remove a user.";
 $_LANG["onappcdnfailedusercreate"] = "Faild to create CDN User - ";
 $_LANG["onappcdnsuccessusercreate"] = "CDN User was created successfully";
+$_LANG["onappcdntotalamount"] = "Total Amount";
+$_LANG["onappcdninvoicedescription"] = "CDN Service";
+$_LANG["onappcdnoutstandingamount"] = "Outstanding Amount";
+$_LANG["onappcdnservicebalance"] = "CDN Service Balance";
+$_LANG["onappcdnservicebalanceinfo"] = "This is negative due balance for all your CDN Resources ( refreshed proximately each 15 min ), which you will be invoiced for at the end of the period.";
+
 

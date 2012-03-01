@@ -37,6 +37,8 @@
     {/foreach}
 
 </table>
+
+<br /><br />
 <form action="" method="post">
    Page : <input type="submit" value="<<" onclick = "$('input[name=page_number]').attr('value', '{$page_number-1}')" />
    <input name="page_number" size="1" value="{$page_number}" />

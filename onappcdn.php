@@ -76,6 +76,6 @@ if ( ! isset( $user['onapp_user_id'] ) && $name != 'OnAppCDNDefault' ) {
 
 // Verify whether User can access service
 if ( ! in_array( $class->getServiceId(), $class->getUserServisesIds() ) )
-    die('Invalid Token ( code : 4 )');                // Try to access not own hosting account
+    die('Invalid Token ( code : 4 )');                // Try to access not own hosting account or not loggedin
 
 $class->runAction($action);

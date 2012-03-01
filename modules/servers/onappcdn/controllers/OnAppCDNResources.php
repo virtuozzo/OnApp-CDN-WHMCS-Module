@@ -28,6 +28,22 @@ class OnAppCDNResources extends OnAppCDN {
 
         $resources = $resource->getList();
 
+        if ( $resources[0]->_user_id ) {
+//            $statistics = $onapp->factory('User_Statistics');
+//            $stat = $statistics->getList( $resources[0]->_user_id );
+
+            $users = $onapp->factory('User');
+            $user  = $users->load( $resources[0]->_user_id );
+            
+            $outstanding_amount = $whmcs_client_details['currencyprefix'] .
+            round ( $user->_outstanding_amount  *  $whmcs_client_details['currencyrate'], 2)
+                . ' ' . $whmcs_client_details['currencycode'] ;
+        }
+
+//        $edge_group_cost = $whmcs_client_details['currencyprefix'] .
+//            round( $stat['0']->_edge_group_cost  *  $whmcs_client_details['currencyrate'], 2)
+//                . ' ' . $whmcs_client_details['currencycode'] ;
+
         foreach( $resources as $_resources ) {
             $__resources[ $_resources->_id ]['_last_24h_cost'] =
                 $whmcs_client_details['currencyprefix'] .
@@ -58,6 +74,7 @@ class OnAppCDNResources extends OnAppCDN {
                 'resources_enabled' =>  $resources_enabled,
                 'errors'            =>  implode( PHP_EOL, $errors ),
                 'messages'          =>  implode( PHP_EOL, $messages ),
+                'outstanding_amount'=>  $outstanding_amount,
             )
         );
     }

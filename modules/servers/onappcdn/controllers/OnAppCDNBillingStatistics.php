@@ -42,7 +42,11 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
             }
         }
 
-        $page_number = parent::get_value( 'page_number' ) ? parent::get_value('page_number') : 1;
+        $page_number = parent::get_value( 'page_number' );
+
+        if ( ! $page_number || $page_number < 0 || ! is_numeric( $page_number ) ) {
+            $page_number = 1;
+        }
 
         if ( $onapp->getErrorsAsArray() )
             $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
@@ -77,6 +81,7 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
                 'page_number'       =>  $page_number,
                 'errors'            =>  implode( PHP_EOL, $errors ),
                 'messages'          =>  implode( PHP_EOL, $messages ),
+                'total'             =>  $edge_group_cost,
             )
         );
     }

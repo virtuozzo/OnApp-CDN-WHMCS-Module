@@ -71,5 +71,11 @@
     <input type="hidden" name="id" value="{$id}" />
     <input type="submit" value="{$_LANG.onappcdnnewresource}" />
 </form>
+<!--<br /><br />
+<b>{$_LANG.onappcdntotalamount}: {$total}</b>-->
+<br />
+<h5>{$_LANG.onappcdnservicebalanceinfo}</h5>
 
+<b>{$_LANG.onappcdnservicebalance}: - {$outstanding_amount}</b>
+<br /><br />
 {/if}
