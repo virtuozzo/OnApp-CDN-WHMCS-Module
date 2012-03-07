@@ -7,13 +7,12 @@ ini_set("display_errors", 1);
 @ini_set( 'max_execution_time', 0 );
 @set_time_limit( 0 );
 
-define("ROOT", realpath( dirname(__FILE__) .'/../../../' ). '/' );
+define("ROOT", realpath( dirname(__FILE__) .'/../../../../' ). '/' );
 
 require_once ROOT . "dbconnect.php";
 require_once ROOT . "includes/functions.php";
 require_once ROOT . "includes/clientareafunctions.php";
 require_once ROOT . "includes/wrapper/OnAppInit.php";
-require_once ROOT . "modules/servers/onapp/onapp.php";
 
 $query = "
     SELECT
