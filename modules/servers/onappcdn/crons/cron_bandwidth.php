@@ -154,7 +154,8 @@ function onappcdn_update_bandwidth_statistics( $start, $resource, $_bw, $row, $o
     echo 'Geting data from OnApp:   ' . PHP_EOL;
     echo '( start )                 ' . $start . PHP_EOL;
     echo '( end )                   ' . $tomorrow . PHP_EOL;
-    echo '( resource_id )           ' . $resource->_aflexi_resource_id . PHP_EOL . PHP_EOL;
+    echo '( resource_id )           ' . $resource->_id . PHP_EOL;
+    echo '( resource_aflexi_id )    ' . $resource->_aflexi_resource_id . PHP_EOL . PHP_EOL;
 
     $url_args = array(
         'start'         => $start,
@@ -184,15 +185,17 @@ function onappcdn_update_bandwidth_statistics( $start, $resource, $_bw, $row, $o
                     cached,
                     non_cached,
                     aflexi_resource_id,
-                    cdn_hostname
+                    cdn_hostname,
+                    resource_id
                  )
                  VALUES (
                      '$date',
                       $row[hostingid],
                       $cached,
                       $non_cached,
-                       $resource->_aflexi_resource_id,
-                      '$resource->_cdn_hostname'
+                      $resource->_aflexi_resource_id,
+                      '$resource->_cdn_hostname',
+                      $resource->_id
                  )
          ";
 // debug

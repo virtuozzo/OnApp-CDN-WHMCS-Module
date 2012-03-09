@@ -35,3 +35,53 @@ table#passwords_table td input[type=text] {
 div#textarea_wrapper, div#ip_wrapper, div#domains_wrapper, div#auth_html_wrapper {
     width:260px;
 }
+
+
+/* Pagination styles */
+
+.paginate {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: .9em;
+}
+
+a.paginate {
+	border: 1px solid #888;
+	padding: 2px 6px 2px 6px;
+	text-decoration: none;
+	color: #888;
+}
+
+
+a.paginate:hover {
+	background-color: #888;
+	color: #FFF;
+	text-decoration: underline;
+}
+
+a.current {
+	border: 1px solid #888;
+	font: bold .9em Arial,Helvetica,sans-serif;
+	padding: 2px 6px 2px 6px;
+	cursor: default;
+	background:#888;
+	color: #FFF;
+	text-decoration: none;
+}
+
+span.inactive {
+	border: 1px solid #888;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: .9em;
+	padding: 2px 6px 2px 6px;
+	color: #888;
+	cursor: default;
+}
+
+div#content_left select.paginate{
+    width:60px;
+}
+
+div.items_per_page{
+    float:right;
+}
+/* END Pagination Styles */

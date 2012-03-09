@@ -21,6 +21,7 @@ $_LANG["onappcdnresources"] = "CDN Resources";
 $_LANG["onappcdnresourcesenabledescription"] = "Click the link below to enable the CDN features on your account.";
 $_LANG["onappcdnenable"] = "Enable CDN";
 $_LANG["onappcdnbwstatistics"] = "Bandwidth Statistics";
+$_LANG["onappcdnbandwidthstatistics"] = "Bandwidth Statistics";
 $_LANG["onappcdncreate"] = "Create CDN";
 $_LANG["onappcdnproductservice"] = "Product / Service";
 $_LANG["onappcdnresourcesnotfound"] = "Resources not found";
@@ -120,5 +121,5 @@ $_LANG["onappcdninvoicedescription"] = "CDN Service";
 $_LANG["onappcdnoutstandingamount"] = "Outstanding Amount";
 $_LANG["onappcdnservicebalance"] = "CDN Service Balance";
 $_LANG["onappcdnservicebalanceinfo"] = "This is negative due balance for all your CDN Resources ( refreshed hourly ), which you will be invoiced for at the end of the period.";
-
-
+$_LANG["onappcdncached"] = "Cached";
+$_LANG["onappcdnnoncached"] = "Non Cached";

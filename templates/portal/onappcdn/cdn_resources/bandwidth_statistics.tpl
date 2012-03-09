@@ -16,33 +16,43 @@
     | <a title="{$LANG.onappcdnadvanceddetails}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=advanced_details&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnadvanceddetails}</a>
     | <a title="{$LANG.onappcdnprefetch}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=prefetch&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnprefetch}</a>
     | <a title="{$LANG.onappcdnpurge}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=purge&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnpurge}</a>
-    | <strong>{$LANG.onappcdnbillingstatistics}</strong>
+    | <strong>{$LANG.onappcdnbwstatistics}</strong>
 </div>
-<h2>{$_LANG.onappcdnbillingstatistics}</h2>
+<h2>{$_LANG.onappbwstatistics}</h2>
+
+{if $statistics|count}
+    {$pagination} <div class="items_per_page"> {$items_per_page}</div>
+{/if}
+<br /><br />
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%" class="data">
     <tr>
+        <th>{$_LANG.onappcdnhostname}</th>
         <th>{$_LANG.onappcdndate}</th>
-        <th>{$_LANG.onappcdnedgegroup}</th>
-        <th>{$_LANG.onappcdntraffic}</th>
-        <th>{$_LANG.onappcdncost}</th>
+        <th>{$_LANG.onappcdncached}</th>
+        <th>{$_LANG.onappcdnnoncached}</th>
     </tr>
-    {foreach from=$statistics item=statistic}
-    <tr>
-        <td><b>{$statistic.date}</b></td>
-        <td>{$statistic.label}</td>
-        <td>{$statistic.traffic}</td>
-        <td>{$statistic.cost}</td>
-    </tr>
-    {/foreach}
+    {if $statistics|count}
+        {foreach from=$statistics item=statistic}
+        <tr>
+            <td><b>{$statistic.cdn_hostname}</b></td>
+            <td>{$statistic.created_at}</td>
+            <td>{$statistic.cached}</td>
+            <td>{$statistic.non_cached}</td>
+        </tr>
+        {/foreach}
+
+        {else}
+            <tr>
+                <td>No statistics yet</td>
+            </tr>
+    {/if}
+
 
 </table>
-
+{if $statistics|count}
+    {$pagination}
+{/if}
 <br /><br />
-<form action="" method="post">
-   Page : <input type="submit" value="<<" onclick = "$('input[name=page_number]').attr('value', '{$page_number-1}')" />
-   <input name="page_number" size="1" value="{$page_number}" />
-   <input type="submit" value=">>"  onclick = "$('input[name=page_number]').attr('value', '{$page_number+1}')"/>
-   <input type="submit" value="{$_LANG.onappcdnjumptopage}" />
-</form> <br /><br />
+
 
