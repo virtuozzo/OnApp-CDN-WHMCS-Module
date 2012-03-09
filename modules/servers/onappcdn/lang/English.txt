@@ -123,3 +123,4 @@ $_LANG["onappcdnservicebalance"] = "CDN Service Balance";
 $_LANG["onappcdnservicebalanceinfo"] = "This is negative due balance for all your CDN Resources ( refreshed hourly ), which you will be invoiced for at the end of the period.";
 $_LANG["onappcdncached"] = "Cached";
 $_LANG["onappcdnnoncached"] = "Non Cached";
+$_LANG["onappcdnnostatistics"] = "No statistics available";

@@ -44,7 +44,7 @@
 
         {else}
             <tr>
-                <td>No statistics yet</td>
+                <td>{$_LANG.onappcdnnostatistics}</td>
             </tr>
     {/if}
 
