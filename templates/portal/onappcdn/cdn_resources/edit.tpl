@@ -12,11 +12,9 @@ $(document).ready(function(){
 
     var advanced_container    = $("#advanced_settings")
     var advanced_checkbox     = $("#advanced_settings_input")
-    var ip_access             = $('#ip_access')
     var domains               = $('#domains')
     var urlsigning_checkbox   = $('#urlsigning_input')
     var password_fields_tr    = '<tr>' + $('#passwords_table tr').eq(1).html() + '</tr>'
-    var unauth_textarea       = $('#auth_html')
     var passwords_container   = $('#passwords_container')
 
 
@@ -35,28 +33,6 @@ $(document).ready(function(){
     });
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
-
-// UnAuth TextArea //
-////////////////////
-
-    if ( unauth_textarea.val() == '')
-        unauth_textarea.val('<span style="color:red">Invalid username or password</span>').attr( 'disabled', true )
-
-    $('#auth_html_wrapper').click( function(){
-        if ( unauth_textarea.attr('disabled') == 'disabled' ) {
-            unauth_textarea.val('').removeAttr('disabled').focus()
-        }
-    })
-
-    unauth_textarea.blur( function() {
-        if( $(this).val() == '' ) {
-            unauth_textarea.val('<span style="color:red">Invalid username or password</span>').attr( 'disabled', true )
-        }
-    })
-
-// END UnAuth TextArea //
-////////////////////////
-
 
     $('#plus_user').click(function() {
         $('#passwords_table').append( password_fields_tr )
@@ -78,45 +54,6 @@ $(document).ready(function(){
     });
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
-
-// Ip Access textarea //
-///////////////////////
-    if ( ip_access.val() == '' )
-        ip_access.val('10.10.10.10, 20.20.20.0/24, ...').attr( 'disabled', true )
-
-    $('#ip_wrapper').click( function(){
-        if ( ip_access.attr('disabled') == 'disabled' ) {
-            ip_access.val('').removeAttr('disabled').focus()
-        }
-    })
-
-    ip_access.blur( function() {
-        if( $(this).val() == '' ) {
-            ip_access.val('10.10.10.10, 20.20.20.0/24, ...').attr( 'disabled', true )
-        }
-    })
-// Ip Access textarea //
-///////////////////////
-    
-// Ip Domains textarea //
-////////////////////////
-    if (domains.val() == '')
-        domains.val('www.yoursite.com mirror.yoursite.com').attr( 'disabled', true )
-
-    $('#domains_wrapper').click( function(){
-        if ( domains.attr('disabled') == 'disabled' ) {
-            domains.val('').removeAttr('disabled').focus()
-        }
-    })
-        
-    domains.blur( function() {
-        if( $(this).val() == '' ) {
-            domains.val('www.yoursite.com mirror.yoursite.com').attr( 'disabled', true )
-        }
-    })
-
-// END Ip Domains textarea //
-////////////////////////////
     
 // Hotlink Policy Checkbox //
 ////////////////////////////
@@ -151,7 +88,7 @@ $(document).ready(function(){
 ///////////////////////////////////
 
 // Check advanced checkbox
-    advanced_checkbox.attr('checked', true);
+    advanced_checkbox.attr('checked', 'checked');
     advanced_checkbox.change();
 
 // Select countries
@@ -168,7 +105,7 @@ $(document).ready(function(){
  // Check Url Signing Url checkbox
  {/literal}
     {if $advanced_details->_url_signing_on eq true}
-        urlsigning_checkbox.attr( 'checked', true ).change()
+        urlsigning_checkbox.attr( 'checked', 'cheched' ).change()
     {/if}
 {literal}
 
@@ -189,7 +126,7 @@ $(document).ready(function(){
  // Check Password checkbox
  {/literal}
     {if $advanced_details->_password_on eq true}
-        $('#passwordon_input').attr( 'checked', true ).change()
+        $('#passwordon_input').attr( 'checked', 'checked' ).change()
     {/if}
 {literal}
 
@@ -292,7 +229,7 @@ $('#passwords_table').append( passwords_html )
             </td>
             <td>
                 <div id="ip_wrapper">
-                <textarea id="ip_access" cols="40" rows="5" name="resource[ip_addresses]" >{$advanced_details->_ip_addresses}</textarea>
+                <textarea placeholder="10.10.10.10, 20.20.20.0/24, ..." id="ip_access" cols="40" rows="5" name="resource[ip_addresses]" >{$advanced_details->_ip_addresses}</textarea>
                 </div>
             </td>
         </tr>
@@ -316,11 +253,9 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdncountryaccess}
             </td>
             <td>
-                <div id="country_wrapper">
                 <select id="country_access" name="resource[countries][]" multiple>
                     {include file="$template/onappcdn/cdn_resources/countries_options.tpl"}
                 </select>
-                </div>
             </td>
         </tr>
     </table>
@@ -341,9 +276,7 @@ $('#passwords_table').append( passwords_html )
         <tr id="domains_tr" >
             <td>{$_LANG.onappcdnexceptfordomains}</td>
             <td>
-                <div id="domains_wrapper">
-                    <textarea id="domains" cols="40" rows="5" name="resource[domains]" >{$advanced_details->_domains}</textarea>
-                </div>
+                <textarea placeholder="www.yoursite.com mirror.yoursite.com" id="domains" cols="40" rows="5" name="resource[domains]" >{$advanced_details->_domains}</textarea>
             </td>
         </tr>
     </table>
@@ -399,9 +332,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdnunauthorizedhtml}</td>
             <td>
-                <div id="auth_html_wrapper">
-                <textarea id="auth_html" cols="40" rows="5" name="resource[password_unauthorized_html]" >{$advanced_details->_password_unauthorized_html}</textarea>
-                </div>
+                <textarea id="auth_html" cols="40" rows="5" placeholder="<span style='color: red'>Invalid username or password</span>" name="resource[password_unauthorized_html]" >{$advanced_details->_password_unauthorized_html}</textarea>
             </td>
         </tr>
         <tr>

@@ -29,9 +29,6 @@ class OnAppCDNResources extends OnAppCDN {
         $resources = $resource->getList();
 
         if ( $resources[0]->_user_id ) {
-//            $statistics = $onapp->factory('User_Statistics');
-//            $stat = $statistics->getList( $resources[0]->_user_id );
-
             $users = $onapp->factory('User');
             $user  = $users->load( $resources[0]->_user_id );
             
@@ -39,10 +36,6 @@ class OnAppCDNResources extends OnAppCDN {
             round ( $user->_outstanding_amount  *  $whmcs_client_details['currencyrate'], 2)
                 . ' ' . $whmcs_client_details['currencycode'] ;
         }
-
-//        $edge_group_cost = $whmcs_client_details['currencyprefix'] .
-//            round( $stat['0']->_edge_group_cost  *  $whmcs_client_details['currencyrate'], 2)
-//                . ' ' . $whmcs_client_details['currencycode'] ;
 
         foreach( $resources as $_resources ) {
             $__resources[ $_resources->_id ]['_last_24h_cost'] =
@@ -164,16 +157,15 @@ class OnAppCDNResources extends OnAppCDN {
                 $countries_ids[] = $country->_id;
             }
 
-            $passwords_html = '';
-            foreach ( $advanced_details[0]->_passwords as $user => $password  ) {
-                $passwords_html .= '<tr>'                                                                                            .'\n'.
-                   '<td>'                                                                                                            .'\n'.
-                       '<input class="username_input" value="'.$user.'" type="text" name="resource[form_pass][user][]" />'           .'\n'.
-                    '</td>'                                                                                                          .'\n'.
-                    '<td>'                                                                                                           .'\n'.
-                        '<input class="password_input" value="'.$password.'" type="text" name="resource[form_pass][pass][]" />'      .'\n'.
-                    '</td>'                                                                                                          .'\n'.
-                    '</tr>'                                                                                                          .'\n';
+            $passwords_html = $this->generate_passwords_html( $advanced_details[0]->_passwords );
+
+            if ( isset( $_SESSION['errors'] ) ) {
+                $errors[] = $_SESSION['errors'];
+                unset( $_SESSION['errors'] );
+            }
+            if ( isset( $_SESSION['successmessages'] ) ) {
+                $messages[] = $_SESSION['successmessages'];
+                unset( $_SESSION['successmessages'] );
             }
 
             $this->show_template(
@@ -195,6 +187,7 @@ class OnAppCDNResources extends OnAppCDN {
         }
         else {
             $resource = parent::get_value('resource');
+            
             
             if ( is_null( $resource['advanced_settings'] ) ) {
                 foreach( $resource as $key => $field ) {
@@ -246,13 +239,14 @@ class OnAppCDNResources extends OnAppCDN {
                 $errors[] = implode( PHP_EOL , $_resource->getErrorsAsArray() );
 
             if ( ! $errors ) {
-                $messages[] = $_LANG['onappcdnresourceupdatedsuccessfully'];
+                $messages = $_LANG['onappcdnresourceupdatedsuccessfully'];
                 $_SESSION['successmessages'] = $messages;
                 $url = ONAPPCDN_FILE_NAME . '?page=details&id=' .parent::get_value( 'id' ).'&resource_id=' . $resource_id;
                 $this->redirect($url);
             }
             else {
-                $this->edit( $errors, $messages );
+                $_SESSION['errors'] = implode( PHP_EOL, $errors );
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&action=edit&id=' . parent::get_value('id') );
             }
             
         }
@@ -332,78 +326,121 @@ class OnAppCDNResources extends OnAppCDN {
                     }
                 }
             }
+
+            if ( isset( $_SESSION['errors'] ) ) {
+                $errors[] = $_SESSION['errors'];
+                unset( $_SESSION['errors'] );
+            }
+            if ( isset( $_SESSION['resource'] ) ) {
+                $session_resource = $_SESSION['resource'];
+                unset( $_SESSION['resource'] );
+            }
             
+            foreach( $session_resource['form_pass']['user'] as $key => $value ) {
+                $passwords_array[$value] = $session_resource['form_pass']['pass'][$key];
+            }
+
+            $passwords_html = $this->generate_passwords_html( $passwords_array );
+
+            $countries   = ( is_null( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
+
+
             $this->show_template(
                 'onappcdn/cdn_resources/add',
                 array(
                     'id'                        =>  parent::get_value('id'),
-                    'new_resource'              =>  parent::get_value('new_resource'),
+                    'resource'                  =>  parent::get_value('resource'),
                     'whmcs_client_details'      =>  $this->getWhmcsClientDetails(),
                     'edge_group_baseresources'  =>  $edge_group_baseresources,
                     'errors'                    =>  implode( PHP_EOL, $errors ),
                     'messages'                  =>  implode( PHP_EOL, $messages ),
+                    'session_resource'          =>  $session_resource,
+                    'passwords_html'            =>  $passwords_html,
+                    'countries'                 =>  $countries,
                 )
             );
         }
         else {
-            $new_resource = parent::get_value('new_resource');
+            $resource = parent::get_value('resource');
 
-            if ( is_null( $new_resource['advanced_settings'] ) ) {
-                foreach( $new_resource as $key => $field ) {
+            if ( is_null( $resource['advanced_settings'] ) ) {
+                foreach( $resource as $key => $field ) {
                     if ( $key != 'cdn_hostname'       &&
                          $key != 'origin'             &&
                          $key != 'type'               &&
                          $key != 'edge_group_ids' 
                     ){
-                        unset( $new_resource[$key] );
+                        unset( $resource[$key] );
                     }
                 }
             }
             else {
-                if ( $new_resource['ip_access_policy'] == 'NONE' ) {
-                    unset( $new_resource['ip_access_policy'] );
-                    unset( $new_resource['ip_addresses'] );
+                if ( $resource['ip_access_policy'] == 'NONE' ) {
+                    unset( $resource['ip_access_policy'] );
+                    unset( $resource['ip_addresses'] );
                 }
-                if ( $new_resource['country_access_policy'] == 'NONE' ) {
-                    unset( $new_resource['country_access_policy'] );
-                    unset( $new_resource['countries'] );
+                if ( $resource['country_access_policy'] == 'NONE' ) {
+                    unset( $resource['country_access_policy'] );
+                    unset( $resource['countries'] );
                 }
-                if ( $new_resource['hotlink_policy'] == 'NONE' ) {
-                    unset( $new_resource['hotlink_policy'] );
-                    unset( $new_resource['domains'] );
+                if ( $resource['hotlink_policy'] == 'NONE' ) {
+                    unset( $resource['hotlink_policy'] );
+                    unset( $resource['domains'] );
                 }
-                if ( is_null( $new_resource['url_signing_on'] ) ) {
-                    unset( $new_resource['url_signing_key'] );
+                if ( is_null( $resource['url_signing_on'] ) ) {
+                    unset( $resource['url_signing_key'] );
                 }
 
-                if ( is_null( $new_resource['password_on'] ) ) {
-                    unset( $new_resource['password_unauthorized_html'] );
-                    unset( $new_resource['form_pass'] );
+                if ( is_null( $resource['password_on'] ) ) {
+                    unset( $resource['password_unauthorized_html'] );
+                    unset( $resource['form_pass'] );
                 }
             }
 
-            $resource      = $onapp->factory('CDNResource', true );
+            $_resource      = $onapp->factory('CDNResource', true );
 
-            foreach( $new_resource as $key => $value ) {
+            foreach( $resource as $key => $value ) {
                 if ( $key != 'advanced_settings' ) {
                     $key = '_'.$key;
-                    $resource->$key = $value;
+                    $_resource->$key = $value;
 
                 }
             }
+            
+            $_resource->save();
 
-            $resource->save();
-
-            if ( $resource->getErrorsAsArray() )
-                $errors[] = implode( PHP_EOL , $resource->getErrorsAsArray() );
+            if ( $_resource->getErrorsAsArray() )
+                $errors[] = implode( PHP_EOL , $_resource->getErrorsAsArray() );
 
             if ( ! $errors ) {
-                $messages[] = $_LANG['onappcdnresourcecreatedsuccessfully'];
-                $this->show( $errors, $messages );
+                $messages = $_LANG['onappcdnresourceupdatedsuccessfully'];
+                $_SESSION['successmessages'] = $messages;
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&id=' . parent::get_value('id') );
             }
-            else {   
-                $this->add( $errors, $messages );
+            else {
+                $_SESSION['resource'] = $_POST['resource'];
+                $_SESSION['errors'] = implode( PHP_EOL, $errors );
+                
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&action=add&id=' . parent::get_value('id') );
             }
         }
     }
+
+    private function generate_passwords_html ( $passwords_array ) {
+        
+        $passwords_html = '';
+        
+        foreach ( $passwords_array as $user => $password) {
+            $passwords_html .= '<tr>' . '\n' .
+                    '<td>' . '\n' .
+                    '<input class="username_input" value="' . $user . '" type="text" name="resource[form_pass][user][]" />' . '\n' .
+                    '</td>' . '\n' .
+                    '<td>' . '\n' .
+                    '<input class="password_input" value="' . $password . '" type="text" name="resource[form_pass][pass][]" />' . '\n' .
+                    '</td>' . '\n' .
+                    '</tr>' . '\n';
+        }
+        return $passwords_html;
+    }
 }
+

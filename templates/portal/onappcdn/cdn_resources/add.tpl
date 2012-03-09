@@ -5,16 +5,19 @@ $(document).ready(function(){
 
     var advanced_container    = $("#advanced_settings")
     var advanced_checkbox     = $("#advanced_settings_input")
-    var ip_access             = $('#ip_access')
-    var domains               = $('#domains')
     var urlsigning_checkbox   = $('#urlsigning_input')
     var password_fields_tr    = '<tr>' + $('#passwords_table tr').eq(1).html() + '</tr>'
-    var unauth_textarea       = $('#auth_html')
     var passwords_container   = $('#passwords_container')
 
 
-// Advanced Settings Checkbox //
-///////////////////////////////
+function in_array(needle, haystack){
+    for(var i=0; i<haystack.length; i++)
+        if(needle == haystack[i])
+            return true;
+    return false;
+}
+// Password Container Checkbox //
+////////////////////////////////
 
     passwords_container.hide()
 
@@ -26,29 +29,8 @@ $(document).ready(function(){
             passwords_container.hide()
         }
     });
-// END Advanced Settings Checkbox //
-///////////////////////////////////
-
-// UnAuth TextArea //
-////////////////////
-
-    unauth_textarea.val('<span style="color:red">Invalid username or password</span>').attr( 'disabled', true )
-
-    $('#auth_html_wrapper').click( function(){
-        if ( unauth_textarea.attr('disabled') == 'disabled' ) {
-            unauth_textarea.val('').removeAttr('disabled').focus()
-        }
-    })
-
-    unauth_textarea.blur( function() {
-        if( $(this).val() == '' ) {
-            unauth_textarea.val('<span style="color:red">Invalid username or password</span>').attr( 'disabled', true )
-        }
-    })
-
-// END UnAuth TextArea //
-////////////////////////
-
+// END Password Container //
+///////////////////////////
 
     $('#plus_user').click(function() {
         $('#passwords_table').append( password_fields_tr )
@@ -68,47 +50,15 @@ $(document).ready(function(){
             advanced_container.slideUp()
         }
     });
+
+{/literal}
+    {if $session_resource.advanced_settings eq true}
+        advanced_checkbox.attr('checked', 'checked').change()
+    {/if}
+{literal}
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
 
-// Ip Access textarea //
-///////////////////////
-    ip_access.val('10.10.10.10, 20.20.20.0/24, ...').attr( 'disabled', true )
-
-    $('#ip_wrapper').click( function(){
-        if ( ip_access.attr('disabled') == 'disabled' ) {
-            ip_access.val('').removeAttr('disabled').focus()
-        }
-    })
-
-    ip_access.blur( function() {
-        if( $(this).val() == '' ) {
-            ip_access.val('10.10.10.10, 20.20.20.0/24, ...').attr( 'disabled', true )
-        }
-    })
-// Ip Access textarea //
-///////////////////////
-    
-// Ip Domains textarea //
-////////////////////////
-
-    domains.val('www.yoursite.com mirror.yoursite.com').attr( 'disabled', true )
-
-    $('#domains_wrapper').click( function(){
-        if ( domains.attr('disabled') == 'disabled' ) {
-            domains.val('').removeAttr('disabled').focus()
-        }
-    })
-        
-    domains.blur( function() {
-        if( $(this).val() == '' ) {
-            domains.val('www.yoursite.com mirror.yoursite.com').attr( 'disabled', true )
-        }
-    })
-
-// END Ip Domains textarea //
-////////////////////////////
-    
 // Hotlink Policy Checkbox //
 ////////////////////////////
     $('#domains_tr').hide()
@@ -122,11 +72,75 @@ $(document).ready(function(){
         }
     })
 
+{/literal}
+    hotlink_policy = '{$session_resource.hotlink_policy}'
+{literal}
+
+    $('#hotlinkpolicy option').each( function() {
+        if ( this.value == hotlink_policy ) {
+            this.selected = true
+            $('#hotlinkpolicy').change()
+        }
+    })
+        
 // END Hotlink Policy Checkbox //
 ////////////////////////////////
 
-// Advanced Settings Checkbox //
-///////////////////////////////
+
+// Country Access Policy //
+//////////////////////////
+
+{/literal}
+    country_access_policy = '{$session_resource.country_access_policy}'
+{literal}
+
+    $('#country_access_policy option').each( function() {
+        if ( this.value == country_access_policy ) {
+            this.selected = true
+            $('#country_access_policy').change()
+        }
+    })
+
+// END Country Access Policy //
+//////////////////////////////
+
+// Selecting Countries //
+////////////////////////
+
+// Select countries
+    {/literal} 
+        countries_ids = {$countries}
+    {literal}
+    if ( countries_ids ) {console.log(countries_ids)
+        $('#country_access option').each( function(){
+            if ( in_array( this.value, countries_ids ) ) {
+                this.selected = true
+            }
+        })
+    }
+        
+// END Selecting Countries //
+////////////////////////////
+
+// Ip policy //
+//////////////
+
+    {/literal}
+        ip_access_policy = '{$session_resource.ip_access_policy}'
+    {literal}
+
+    $('#ip_access_policy option').each( function() {
+        if ( this.value == ip_access_policy ) {
+            this.selected = true
+            $('#ip_access_policy').change()
+        }
+    })
+
+// END Ip Policy //
+//////////////////
+
+// URL signing Checkbox //
+/////////////////////////
     
     $('#urlsigning_tr').hide()
 
@@ -138,10 +152,37 @@ $(document).ready(function(){
             $('#urlsigning_tr').hide()
         }
     });
-// END Advanced Settings Checkbox //
-///////////////////////////////////
+
+// Check Url Signing Url checkbox
+ {/literal}
+    {if $session_resource.url_signing_on eq true}
+        urlsigning_checkbox.attr( 'checked', 'checked' ).change()
+    {/if}
+{literal}
+// END URL Signing Checkbox //
+/////////////////////////////
+
+// Fill up passwords fields //
+/////////////////////////////
+
+// Check Password checkbox
+ {/literal}
+    {if $session_resource.password_on eq true}
+        $('#passwordon_input').attr( 'checked', 'checked' ).change()
+    {/if}
+{literal}
+
     
-// TODO add form validation
+{/literal}
+  var passwords_html = '{$passwords_html}'
+{literal}
+
+$('#passwords_table tr').eq(1).remove()
+$('#passwords_table').append( passwords_html )
+
+// END Fill up password fields //
+////////////////////////////////
+
 });
 
 </script>
@@ -172,14 +213,13 @@ $(document).ready(function(){
 <hr />
 <h5>{$_LANG.onappcdnresourcepropertiesinfo}</h5>
 <form action="" method="post" >
-
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
     <tr>
         <td>
             {$_LANG.onappcdnhostname}
         </td>
         <td>
-            <input type="text" name="new_resource[cdn_hostname]" />
+            <input type="text" value="{$session_resource.cdn_hostname}" name="resource[cdn_hostname]" />
         </td>
     </tr>
     <tr>
@@ -187,7 +227,7 @@ $(document).ready(function(){
             {$_LANG.onappcdnorigins}
         </td>
         <td>
-            <input type="text" name="new_resource[origin]" />
+            <input type="text" value="{$session_resource.origin}" name="resource[origin]" />
         </td>
     </tr>
     <tr>
@@ -195,7 +235,7 @@ $(document).ready(function(){
             {$_LANG.onappcdnresourcetype}
         </td>
         <td>
-            <select name="new_resource[type]">
+            <select name="resource[type]">
                 <option value="HTTP_PULL">HTTP PULL</option>
             </select>
         </td>
@@ -205,7 +245,7 @@ $(document).ready(function(){
             {$_LANG.onappcdnadvancedsettings}
         </td>
         <td>
-            <input id="advanced_settings_input" type="checkbox" name="new_resource[advanced_settings]" />
+            <input id="advanced_settings_input" type="checkbox" name="resource[advanced_settings]" />
         </td>
     </tr>
 </table>
@@ -219,7 +259,7 @@ $(document).ready(function(){
         <tr>
             <td>{$_LANG.onappcdnipaccesspolicy}</td>
             <td>
-                <select name="new_resource[ip_access_policy]">
+                <select id="ip_access_policy" name="resource[ip_access_policy]">
                     <option value="NONE">{$_LANG.onappcdndisabled}</option>
                     <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
                     <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
@@ -231,10 +271,7 @@ $(document).ready(function(){
                 {$_LANG.onappcdnipaccess}
             </td>
             <td>
-                <div id="ip_wrapper">
-                <textarea id="ip_access" cols="40" rows="5" name="new_resource[ip_addresses]" >
-                </textarea>
-                </div>
+                <textarea id="ip_access" cols="40" rows="5" placeholder="10.10.10.10, 20.20.20.0/24, ..." name="resource[ip_addresses]" >{$session_resource.ip_addresses}</textarea>
             </td>
         </tr>
     </table>
@@ -245,7 +282,7 @@ $(document).ready(function(){
         <tr>
             <td>{$_LANG.onappcdncountryaccesspolicy}</td>
             <td>
-                <select name="new_resource[country_access_policy]">
+                <select id="country_access_policy" name="resource[country_access_policy]">
                     <option value="NONE">{$_LANG.onappcdndisabled}</option>
                     <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
                     <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
@@ -258,7 +295,7 @@ $(document).ready(function(){
             </td>
             <td>
                 <div id="country_wrapper">
-                <select id="country_access" name="new_resource[countries][]" multiple> 
+                <select id="country_access" name="resource[countries][]" multiple>
                     {include file="$template/onappcdn/cdn_resources/countries_options.tpl"}
                 </select>
                 </div>
@@ -272,7 +309,7 @@ $(document).ready(function(){
         <tr>
             <td>{$_LANG.onappcdnhotlinkpolicy}</td>
             <td>
-                <select id="hotlinkpolicy" name="new_resource[hotlink_policy]">
+                <select id="hotlinkpolicy" name="resource[hotlink_policy]">
                     <option value="NONE">{$_LANG.onappcdndisabled}</option>
                     <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
                     <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
@@ -282,10 +319,7 @@ $(document).ready(function(){
         <tr id="domains_tr" >
             <td>{$_LANG.onappcdnexceptfordomains}</td>
             <td>
-                <div id="domains_wrapper">
-                    <textarea id="domains" cols="40" rows="5" name="new_resource[domains]" >
-                    </textarea>
-                </div>
+                <textarea placeholder="www.yoursite.com mirror.yoursite.com" id="domains" cols="40" rows="5" name="resource[domains]" >{$session_resource.domains}</textarea>
             </td>
         </tr>
     </table>
@@ -300,13 +334,13 @@ $(document).ready(function(){
                 {$_LANG.onappcdnenableurlsigning}
             </td>
             <td>
-                <input id="urlsigning_input" value="1" type="checkbox" name="new_resource[url_signing_on]" />
+                <input id="urlsigning_input" value="1" type="checkbox" name="resource[url_signing_on]" />
             </td>
         </tr>
         <tr id="urlsigning_tr">
             <td>{$_LANG.onappcdnurlsigningkey}</td>
             <td>
-                <input type="text" name="new_resource[url_signing_key]" />
+                <input value="{$session_resource.url_signing_key}" type="text" name="resource[url_signing_key]" />
             </td>
         </tr>
     </table>
@@ -319,7 +353,7 @@ $(document).ready(function(){
         <tr>
             <td>{$_LANG.onappcdncacheexpiry}</td>
             <td>
-                <input id="cache_input" type="text" name="new_resource[cache_expiry]" />
+                <input value="{$session_resource.cache_expiry}" id="cache_input" type="text" name="resource[cache_expiry]" />
             </td>
         </tr>
 
@@ -332,7 +366,7 @@ $(document).ready(function(){
         <tr>
             <td>{$_LANG.onappcdnenablepassword}</td>
             <td>
-                <input id="passwordon_input" value="1" type="checkbox" name="new_resource[password_on]" />
+                <input id="passwordon_input" value="1" type="checkbox" name="resource[password_on]" />
             </td>
         </tr>
     </table>
@@ -341,10 +375,7 @@ $(document).ready(function(){
         <tr>
             <td>{$_LANG.onappcdnunauthorizedhtml}</td>
             <td>
-                <div id="auth_html_wrapper">
-                <textarea id="auth_html" cols="40" rows="5" placeholder="adfasdfs" name="new_resource[password_unauthorized_html]" >
-                </textarea>
-                </div>
+                <textarea id="auth_html" cols="40" rows="5" placeholder="<span style='color: red'>Invalid username or password</span>" name="resource[password_unauthorized_html]" >{$session_resource.password_unauthorized_html}</textarea>
             </td>
         </tr>
         <tr>
@@ -357,10 +388,10 @@ $(document).ready(function(){
                     </tr>
                     <tr>
                         <td>
-                            <input id="username_input" type="text" name="new_resource[form_pass][user][]" />
+                            <input id="username_input" type="text" name="resource[form_pass][user][]" />
                         </td>
                         <td>
-                            <input id="password_input" type="text" name="new_resource[form_pass][pass][]" />
+                            <input id="password_input" type="text" name="resource[form_pass][pass][]" />
                         </td>
                     </tr>
                 </table>
@@ -388,7 +419,7 @@ $(document).ready(function(){
                 {/foreach}
         </td>
         <td>
-            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="new_resource[edge_group_ids][]" />
+            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" {if $group.id|in_array:$session_resource.edge_group_ids}checked{/if}/>
         </td>
     </tr>
 
