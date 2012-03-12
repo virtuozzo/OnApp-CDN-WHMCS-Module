@@ -17,7 +17,17 @@ class OnAppCDNPrefetch extends OnAppCDN {
      * @return void
      */
     public function show( $errors = null, $messages = null ) {
-        
+
+        if ( isset( $_SESSION['successmessages'] ) ) {
+            $messages[] = $_SESSION['successmessages'];
+            unset( $_SESSION['successmessages'] );
+        }
+
+        if (isset($_SESSION['errors'])) {
+            $errors[] = $_SESSION['errors'];
+            unset($_SESSION['errors']);
+        }
+
         $this->show_template(
             'onappcdn/cdn_resources/prefetch',
             array(
@@ -40,7 +50,7 @@ class OnAppCDNPrefetch extends OnAppCDN {
         global $_LANG;
 
         $onapp    = $this->getOnAppInstance();
-        $id       = parent::get_value('resource_id');
+        $resource_id       = parent::get_value('resource_id');
         $prefetch = parent::get_value('prefetch');
         
         if ( $onapp->getErrorsAsArray() )
@@ -50,15 +60,21 @@ class OnAppCDNPrefetch extends OnAppCDN {
 
         $prefetch_paths = trim( $prefetch['prefetch_paths'] );
 
-        $cdn_resource->prefetch( $id, $prefetch_paths );
+        $cdn_resource->prefetch( $resource_id, $prefetch_paths );
 
         if ( $cdn_resource->getErrorsAsArray() )
             $errors[] = implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
 
-        if ( ! $errors )
-            $messages[] = $_LANG['onappcdnprefetchsuccessfully'];
-
-        $this->show( $errors, $messages );
+        $url = ONAPPCDN_FILE_NAME . '?page=prefetch&id=' . parent::get_value('id') . '&resource_id=' . $resource_id;
+        
+        if ( ! $errors ) {
+            $messages = $_LANG['onappcdnprefetchsuccessfully'];
+            $_SESSION['successmessages'] = $messages;
+            $this->redirect($url);
+        } else {
+            $_SESSION['errors'] = implode(PHP_EOL, $errors);
+            $this->redirect($url);
+        }
     }
 }
 

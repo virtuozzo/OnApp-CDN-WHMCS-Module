@@ -17,6 +17,7 @@ class OnAppCDNDetails extends OnAppCDN {
      * @param array $messages Messages
      */
     public function show( $errors = null, $messages = null ) {
+
         global $_LANG;
         parent::loadcdn_language();
 
@@ -61,8 +62,13 @@ class OnAppCDNDetails extends OnAppCDN {
         }
 
         if ( isset( $_SESSION['successmessages'] ) ) {
-            $messages = $_SESSION['successmessages'];
+            $messages[] = $_SESSION['successmessages'];
             unset( $_SESSION['successmessages'] );
+        }
+
+        if (isset($_SESSION['errors'])) {
+            $errors[] = $_SESSION['errors'];
+            unset($_SESSION['errors']);
         }
 
         $this->show_template(

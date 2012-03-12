@@ -17,6 +17,16 @@ class OnAppCDNPurge extends OnAppCDN {
      */
     public function show( $errors = null, $messages = null ) {
 
+        if ( isset( $_SESSION['successmessages'] ) ) {
+            $messages[] = $_SESSION['successmessages'];
+            unset( $_SESSION['successmessages'] );
+        }
+
+        if (isset($_SESSION['errors'])) {
+            $errors[] = $_SESSION['errors'];
+            unset($_SESSION['errors']);
+        }
+
         $this->show_template(
             'onappcdn/cdn_resources/purge',
             array(
@@ -39,9 +49,9 @@ class OnAppCDNPurge extends OnAppCDN {
         parent::loadcdn_language();
         global $_LANG;
 
-        $onapp    = $this->getOnAppInstance();
-        $id       = parent::get_value('resource_id');
-        $purge    = parent::get_value('purge');
+        $onapp       = $this->getOnAppInstance();
+        $resource_id = parent::get_value('resource_id');
+        $purge       = parent::get_value('purge');
 
         if ( $onapp->getErrorsAsArray() )
             $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
@@ -50,14 +60,20 @@ class OnAppCDNPurge extends OnAppCDN {
 
         $purge_paths = trim( $purge['purge_paths'] );
 
-        $cdn_resource->purge( $id, $purge_paths );
+        $cdn_resource->purge( $resource_id, $purge_paths );
 
         if ( $cdn_resource->getErrorsAsArray() )
             $errors[] = implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
 
-        if ( ! $errors )
-            $messages[] = $_LANG['onappcdnpurgesuccessfully'];
+        $url = ONAPPCDN_FILE_NAME . '?page=purge&id=' . parent::get_value('id') . '&resource_id=' . $resource_id;
 
-        $this->show( $errors, $messages );
+        if ( ! $errors ) {
+            $messages = $_LANG['onappcdnpurgesuccessfully'];
+            $_SESSION['successmessages'] = $messages;
+            $this->redirect($url);
+        } else {
+            $_SESSION['errors'] = implode(PHP_EOL, $errors);
+            $this->redirect($url);
+        }
     }
 }
