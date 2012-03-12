@@ -1,28 +1,3 @@
-{literal}
-<script type="text/javascript">
-
-$(document).ready(function(){
-    $('#textarea_wrapper').css('width', '260px')
-    $('textarea').val('/home/somefile.jpg').attr( 'disabled', true )
-
-    $('textarea').blur( function(){
-       if ( $('textarea').val() == '' ) {
-           $('textarea').val('/home/somefile.jpg').attr( 'disabled', true )
-       }
-    })
-
-    $('#textarea_wrapper').click( function(){
-        if ( $('textarea').attr('disabled') == true ) {
-            $('textarea').val('').removeAttr('disabled').focus()
-        }
-    })
-
-});
-
-</script>
-
-{/literal}
-
 {if isset($errors)}
     <div class="errorbox">
         {$errors}
@@ -57,10 +32,7 @@ $(document).ready(function(){
             <b>{$_LANG.onappcdnpathtopurge}</b>
         </td>
         <td>
-            <div id="textarea_wrapper">
-            <textarea cols="40" rows="5" name="purge[purge_paths]" >
-            </textarea>
-            </div>
+            <textarea placeholder="/home/somefile.jpg" cols="40" rows="5" name="purge[purge_paths]" >{$purge.purge_paths}</textarea>
         </td>
     </tr>
 </table>

@@ -17,6 +17,7 @@ class OnAppCDNPrefetch extends OnAppCDN {
      * @return void
      */
     public function show( $errors = null, $messages = null ) {
+        $prefetch = array();
 
         if ( isset( $_SESSION['successmessages'] ) ) {
             $messages[] = $_SESSION['successmessages'];
@@ -28,11 +29,17 @@ class OnAppCDNPrefetch extends OnAppCDN {
             unset($_SESSION['errors']);
         }
 
+        if (isset($_SESSION['prefetch'])) {
+            $prefetch = $_SESSION['prefetch'];
+            unset($_SESSION['prefetch']);
+        }
+
         $this->show_template(
             'onappcdn/cdn_resources/prefetch',
             array(
                 'id'                =>  parent::get_value('id'),
                 'resource_id'       =>  parent::get_value('resource_id'),
+                'prefetch'          =>  $prefetch,
                 'errors'            =>  implode( PHP_EOL, $errors ),
                 'messages'          =>  implode( PHP_EOL, $messages ),
             )
@@ -72,6 +79,7 @@ class OnAppCDNPrefetch extends OnAppCDN {
             $_SESSION['successmessages'] = $messages;
             $this->redirect($url);
         } else {
+            $_SESSION['prefetch'] = $_POST['prefetch'];
             $_SESSION['errors'] = implode(PHP_EOL, $errors);
             $this->redirect($url);
         }

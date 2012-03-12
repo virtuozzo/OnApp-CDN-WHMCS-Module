@@ -248,7 +248,6 @@ class OnAppCDNResources extends OnAppCDN {
                 $_SESSION['errors'] = implode( PHP_EOL, $errors );
                 $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&action=edit&id=' . parent::get_value('id') );
             }
-            
         }
     }
 

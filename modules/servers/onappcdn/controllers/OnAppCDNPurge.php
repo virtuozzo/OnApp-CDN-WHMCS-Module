@@ -16,6 +16,7 @@ class OnAppCDNPurge extends OnAppCDN {
      * @param string $messages Messages
      */
     public function show( $errors = null, $messages = null ) {
+        $purge = array();
 
         if ( isset( $_SESSION['successmessages'] ) ) {
             $messages[] = $_SESSION['successmessages'];
@@ -27,11 +28,17 @@ class OnAppCDNPurge extends OnAppCDN {
             unset($_SESSION['errors']);
         }
 
+        if (isset($_SESSION['purge'])) {
+            $purge = $_SESSION['purge'];
+            unset($_SESSION['purge']);
+        }
+
         $this->show_template(
             'onappcdn/cdn_resources/purge',
             array(
                 'id'                =>  parent::get_value('id'),
                 'resource_id'       =>  parent::get_value('resource_id'),
+                'purge'             =>  $purge,
                 'errors'            =>  implode( PHP_EOL, $errors ),
                 'messages'          =>  implode( PHP_EOL, $messages ),
             )
@@ -72,6 +79,7 @@ class OnAppCDNPurge extends OnAppCDN {
             $_SESSION['successmessages'] = $messages;
             $this->redirect($url);
         } else {
+            $_SESSION['purge'] = $_POST['purge'];
             $_SESSION['errors'] = implode(PHP_EOL, $errors);
             $this->redirect($url);
         }
