@@ -6,12 +6,13 @@ ini_set( 'display_errors', 1 );
 require_once dirname(__FILE__).'/class_onappcdn.php';
 
 OnAppCDN::loadcdn_language();
-$init_wrapper = OnAppCDN::init_wrapper();
+OnAppCDN::init_wrapper();
 if ( ! defined('ONAPPCDN_FILE_NAME') ) define('ONAPPCDN_FILE_NAME', 'onappcdn.php' );
 
 function onappcdn_ConfigOptions() {
     global $packageconfigoption, $_GET, $_POST, $_LANG;
-    $serviceid = addslashes( OnAppCDN::get_value("id") );
+    $js_Errors = array();
+    
 /// Create Tables ////////////////
 //////////////////////////////////
 
