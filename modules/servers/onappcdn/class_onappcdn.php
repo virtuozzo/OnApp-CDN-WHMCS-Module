@@ -106,7 +106,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return implode("\n", $onapp->getErrorsAsArray());
+            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
         } else {
             $sql = "SELECT
                 tblproducts.*
@@ -176,7 +176,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return implode("\n", $onapp->getErrorsAsArray());
+            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
         } else {
             $user = $this->get_user();
 
@@ -215,7 +215,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return implode("\n", $onapp->getErrorsAsArray());
+            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
         } else {
             $user = $this->get_user();
 
@@ -248,7 +248,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return implode("\n", $onapp->getErrorsAsArray());
+            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
         } else {
             $user = $this->get_user();
 

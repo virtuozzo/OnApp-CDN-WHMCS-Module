@@ -103,7 +103,7 @@ function onappcdn_ConfigOptions() {
         );
         if ( $onapp_instance->getErrorsAsArray() ) {
             foreach( $onapp_instance->getErrorsAsArray() as $error ) {
-                $js_Errors[] = $error;
+                $js_Errors[] = '<b>Getting OnApp Version Error: </b>' . $error;
             }
         }
     } else {

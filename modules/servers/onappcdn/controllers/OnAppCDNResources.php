@@ -22,7 +22,7 @@ class OnAppCDNResources extends OnAppCDN {
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
         
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL ,  $onapp->getErrorsAsArray() );
 
         $resource  = $onapp->factory('CDNResource', true );
 
@@ -37,6 +37,7 @@ class OnAppCDNResources extends OnAppCDN {
                 . ' ' . $whmcs_client_details['currencycode'] ;
         }
 
+        $__resources = array();
         foreach( $resources as $_resources ) {
             $__resources[ $_resources->_id ]['_last_24h_cost'] =
                 $whmcs_client_details['currencyprefix'] .
@@ -79,10 +80,12 @@ class OnAppCDNResources extends OnAppCDN {
      */
     protected function enable( ) {
         
+        $errors = array();
         $onapp = $this->getOnAppInstance();
+        
 
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $resource  = $onapp->factory('CDNResource', true );
 
@@ -99,6 +102,7 @@ class OnAppCDNResources extends OnAppCDN {
      */
     protected function edit ( $errors = null, $messages = null ) {
         global $_LANG;
+        $whmcs_client_details  =  $this->getWhmcsClientDetails();
         $resource_id = parent::get_value( 'resource_id' );
 
         if ( $errors || $messages ) {
@@ -109,14 +113,14 @@ class OnAppCDNResources extends OnAppCDN {
         $onapp = $this->getOnAppInstance();
 
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         if ( parent::get_value('edit') != 1 ) {
             
             $onapp = $this->getOnAppInstance();
 
             if ( $onapp->getErrorsAsArray() )
-                $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+                $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
             $_resource  = $onapp->factory('CDNResource', true );
 
@@ -138,10 +142,11 @@ class OnAppCDNResources extends OnAppCDN {
 
             $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
 
+            $edge_group_baseresources = array();
             foreach ( $baseresources as $edge_group ) {
                 if ( $edge_group->_resource_name == 'edge_group' )
                 {
-                    $edge_group_baseresources[ $edge_group->_id ]['price']       = $edge_group->_prices[0]->_price;
+                    $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices[0]->_price * $whmcs_client_details['currencyrate'], 2 );
 
                     foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
                         if ( $group->_id == $edge_group->_target_id ) {
@@ -153,6 +158,7 @@ class OnAppCDNResources extends OnAppCDN {
                 }
             }
 
+            $countries_ids = array();
             foreach( $advanced_details[0]->_countries as $country ) {
                 $countries_ids[] = $country->_id;
             }
@@ -236,7 +242,7 @@ class OnAppCDNResources extends OnAppCDN {
             $_resource->save();
 
             if ( $_resource->getErrorsAsArray() )
-                $errors[] = implode( PHP_EOL , $_resource->getErrorsAsArray() );
+                $errors[] = '<b>Edit CDN Resource Error: </b>' . implode( PHP_EOL , $_resource->getErrorsAsArray() );
 
             if ( ! $errors ) {
                 $messages = $_LANG['onappcdnresourceupdatedsuccessfully'];
@@ -261,18 +267,20 @@ class OnAppCDNResources extends OnAppCDN {
     protected function delete () {
         parent::loadcdn_language();
         global $_LANG;
+        $errors = array();
+        $messages = array();
         
         $onapp = $this->getOnAppInstance();
 
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $resource      = $onapp->factory('CDNResource', true );
         $resource->_id = parent::get_value('resource_id');
         $resource->delete();
 
         if ( $resource->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $resource->getErrorsAsArray() );
+            $errors[] = '<b>Delete CDN Resource Error: </b>' . implode( PHP_EOL , $resource->getErrorsAsArray() );
 
         if ( ! $errors )
             $messages[] = $_LANG['onappcdnresourcedeletesuccessfully'];
@@ -287,18 +295,28 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $errors Error Messages
      * @param array $messages Messages
      */
-    protected function add ( $errors = null, $messages = null ) { 
+    protected function add ( $errors = null, $messages = null ) {
         global $_LANG;
+        $whmcs_client_details  =  $this->getWhmcsClientDetails();
 
         if ( $errors || $messages ) {
             unset( $_POST['add'] );
         }
 
-        parent::loadcdn_language();
+        parent::loadcdn_language(); 
         $onapp = $this->getOnAppInstance();
         
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+        if ( $onapp->getErrorsAsArray() ) {
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $this->show_template(
+                'onappcdn/cdn_resources/edit',
+                array(
+                    'id'                        =>  parent::get_value('id'),
+                    'errors'                    =>  implode( PHP_EOL, $errors ),
+                    'messages'                  =>  implode( PHP_EOL, $messages ),
+                )
+            );
+        }
 
         if ( parent::get_value('add') != 1 ) {
             $whmcsuser = $this->get_user();
@@ -307,14 +325,20 @@ class OnAppCDNResources extends OnAppCDN {
             $onappuser     = $onappusers->load( $whmcsuser['onapp_user_id'] );
 
             $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
+
             $baseresources = $baseresource->getList( $onappuser->_billing_plan_id );
+            
+            if ( $baseresource->getErrorsAsArray() )
+                $errors[] = '<b>Getting Edge Groups Error</b> - '. implode( PHP_EOL , $baseresource->getErrorsAsArray() );
 
             $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
 
+            $edge_group_baseresources = array();
+            
             foreach ( $baseresources as $edge_group ) {
                 if ( $edge_group->_resource_name == 'edge_group' )
                 {
-                    $edge_group_baseresources[ $edge_group->_id ]['price']       = $edge_group->_prices[0]->_price;
+                    $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices[0]->_price * $whmcs_client_details['currencyrate'], 2 );
 
                     foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
                         if ( $group->_id == $edge_group->_target_id ) {
@@ -409,10 +433,10 @@ class OnAppCDNResources extends OnAppCDN {
             $_resource->save();
 
             if ( $_resource->getErrorsAsArray() )
-                $errors[] = implode( PHP_EOL , $_resource->getErrorsAsArray() );
+                $errors[] = '<b>Create CDN Resource Error: </b>' . implode( PHP_EOL , $_resource->getErrorsAsArray() );
 
             if ( ! $errors ) {
-                $messages = $_LANG['onappcdnresourceupdatedsuccessfully'];
+                $messages = $_LANG['onappcdnresourcecreatedsuccessfully'];
                 $_SESSION['successmessages'] = $messages;
                 $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&id=' . parent::get_value('id') );
             }

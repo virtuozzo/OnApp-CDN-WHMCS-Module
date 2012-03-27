@@ -10,5 +10,7 @@ CREATE TABLE IF NOT EXISTS `tblonappcdn_bandwidth` (
   `aflexi_resource_id` int(11) NOT NULL,
   `cdn_hostname` varchar(100) NOT NULL,
   `resource_id` int(11) NOT NULL,
+  `price` double NOT NULL,
+  `currency_rate` double NOT NULL,
   UNIQUE KEY `created_at` (`created_at`,`aflexi_resource_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

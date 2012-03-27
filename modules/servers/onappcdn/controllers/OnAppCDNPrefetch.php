@@ -55,13 +55,14 @@ class OnAppCDNPrefetch extends OnAppCDN {
     protected function prefetch () {
         parent::loadcdn_language();
         global $_LANG;
+        $errors = array();
 
         $onapp    = $this->getOnAppInstance();
         $resource_id       = parent::get_value('resource_id');
         $prefetch = parent::get_value('prefetch');
         
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $cdn_resource  = $onapp->factory('CDNResource', true );
 
@@ -70,7 +71,7 @@ class OnAppCDNPrefetch extends OnAppCDN {
         $cdn_resource->prefetch( $resource_id, $prefetch_paths );
 
         if ( $cdn_resource->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
+            $errors[] = '<b>Prefetch Error: </b>' . implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
 
         $url = ONAPPCDN_FILE_NAME . '?page=prefetch&id=' . parent::get_value('id') . '&resource_id=' . $resource_id;
         

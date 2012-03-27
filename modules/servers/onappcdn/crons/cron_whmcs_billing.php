@@ -28,10 +28,7 @@ $query = "
         curr.rate             as currencyrate,
         curr.default          as currencydefault,
         s.hostname,
-        s.secure,
         onappc.onapp_user_id,
-        s.username,
-        s.password,
         s.ipaddress,
         h.id                 as hostingid
     FROM
@@ -55,6 +52,8 @@ $query = "
 
 $result = full_query( $query );
 
+echo PHP_EOL . PHP_EOL . 'CDN Billing CronJob Runs at ' . date('Y-m-d H:i:s'), ' (UTC)', PHP_EOL, PHP_EOL;
+
 if ( ! $result || mysql_num_rows( $result ) < 1 ) {
     die( '******** Cron Failed MySQL error or NUL rows result ********* '
         . PHP_EOL . mysql_error() . PHP_EOL . '**************************' . PHP_EOL );
@@ -63,40 +62,71 @@ if ( ! $result || mysql_num_rows( $result ) < 1 ) {
 $duedate = $today = date( 'Y-m-d H:i:s' );
 
 while ( $row = mysql_fetch_assoc( $result ) ) {
-
-    if ( ! $onapp ) {
-        $onapp = new OnApp_Factory(
-            ( $row['hostname'] ) ? $row['hostname'] : $row['ipaddress'],
-            $row['username'],
-            decrypt( $row['password'])
-        );
-
-        if ( $onapp->getErrorsAsArray() ) {
-            print_r( $onapp->getErrorsAsArray() );
-            echo PHP_EOL;
-            die('OnApp Login Error');
-        }
+echo PHP_EOL . '************************************************************************ H O S T I N G  L I N E *************************' . PHP_EOL ;    
+    
+    $cost_query = "
+        SELECT
+            SUM( bandwidth.cached )      as cached,
+            SUM( bandwidth.non_cached )  as non_cached,
+            MIN( bandwidth.created_at )  as min_date,
+            MAX( bandwidth.created_at )  as max_date,
+           /* MIN( bandwidth.currency_rate)as rate, */
+            bandwidth.currency_rate as rate,
+            bandwidth.price
+        FROM 
+            tblonappcdn_bandwidth as bandwidth
+        WHERE
+            bandwidth.hosting_id = $row[hostingid]
+        GROUP BY
+            bandwidth.price, rate  
+        ORDER BY
+            bandwidth.created_at
+    ";
+    
+    $cost_result = full_query( $cost_query );
+    if ( ! $cost_result ) {
+        die('Cost Query Error ' . PHP_EOL . mysql_error() . PHP_EOL );
     }
-
-    $users = $onapp->factory('User', true );
-    $user = $users->load( $row['onapp_user_id'] );
-
-    if ( $users->getErrorsAsArray() ) {
-        echo 'Error Loading OnApp_User Object '  . PHP_EOL;
-        echo 'OnApp User Id ' . $users->_id . PHP_EOL;
-        print_r( $users->getErrorsAsArray() );
-//        print_r( $users);
+    
+    $billing_stat_for_whole_period = 'CDN Usage:' . PHP_EOL;
+    $total_cost = 0;
+    
+    while ( $cost_row = mysql_fetch_assoc( $cost_result ) ) {
+        $price = $cost_row[price];
+        $cost =  ( $cost_row[cached] + $cost_row[non_cached] ) * ( $price * $cost_row['rate'] );       
+        
+        $billing_stat_for_whole_period .= '***'. PHP_EOL .
+            'Start Date: (' . $cost_row[min_date] . ') End Date: (' . $cost_row[max_date] . ') :' . PHP_EOL . PHP_EOL .
+            'Data Cached           ' . $cost_row[cached] .'MB'. PHP_EOL .
+            'Data Non Cached       ' . $cost_row[non_cached] . 'MB'.  PHP_EOL .
+            'Base Currency Price   ' . $cost_row[price]. PHP_EOL .
+            'Currency Rate         ' . $cost_row['rate'] . PHP_EOL .       
+            'Cost                  ' . $cost . PHP_EOL;
+        
+        $total_cost += $cost;    
+        print('<pre>');
+        print_r( $cost_row );
     }
+    
+    $billing_stat_for_whole_period .= 
+       PHP_EOL.  '___' .PHP_EOL . PHP_EOL . 
+        'Total Cost              ' . $total_cost; 
+        ; 
 
+        echo $billing_stat_for_whole_period . PHP_EOL;
+    
     $client_amount_query =
-        'SELECT
-	        i.subtotal AS amount
+        "SELECT
+	        SUM( i.subtotal ) AS amount
 	    FROM
             tblinvoices as i
 	    WHERE
-		    i.userid = ' . $row['userid'] . '
-		    AND i.status = "Unpaid"
-            AND i.notes = '. $row['hostingid'];
+		    i.userid = $row[userid]
+		   /* AND i.status = 'Unpaid' */
+              AND i.notes = $row[hostingid] 
+        GROUP BY      
+            i.notes
+        ";
     
     $client_amount_result = full_query($client_amount_query);
     
@@ -105,21 +135,18 @@ while ( $row = mysql_fetch_assoc( $result ) ) {
         die( mysql_error() );
     }
 
-    $client_amount = 0;
-    while ($amount = mysql_fetch_assoc($client_amount_result)) {
-        $client_amount += $amount['amount'];
-    }
+    $invoiced_amount = mysql_fetch_assoc($client_amount_result);
     
-    $amount_diff = $user->_outstanding_amount - $client_amount / $row['currencyrate'];
-    $amount_diff = round( $amount_diff * $row['currencyrate'], 2 );
+// debug    
+    echo 'Total Invoices Amount   ' . $invoiced_amount['amount'] . PHP_EOL;  
+    
+    $amount = round( $total_cost - $invoiced_amount['amount'], 2 );
+ 
+// debug    
+    echo PHP_EOL .'Not Invoiced Amount     ' . $amount . PHP_EOL; 
+    
 
-    echo '( Unpaid Amount in Base Currency )  '. $client_amount / $row['currencyrate'] . PHP_EOL;
-    echo '( Currency Rate )                   '. $row['currencyrate'] . PHP_EOL;
-    echo '( Unpaid Amount )                   '. $client_amount . PHP_EOL;
-    echo '( Outstanding Amount )              '. $user->_outstanding_amount . PHP_EOL;
-    echo '( Billing Amount )                  '. $amount_diff . PHP_EOL;
-
-    if ( $amount_diff > 1 ) {
+    if ( $amount > 0.1 ) {
 // debug
         echo 'Generating Invoice' . PHP_EOL;
 
@@ -147,7 +174,7 @@ while ( $row = mysql_fetch_assoc( $result ) ) {
             'paymentmethod'    => $row['paymentmethod'],
             'taxrate'          => $taxrate,
             'itemdescription1' => 'CDN Service Usage',
-            'itemamount1'      => $amount_diff,
+            'itemamount1'      => $amount,
             'itemtaxed1'       => $taxed,
             'notes'            => $row['hostingid'],
         );
@@ -174,4 +201,4 @@ while ( $row = mysql_fetch_assoc( $result ) ) {
     echo '***************************'  . PHP_EOL;
 }
 
-echo 'CDN Billing CronJob was Finished Successfully', PHP_EOL;
+echo 'CDN Billing CronJob was Finished Successfully at ' . date('Y-m-d H-i-s') . ' (UTC)' , PHP_EOL;

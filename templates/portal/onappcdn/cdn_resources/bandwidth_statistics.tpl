@@ -18,7 +18,8 @@
     | <a title="{$LANG.onappcdnpurge}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=purge&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnpurge}</a>
     | <strong>{$LANG.onappcdnbwstatistics}</strong>
 </div>
-<h2>{$_LANG.onappbwstatistics}</h2>
+<h2>{$_LANG.onappcdnbandwidthstatistics}</h2>
+<p>{$_LANG.onappcdnbandwidthstatisticsinfo}</p>
 
 {if $statistics|count}
     {$pagination} <div class="items_per_page"> {$items_per_page}</div>

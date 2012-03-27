@@ -19,12 +19,13 @@ class OnAppCDNDetails extends OnAppCDN {
     public function show( $errors = null, $messages = null ) {
 
         global $_LANG;
+        $whmcs_client_details  =  $this->getWhmcsClientDetails();
         parent::loadcdn_language();
 
         $onapp = $this->getOnAppInstance();
 
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $_resource  = $onapp->factory('CDNResource', true );
 
@@ -45,11 +46,12 @@ class OnAppCDNDetails extends OnAppCDN {
 
         $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
 
+        $edge_group_baseresources = array();
         foreach ( $baseresources as $edge_group ) {
             if ( $edge_group->_resource_name == 'edge_group' &&
                  in_array( $edge_group->_target_id, $edge_group_ids )
             ) {
-                $edge_group_baseresources[ $edge_group->_id ][price]       = $edge_group->_prices[0]->_price;
+                $edge_group_baseresources[ $edge_group->_id ][price] = round( $edge_group->_prices[0]->_price * $whmcs_client_details['currencyrate'], 2 );
 
                 foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
                     if ( $group->_id == $edge_group->_target_id ) {

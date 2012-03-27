@@ -15,7 +15,7 @@ class OnAppCDNAdvancedDetails extends OnAppCDN {
         $resource_id = parent::get_value( 'resource_id' );
         
         if ( $onapp->getErrorsAsArray() )
-            $errors[] = implode( PHP_EOL , $onapp->getErrorsAsArray() );
+            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $advanced  = $onapp->factory('CDNResource_Advanced', true );
 

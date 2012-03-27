@@ -1,5 +1,4 @@
 <?php
-echo 'CDN Billing CronJob Start', PHP_EOL .PHP_EOL . PHP_EOL;
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 @date_default_timezone_set('UTC');
@@ -30,7 +29,9 @@ $query = "
         onappc.onapp_user_id,
         onappc.email          as username,
         onappc.password,
-        h.id                  as hostingid
+        h.id                  as hostingid,
+        curr.rate             as currency_rate,
+        p.overagesbwprice     as price
     FROM
         tblservers as s
     LEFT JOIN
@@ -39,6 +40,9 @@ $query = "
     LEFT JOIN
         tblonappcdnclients as onappc
         ON onappc.service_id = h.id
+    LEFT JOIN
+        tblproducts as p
+        ON h.packageid = p.id
     LEFT JOIN
         tblclients as c
         ON h.userid = c.id
@@ -52,6 +56,9 @@ $query = "
 
 $result   = full_query( $query );
 $today    = date( 'Y-m-d' );
+$now      = date('Y-m-d H:i:s'); 
+
+echo PHP_EOL . PHP_EOL . 'CDN Bandwidth CronJob Runs at ' . $now, ' (UTC)', PHP_EOL, PHP_EOL;
 
 while ( $row = mysql_fetch_assoc( $result ) ) {
 // debug
@@ -186,7 +193,9 @@ function onappcdn_update_bandwidth_statistics( $start, $resource, $_bw, $row, $o
                     non_cached,
                     aflexi_resource_id,
                     cdn_hostname,
-                    resource_id
+                    resource_id,
+                    price,
+                    currency_rate
                  )
                  VALUES (
                      '$date',
@@ -195,7 +204,9 @@ function onappcdn_update_bandwidth_statistics( $start, $resource, $_bw, $row, $o
                       $non_cached,
                       $resource->_aflexi_resource_id,
                       '$resource->_cdn_hostname',
-                      $resource->_id
+                      $resource->_id,
+                      $row[price],
+                      $row[currency_rate]
                  )
          ";
 // debug

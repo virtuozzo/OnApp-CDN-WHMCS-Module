@@ -19,11 +19,11 @@
 <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=enable">{$_LANG.onappcdnenable}</a>
 
 {else}
+<div class="contentbox">
+      <strong>{$LANG.onappcdnresources}</strong>
+      | <a title="{$LANG.onappcdnbillingstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=billing_statistics&id={$id}">{$LANG.onappcdnbillingstatistics}</a>
+</div>
 
-<!--  <div class="contentbox">
-    <strong>{$LANG.onappcdnresources}</strong>
-    | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a>
-  </div> -->
 <h2>{$_LANG.onappcdnresources}</h2>
 
 <div class="description">
@@ -35,7 +35,6 @@
         <th>{$LANG.onappcdnhostname}</th>
         <th>{$LANG.onappcdnoriginsites}</th>
         <th>{$LANG.onappcdntype}</th>
-        <th>{$LANG.onappcdnlast24cost}</th>
         <th>&nbsp;</th>
     </tr>
     {if count($resources) > 0}
@@ -48,7 +47,6 @@
             </td>
             <td>{$resource._origins_for_api}</td>
             <td>{$resource._resource_type}</td>
-            <td>{$resource._last_24h_cost}</td>
             <td>
                 <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=edit&resource_id={$resource_id}">{$_LANG.onappcdnedit}</a> &nbsp
                 <a onclick="if( confirm('{$_LANG.onappcdnareyousureyouwantdelete}') ) return true; else return false" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=delete&resource_id={$resource_id}">{$_LANG.onappcdndelete}</a>
@@ -71,11 +69,6 @@
     <input type="hidden" name="id" value="{$id}" />
     <input type="submit" value="{$_LANG.onappcdnnewresource}" />
 </form>
-<!--<br /><br />
-<b>{$_LANG.onappcdntotalamount}: {$total}</b>-->
-<br />
-<h5>{$_LANG.onappcdnservicebalanceinfo}</h5>
 
-<b>{$_LANG.onappcdnservicebalance}: - {$outstanding_amount}</b>
 <br /><br />
 {/if}
