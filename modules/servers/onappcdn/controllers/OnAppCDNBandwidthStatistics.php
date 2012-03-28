@@ -17,6 +17,10 @@ class OnAppCDNBandwidthStatistics extends OnAppCDN {
      * @param string $messages messages
      */
     public function show($errors = null, $messages = null) {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }
+        
         $resource_id = parent::get_value('resource_id');
         $hosting_id = parent::get_value('id');
 

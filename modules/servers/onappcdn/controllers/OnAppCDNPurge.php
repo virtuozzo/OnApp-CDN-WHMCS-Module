@@ -16,6 +16,10 @@ class OnAppCDNPurge extends OnAppCDN {
      * @param string $messages Messages
      */
     public function show( $errors = null, $messages = null ) {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }
+        
         $purge = array();
 
         if ( isset( $_SESSION['successmessages'] ) ) {
@@ -61,9 +65,6 @@ class OnAppCDNPurge extends OnAppCDN {
         $resource_id = parent::get_value('resource_id');
         $purge       = parent::get_value('purge');
 
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
-
         $cdn_resource  = $onapp->factory('CDNResource', true );
 
         $purge_paths = trim( $purge['purge_paths'] );
@@ -71,7 +72,7 @@ class OnAppCDNPurge extends OnAppCDN {
         $cdn_resource->purge( $resource_id, $purge_paths );
 
         if ( $cdn_resource->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
+            $errors[] = '<b>Purge Error: </b>' . implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
 
         $url = ONAPPCDN_FILE_NAME . '?page=purge&id=' . parent::get_value('id') . '&resource_id=' . $resource_id;
 

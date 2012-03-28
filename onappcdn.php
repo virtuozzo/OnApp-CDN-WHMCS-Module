@@ -77,5 +77,12 @@ if ( ! isset( $user['onapp_user_id'] ) && $name != 'OnAppCDNDefault' ) {
 // Verify whether User can access service
 if ( ! in_array( $class->getServiceId(), $class->getUserServisesIds() ) )
     die('Invalid Token ( code : 4 )');                // Try to access not own hosting account or not loggedin
+  
+// Verify whether User can access resource
+$resource_id = OnAppCDN::get_value( 'resource_id' );
+
+if ( ! is_null( $resource_id ) ) {
+    $class->ifHaveAccessToResource( $resource_id );
+}
 
 $class->runAction($action);

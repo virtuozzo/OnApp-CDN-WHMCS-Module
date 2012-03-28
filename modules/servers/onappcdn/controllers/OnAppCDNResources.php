@@ -20,9 +20,6 @@ class OnAppCDNResources extends OnAppCDN {
         $onapp = $this->getOnAppInstance();
 
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
-        
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL ,  $onapp->getErrorsAsArray() );
 
         $resource  = $onapp->factory('CDNResource', true );
 
@@ -80,12 +77,7 @@ class OnAppCDNResources extends OnAppCDN {
      */
     protected function enable( ) {
         
-        $errors = array();
         $onapp = $this->getOnAppInstance();
-        
-
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $resource  = $onapp->factory('CDNResource', true );
 
@@ -101,26 +93,24 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages array
      */
     protected function edit ( $errors = null, $messages = null ) {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }
+        
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
         $resource_id = parent::get_value( 'resource_id' );
-
+        
         if ( $errors || $messages ) {
             unset( $_POST['edit'] );
         }
 
         parent::loadcdn_language();
         $onapp = $this->getOnAppInstance();
-
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
-
+     
         if ( parent::get_value('edit') != 1 ) {
             
             $onapp = $this->getOnAppInstance();
-
-            if ( $onapp->getErrorsAsArray() )
-                $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
             $_resource  = $onapp->factory('CDNResource', true );
 
@@ -265,15 +255,14 @@ class OnAppCDNResources extends OnAppCDN {
      * 
      */
     protected function delete () {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }
+        
         parent::loadcdn_language();
         global $_LANG;
-        $errors = array();
-        $messages = array();
         
         $onapp = $this->getOnAppInstance();
-
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $resource      = $onapp->factory('CDNResource', true );
         $resource->_id = parent::get_value('resource_id');
@@ -296,6 +285,10 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages
      */
     protected function add ( $errors = null, $messages = null ) {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }
+        
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
 
@@ -306,18 +299,6 @@ class OnAppCDNResources extends OnAppCDN {
         parent::loadcdn_language(); 
         $onapp = $this->getOnAppInstance();
         
-        if ( $onapp->getErrorsAsArray() ) {
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
-            $this->show_template(
-                'onappcdn/cdn_resources/edit',
-                array(
-                    'id'                        =>  parent::get_value('id'),
-                    'errors'                    =>  implode( PHP_EOL, $errors ),
-                    'messages'                  =>  implode( PHP_EOL, $messages ),
-                )
-            );
-        }
-
         if ( parent::get_value('add') != 1 ) {
             $whmcsuser = $this->get_user();
 

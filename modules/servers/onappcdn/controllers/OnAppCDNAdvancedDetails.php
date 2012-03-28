@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ * Represents CDN Advanced Details
  */
 class OnAppCDNAdvancedDetails extends OnAppCDN {
 
@@ -9,13 +9,20 @@ class OnAppCDNAdvancedDetails extends OnAppCDN {
         parent::init_wrapper();
     }
 
+    /**
+     * Displays CDN Advanced Details
+     * 
+     * @param string $errors
+     * @param string $messages 
+     */
     public function show( $errors = null, $messages = null ) {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }
+        
         $onapp = $this->getOnAppInstance();
 
         $resource_id = parent::get_value( 'resource_id' );
-        
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $advanced  = $onapp->factory('CDNResource_Advanced', true );
 

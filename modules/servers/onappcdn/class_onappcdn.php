@@ -469,6 +469,7 @@ WHERE
         if ( ! $result && mysql_num_rows($result) < 1 )
             return array();
 
+        $servicesIds = array();
         while ( $row = mysql_fetch_assoc($result) )
             $servicesIds[] = $row['id'];
 
@@ -498,7 +499,11 @@ WHERE
            $user['email'],
            $user['password']
         );
-
+        
+        if ( $this->onapp->getErrorsAsArray() ) {
+            die('<b>Get OnApp Version Permission Error: </b>' . implode( PHP_EOL , $this->onapp->getErrorsAsArray() )); 
+        }
+        
         return $this->onapp;
     }
 
@@ -528,6 +533,31 @@ WHERE
             echo '</noscript>'; exit;
         };
     }
+    
+    /**
+     *  Verify if user have access to particular cdn_resource
+     *  
+     *  @param integer $resource_id CDN resource id
+     */
+    public function ifHaveAccessToResource ( $resource_id ) {
+        $onapp = $this->getOnAppInstance();    
+        
+        $resources= $onapp->factory('CDNResource');
+        $list = $resources->getList();
+        
+        if ( $resources->getErrorsAsArray() ) {
+            die('<b>Getting Resource Error: </b>' . implode( PHP_EOL , $resources->getErrorsAsArray() ) );
+        }         
+        
+        $resource_ids = array();
+        foreach ( $list as $resource) {
+            $resource_ids[] = $resource->_id;
+        }
 
-
+        if ( ! in_array( $resource_id ,$resource_ids ) ) {
+            die( 'Invalid Token ( code : 5 )' );
+        }
+        
+        return true;
+    }
 }

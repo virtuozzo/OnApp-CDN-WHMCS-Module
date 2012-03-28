@@ -17,15 +17,15 @@ class OnAppCDNDetails extends OnAppCDN {
      * @param array $messages Messages
      */
     public function show( $errors = null, $messages = null ) {
+        if ( ! parent::get_value('resource_id') ) {
+            die('resource_id should be specified');
+        }        
 
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
         parent::loadcdn_language();
 
         $onapp = $this->getOnAppInstance();
-
-        if ( $onapp->getErrorsAsArray() )
-            $errors[] = '<b>Getting OnApp Version Error: </b>' . implode( PHP_EOL , $onapp->getErrorsAsArray() );
 
         $_resource  = $onapp->factory('CDNResource', true );
 
