@@ -40,6 +40,9 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
         $invoices_result = full_query( $invoices_query );
         
         $invoices_data = array();
+        $invoices_data['paid']= 0;
+        $invoices_data['unpaid'] = 0;
+        
         while( $invoices = mysql_fetch_assoc( $invoices_result ) ) {
             if ( $invoices['status'] == 'Paid'){
                 $invoices_data['paid'] = $invoices['amount'];
