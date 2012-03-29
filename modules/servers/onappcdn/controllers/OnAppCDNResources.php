@@ -300,7 +300,10 @@ class OnAppCDNResources extends OnAppCDN {
 
             $onappusers    = $onapp->factory('User', true );
             $onappuser     = $onappusers->load( $whmcsuser['onapp_user_id'] );
-
+            
+            if ( $onappusers->getErrorsAsArray() )
+                die( '<b>Getting User Error</b> - ' . implode( PHP_EOL , $onappusers->getErrorsAsArray() ));            
+            
             $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
 
             $baseresources = $baseresource->getList( $onappuser->_billing_plan_id );
@@ -309,9 +312,9 @@ class OnAppCDNResources extends OnAppCDN {
                 $errors[] = '<b>Getting Edge Groups Error</b> - '. implode( PHP_EOL , $baseresource->getErrorsAsArray() );
 
             $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
-
+ 
             $edge_group_baseresources = array();
-            
+          
             foreach ( $baseresources as $edge_group ) {
                 if ( $edge_group->_resource_name == 'edge_group' )
                 {
