@@ -285,10 +285,6 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages
      */
     protected function add ( $errors = null, $messages = null ) {
-        if ( ! parent::get_value('resource_id') ) {
-            die('resource_id should be specified');
-        }
-        
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
 
