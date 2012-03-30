@@ -5,7 +5,7 @@ require_once dirname( __FILE__ ).'/../../../includes/functions.php';
 class OnAppCDN {
 
     private $salt   = "ec457d0a974c48d5685a7efa03d137dc8bbde7e3";
-    private $hostname = 'whmcs.com';
+    private $hostname;
     private $serviceid;
     private $created;
     private $server;
@@ -15,6 +15,8 @@ class OnAppCDN {
     public  $error;
 
     function __construct( $serviceid = null ) {
+        $this->hostname = $_SERVER['HTTP_HOST'];
+        
         if ( is_null( $serviceid ) )
             $serviceid = self::get_value('id');
         if ( ! is_numeric ( $serviceid ) )
@@ -122,7 +124,12 @@ class OnAppCDN {
             if( ! $hosting )
                 return "Can't execute SQL query \"$sql\"";
 
+            if ( ! strpos('.', $this->hostname ) ){
+                $this->hostname .= '.com'; 
+            }
+            
             $email    = 'cdnuser'.$this->serviceid.'@'.$this->hostname;
+            
             $password = md5($this->serviceid . $this->salt . date('h-i-s, j-m-y') );
 
             $user = $onapp->factory( 'User', true );

@@ -70,7 +70,7 @@ $class = new $name;
 
 $user = $class->get_user();
 
-if ( ! isset( $user['onapp_user_id'] ) && $name != 'OnAppCDNDefault' ) {
+if ( ! isset( $user['onapp_user_id'] ) && $name != 'OnAppCDNDefault' && $name != 'OnAppCDNError' ) {
     die('Invalid Token ( code : 3 )');                 // CDN User is not created yet
 }
 
