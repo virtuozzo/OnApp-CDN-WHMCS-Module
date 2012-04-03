@@ -35,6 +35,8 @@ table#passwords_table td input[type=text] {
 div#textarea_wrapper, div#ip_wrapper, div#domains_wrapper, div#auth_html_wrapper {
     width:260px;
 }
+#cdntabledate {width:70px}
+#cdntablepricebc {width:10px;}
 
 
 /* Pagination styles */

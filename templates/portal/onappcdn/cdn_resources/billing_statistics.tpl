@@ -24,17 +24,19 @@
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%" class="data">
     <tr>
-        <th>{$_LANG.onappcdndate}</th>
-        <th>{$_LANG.onappcdntraffic}</th>
-        <th>{$_LANG.onappcdnbasecurrencyprice}</th>
-        <th>{$_LANG.onappcdncurrencyrate}</th>
-        <th>{$_LANG.onappcdnprice}</th>
-        <th>{$_LANG.onappcdncost}</th>
+        <th id="cdntabledate">{$_LANG.onappcdndate}</th>
+        <th>{$_LANG.onappcdnresource}</th>
+        <th id="cdntabletraffic">{$_LANG.onappcdntraffic}</th>
+        <th id="cdntablepricebc">{$_LANG.onappcdnbasecurrencyprice}</th>
+        <th id="cdntablecurrencyrate">{$_LANG.onappcdncurrencyrate}</th>
+        <th id="cdntableprice">{$_LANG.onappcdnprice}</th>
+        <th id="cdntablecost">{$_LANG.onappcdncost}</th>
     </tr>
     {if $statistics|count}
         {foreach from=$statistics item=statistic}
         <tr>
             <td>{$statistic.created_at}</td>
+            <td>{$statistic.cdn_hostname}</td>
             <td>{$statistic.traffic} MB</td>
             <td> {$statistic.price}</td>
             <td>{$statistic.currency_rate}</td>

@@ -132,4 +132,5 @@ $_LANG["onappcdnbasecurrencyprice"] = "Price in base currency";
 $_LANG["onappcdncurrencyrate"] = "Currency Rate";
 $_LANG["onappcdnprice"] = "Price";
 $_LANG["onappcdnbandwidthstatisticsinfo"] = "Here you can view cdn resource bandwidth statistics information.";
-$_LANG["onappcdnbillingstatisticsinfo"] = "Here you can view here daily usage costs and total amounts of all your cdn resources.";
+$_LANG["onappcdnbillingstatisticsinfo"] = "Here you can view daily usage costs and total amounts of all your cdn resources.";
+$_LANG["onappcdnresource"] = "CDN Resource";
