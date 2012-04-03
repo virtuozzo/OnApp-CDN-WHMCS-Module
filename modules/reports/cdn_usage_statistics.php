@@ -103,7 +103,7 @@ if ( isset( $_POST['bw']) ) {
         $filter_conditions[] = "bandwidth.created_at >= '". onappcdn_dates_mysql($bw['end']) ."'";
     }
 
-    if ( isset ( $bw[start] ) && $bw[start] != "" ) {
+    if ( isset ( $bw['start'] ) && $bw[start] != "" ) {
         // TODO DATE_FORMAT
         $filter_conditions[] = "bandwidth.created_at <= '". onappcdn_dates_mysql($bw['start']). "'";
     }
@@ -128,15 +128,20 @@ if ( isset( $_POST['bw']) ) {
 // TODO add pagenator
 $query1 = "
     SELECT
+        bandwidth.currency_rate       as rate,
+        bandwidth.price               as price,
         hosting.userid,
         client.firstname              as clientfirstname,
         client.lastname               as clientlastname,
+        client.id                     as clientid, 
         server.hostname,
         server.ipaddress,
         server.id                     as serverid,
         onappclient.onapp_user_id,
         sum( bandwidth.cached )       as cached,
         sum( bandwidth.non_cached )   as non_cached,
+        sum( bandwidth.non_cached) + sum( bandwidth.cached ) as total_bandwidth,
+        (sum( bandwidth.non_cached) + sum( bandwidth.cached )) * bandwidth.price as cost,
         bandwidth.cdn_hostname,
         hosting.id                    as hostingid,
         bandwidth.created_at,
@@ -165,7 +170,9 @@ $query1 = "
         onappclient.onapp_user_id != ''
         $filter_condition
     GROUP BY
-        hosting.id
+        bandwidth.hosting_id, bandwidth.price
+    ORDER BY 
+        bandwidth.created_at DESC
     ";
 
  // debug
@@ -180,8 +187,8 @@ $query1 = "
 // Filter HTML //
 ////////////////
 
-$reportdata["title"] = "CDN Bandwidth Statistics";
-$reportdata["description"] = "This report shows bandwidth usage of CDN Resources.<br /><br />
+$reportdata["title"] = "CDN Usage Statistics";
+$reportdata["description"] = "This report shows usage statistics of CDN Resources and billing information.<br /><br />
 
 <div id='tab_content'>
 
@@ -225,21 +232,76 @@ $reportdata["description"] = "This report shows bandwidth usage of CDN Resources
 
 // END Filter HTML //
 ////////////////////
-
-$reportdata["tableheadings"] = array( "Status", "Service ID", "Client Name", "Product Name", "Cached","Non Cached", "Total Bandwidht");
+if ( $bw['end'] != "" || $bw['start'] != "" ) {
+    $reportdata["tableheadings"] = array( "Status", "Service ID", "Client Name", "Product Name", "Cached","Non Cached", "Total Bandwidht", "Cost" );
+} else {
+    $reportdata["tableheadings"] = array( "Status", "Service ID", "Client Name", "Product Name", "Cached","Non Cached", "Total Bandwidht", "Cost", "Paid Invoices", "Unpaid Invoices", "Not Invoiced" );
+}
 
 $result = mysql_query($query1);
 
-$total            = 0;
-$total_cached     = 0;
-$total_non_cached = 0;
+$total                 = 0;
+$total_cost            = 0;
+$total_paid            = 0;
+$total_unpaid          = 0;
+$not_invoiced_amount   = 0;
 
-while($data = mysql_fetch_assoc($result)) {
-    $total_bandwidth  = $data['cached']+$data['non_cached'];
-    $total            += $total_bandwidth;
-    $total_cached     += $data['cached'];
-    $total_non_cached += $data['non_cached'];
+$_data = array();
+while($row1 = mysql_fetch_assoc($result)) {
+    if ( ! isset( $_data[$row1['hostingid']]) ){
+        $_data[$row1['hostingid']] = $row1;
+    } else {
+        $_data[$row1['hostingid']]['cached'] += $row1['cached'];
+        $_data[$row1['hostingid']]['non_cached'] += $row1['non_cached'];
+        $_data[$row1['hostingid']]['total_bandwidth'] += $row1['total_bandwidth'];
+        $_data[$row1['hostingid']]['cost'] += $row1['cost'];
+    } 
+}
+//print('<pre>');
+//print_r($_data);
+//die();
 
+foreach( $_data as $data ) {
+    $invoices_query =
+        "SELECT
+            SUM( i.subtotal ) AS amount,
+            status
+        FROM
+            tblinvoices as i
+        WHERE
+            i.userid = $data[clientid]
+            AND i.notes = $data[hostingid]
+        GROUP BY      
+            i.notes, status
+        ORDER BY 
+            i.date DESC
+        ";
+
+    $invoices_result = full_query($invoices_query);
+
+    $invoices_data           = array();
+    $invoices_data['paid']   = 0;
+    $invoices_data['unpaid'] = 0;
+    
+
+    while ($invoices = mysql_fetch_assoc($invoices_result)) {
+        if ($invoices['status'] == 'Paid') {
+            $invoices_data['paid'] = $invoices['amount'] / $data['rate'];
+        } else {
+            $invoices_data['unpaid'] = $invoices['amount'] / $data['rate'];
+        }
+    }
+    
+    $not_invoiced_amount = $data['cost'] - ( $invoices_data['paid'] + $invoices_data['unpaid'] );
+    
+    $total_paid         += $invoices_data['paid'];
+    $total_unpaid       += $invoices_data['unpaid'];
+    $total              += $data['total_bandwidth'];
+    $total_cached       += $data['cached'];
+    $total_non_cached   += $data['non_cached'];
+    $total_cost         += $data['cost'];
+    $total_not_invoiced += $not_invoiced_amount;
+    
 // debug
 //    print('<pre>');
 //    print_r($data);
@@ -247,7 +309,11 @@ while($data = mysql_fetch_assoc($result)) {
     $clientlink = '<a href="clientssummary.php?userid='.$data['userid'].'">';
     $servicelink = '<a href="clientshosting.php?userid= '. $data['userid'] .'&id='. $data['hostingid'] .'">';;
 
-    $reportdata["tablevalues"][] = array($data['domainstatus'], $servicelink.$data['hostingid'].'</a>' , $clientlink.$data['clientfirstname'].' '.$data['clientlastname'] . '</a>', $data['productname'], $data['cached'], $data['non_cached'], $total_bandwidth);
+    if ( $bw['end'] != "" || $bw['start'] != "" ) {
+        $reportdata["tablevalues"][] = array($data['domainstatus'], $servicelink.$data['hostingid'].'</a>' , $clientlink.$data['clientfirstname'].' '.$data['clientlastname'] . '</a>', $data['productname'], $data['cached'], $data['non_cached'], $total, $data['cost']);
+    } else {    
+        $reportdata["tablevalues"][] = array($data['domainstatus'], $servicelink.$data['hostingid'].'</a>' , $clientlink.$data['clientfirstname'].' '.$data['clientlastname'] . '</a>', $data['productname'], $data['cached'], $data['non_cached'], $total, $data['cost'], $invoices_data['paid'], $invoices_data['unpaid'], $not_invoiced_amount);
+    }
 }
 
 // Javascript //
@@ -268,7 +334,11 @@ echo $javascript;
 $reportdata["footertext"] = '<a href="#" onClick="update_run()">Update Now</a>';
 
 if ( ! mysql_num_rows($result) < 1 ) {
-    $reportdata['tablevalues'][] = array( '<b>Total</b>', '','', '', '<b>'. $total_cached . '</b>', '<b>'. $total_non_cached . '</b>', '<b>'. $total . '</b>');
+    if ( $bw['end'] != "" || $bw['start'] != "" ) {
+        $reportdata['tablevalues'][] = array( '<b>Total</b>', '','', '', '<b>'. $total_cached . '</b>', '<b>'. $total_non_cached . '</b>', '<b>'. $total . '</b>', '<b>' .$total_cost. '</b>');
+    } else {
+        $reportdata['tablevalues'][] = array( '<b>Total</b>', '','', '', '<b>'. $total_cached . '</b>', '<b>'. $total_non_cached . '</b>', '<b>'. $total . '</b>', '<b>' .$total_cost. '</b>', '<b>' .$total_paid. '</b>', '<b>' .$total_unpaid. '</b>', '<b>' .$total_not_invoiced. '</b>');
+    }
 }
 
 function onappcdn_dates_mysql ( $date ){
