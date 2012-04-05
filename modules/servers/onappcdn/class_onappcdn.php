@@ -1,6 +1,8 @@
 <?php
 
-require_once dirname( __FILE__ ).'/../../../includes/functions.php';
+if ( ! function_exists('emailtpl_template') ){
+    require_once realpath( dirname( __FILE__ ).'/../../../includes/functions.php');
+}
 
 class OnAppCDN {
 
