@@ -24,6 +24,13 @@ class OnAppCDNResources extends OnAppCDN {
         $resource  = $onapp->factory('CDNResource', true );
 
         $resources = $resource->getList();
+        
+        foreach ( $resources as $key => $resource ) {
+            echo $resource->_user_id, '  ' . $whmcs_client_details['onapp_user_id'] . PHP_EOL;
+            if ( $resource->_user_id != $whmcs_client_details['onapp_user_id'] ) {
+                unset( $resources[$key] );
+            }
+        }
 
         if ( $resources[0]->_user_id ) {
             $users = $onapp->factory('User');

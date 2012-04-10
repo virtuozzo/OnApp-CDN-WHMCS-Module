@@ -47,7 +47,8 @@ class OnAppCDN {
                 currencies.prefix as currencyprefix,
                 currencies.code as currencycode,
                 currencies.rate as currencyrate,
-                currencies.default as ifdefaultcurrency
+                currencies.default as ifdefaultcurrency,
+                cdnclients.onapp_user_id
             FROM
                 tblhosting as h
             LEFT JOIN
@@ -56,6 +57,9 @@ class OnAppCDN {
             LEFT JOIN
                 tblcurrencies as currencies
                 ON currencies.id = c.currency
+            LEFT JOIN
+                tblonappcdnclients as cdnclients
+                ON cdnclients.service_id = $this->serviceid
             WHERE
                 h.id = $this->serviceid
         ";
