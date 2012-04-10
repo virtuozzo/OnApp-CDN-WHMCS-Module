@@ -26,7 +26,6 @@ class OnAppCDNResources extends OnAppCDN {
         $resources = $resource->getList();
         
         foreach ( $resources as $key => $resource ) {
-            echo $resource->_user_id, '  ' . $whmcs_client_details['onapp_user_id'] . PHP_EOL;
             if ( $resource->_user_id != $whmcs_client_details['onapp_user_id'] ) {
                 unset( $resources[$key] );
             }
