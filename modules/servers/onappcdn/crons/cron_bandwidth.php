@@ -98,56 +98,58 @@ while ( $row = mysql_fetch_assoc( $result ) ) {
     }
 
     foreach ( $resources as $resource ) {
-        $query = "
-            SELECT
-                *
-            FROM
-                tblonappcdn_bandwidth
-            WHERE
-                aflexi_resource_id = $resource->_aflexi_resource_id
-            ORDER BY
-                created_at
-            DESC LIMIT 1
-        ";
+        if ( $resource->_user_id == $row['onapp_user_id'] ){
+            $query = "
+                SELECT
+                    *
+                FROM
+                    tblonappcdn_bandwidth
+                WHERE
+                    aflexi_resource_id = $resource->_aflexi_resource_id
+                ORDER BY
+                    created_at
+                DESC LIMIT 1
+            ";
 
 // debug
-        echo $query . PHP_EOL;
+            echo $query . PHP_EOL;
 
-        $result_bw = full_query( $query );
+            $result_bw = full_query( $query );
 
-        $row_bw    = mysql_fetch_assoc( $result_bw );
+            $row_bw    = mysql_fetch_assoc( $result_bw );
 
-        if ( ! $result_bw ) {
+            if ( ! $result_bw ) {
 // debug
-            echo 'ERROR selecting last statistics query' . mysql_error() . PHP_EOL;
-            continue;
-        }
+                echo 'ERROR selecting last statistics query' . mysql_error() . PHP_EOL;
+                continue;
+            }
 
-        if ( ! $row_bw['hosting_id'] ) {
+            if ( ! $row_bw['hosting_id'] ) {
 // debug ///////////////////////////////////////////////////////////////////////////////////////////
-            echo 'No records about this resource in database yet' . PHP_EOL;
-            
-            onappcdn_update_bandwidth_statistics( '0000-00-00', $resource, $_bw, $row, $onapp );
-        }
-        else {
-// debug //////////////////////////////////////////////////////////////////////////////////////////////////////////
-            echo 'There are some records in database. Here is the last one' . PHP_EOL;
-            print_r( $row_bw ); echo PHP_EOL;
+                echo 'No records about this resource in database yet' . PHP_EOL;
 
-            if ( $row_bw['created_at'] == $today ) {
-// debug
-                echo 'Cron was already running today. Updating todays bandwidth' . PHP_EOL;
-
-                onappcdn_update_bandwidth_statistics( $today, $resource, $_bw, $row, $onapp );
+                onappcdn_update_bandwidth_statistics( '0000-00-00', $resource, $_bw, $row, $onapp );
             }
             else {
+// debug //////////////////////////////////////////////////////////////////////////////////////////////////////////
+                echo 'There are some records in database. Here is the last one' . PHP_EOL;
+                print_r( $row_bw ); echo PHP_EOL;
+
+                if ( $row_bw['created_at'] == $today ) {
 // debug
-                echo 'It\'s the first time Cron is running today. Updating bandwidth from the last time till today' . PHP_EOL;
+                    echo 'Cron was already running today. Updating todays bandwidth' . PHP_EOL;
 
-                onappcdn_update_bandwidth_statistics( $row_bw['created_at'], $resource, $_bw, $row, $onapp );
+                    onappcdn_update_bandwidth_statistics( $today, $resource, $_bw, $row, $onapp );
+                }
+                else {
+// debug
+                    echo 'It\'s the first time Cron is running today. Updating bandwidth from the last time till today' . PHP_EOL;
 
+                    onappcdn_update_bandwidth_statistics( $row_bw['created_at'], $resource, $_bw, $row, $onapp );
+
+                }
             }
-        }
+        }    
     }
 }
 
