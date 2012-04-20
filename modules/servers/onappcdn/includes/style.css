@@ -13,9 +13,11 @@ textarea {
     font-weight:bold
 }
 
-div#content_left input[type=text] {
+div#content_left  input[type=text].textfield {
     width:250px;
 }
+
+
 div#content_left select {
     width:260px;
 }

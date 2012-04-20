@@ -176,7 +176,7 @@ $('#passwords_table').append( passwords_html )
             {$_LANG.onappcdnhostname}
         </td>
         <td>
-            <input value="{$resource->_cdn_hostname}" type="text" name="resource[cdn_hostname]" />
+            <input class="textfield" value="{$resource->_cdn_hostname}" type="text" name="resource[cdn_hostname]" />
         </td>
     </tr>
     <tr>
@@ -184,7 +184,7 @@ $('#passwords_table').append( passwords_html )
             {$_LANG.onappcdnorigins}
         </td>
         <td>
-            <input value="{foreach item=origin from=$resource->_origins_for_api}{$origin->_value}{/foreach}" type="text" name="resource[origin]" />
+            <input class="textfield" value="{foreach item=origin from=$resource->_origins_for_api}{$origin->_value}{/foreach}" type="text" name="resource[origin]" />
         </td>
     </tr>
     <tr>
@@ -297,7 +297,7 @@ $('#passwords_table').append( passwords_html )
         <tr id="urlsigning_tr">
             <td>{$_LANG.onappcdnurlsigningkey}</td>
             <td>
-                <input type="text" value="{$advanced_details->_url_signing_key}" name="resource[url_signing_key]" />
+                <input class="textfield" type="text" value="{$advanced_details->_url_signing_key}" name="resource[url_signing_key]" />
             </td>
         </tr>
     </table>
@@ -310,7 +310,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdncacheexpiry}</td>
             <td>
-                <input id="cache_input" type="text" value="{$advanced_details->_cache_expiry}" name="resource[cache_expiry]" />
+                <input class="textfield" id="cache_input" type="text" value="{$advanced_details->_cache_expiry}" name="resource[cache_expiry]" />
             </td>
         </tr>
 

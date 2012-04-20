@@ -219,7 +219,7 @@ $('#passwords_table').append( passwords_html )
             {$_LANG.onappcdnhostname}
         </td>
         <td>
-            <input type="text" value="{$session_resource.cdn_hostname}" name="resource[cdn_hostname]" />
+            <input class="textfield" type="text" value="{$session_resource.cdn_hostname}" name="resource[cdn_hostname]" />
         </td>
     </tr>
     <tr>
@@ -227,7 +227,7 @@ $('#passwords_table').append( passwords_html )
             {$_LANG.onappcdnorigins}
         </td>
         <td>
-            <input type="text" value="{$session_resource.origin}" name="resource[origin]" />
+            <input class="textfield" type="text" value="{$session_resource.origin}" name="resource[origin]" />
         </td>
     </tr>
     <tr>
@@ -340,7 +340,7 @@ $('#passwords_table').append( passwords_html )
         <tr id="urlsigning_tr">
             <td>{$_LANG.onappcdnurlsigningkey}</td>
             <td>
-                <input value="{$session_resource.url_signing_key}" type="text" name="resource[url_signing_key]" />
+                <input class="textfield" value="{$session_resource.url_signing_key}" type="text" name="resource[url_signing_key]" />
             </td>
         </tr>
     </table>
@@ -353,7 +353,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdncacheexpiry}</td>
             <td>
-                <input value="{$session_resource.cache_expiry}" id="cache_input" type="text" name="resource[cache_expiry]" />
+                <input class="textfield" value="{$session_resource.cache_expiry}" id="cache_input" type="text" name="resource[cache_expiry]" />
             </td>
         </tr>
 
