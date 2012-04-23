@@ -18,7 +18,7 @@ div#content_left  input[type=text].textfield {
 }
 
 
-div#content_left select {
+div#content_left select.selectfield {
     width:260px;
 }
 

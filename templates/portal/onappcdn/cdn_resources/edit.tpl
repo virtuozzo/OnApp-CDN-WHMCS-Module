@@ -192,7 +192,7 @@ $('#passwords_table').append( passwords_html )
             {$_LANG.onappcdnresourcetype}
         </td>
         <td>
-            <select name="resource[type]">
+            <select class="selectfield" name="resource[type]">
                 <option value="HTTP_PULL">HTTP PULL</option>
             </select>
         </td>
@@ -216,7 +216,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdnipaccesspolicy}</td>
             <td>
-                <select name="resource[ip_access_policy]">
+                <select class="selectfield" name="resource[ip_access_policy]">
                     <option value="NONE" {if $advanced_details->_ip_access_policy eq 'NONE'}selected{/if}>{$_LANG.onappcdndisabled}</option>
                     <option value="ALLOW_BY_DEFAULT" {if $advanced_details->_ip_access_policy eq 'ALLOW_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnallowbydefault}</option>
                     <option value="BLOCK_BY_DEFAULT" {if $advanced_details->_ip_access_policy eq 'BLOCK_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnblockbydefault}</option>
@@ -241,7 +241,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdncountryaccesspolicy}</td>
             <td>
-                <select name="resource[country_access_policy]">
+                <select class="selectfield" name="resource[country_access_policy]">
                     <option value="NONE" {if $advanced_details->_country_access_policy eq 'NONE'}selected{/if}>{$_LANG.onappcdndisabled}</option>
                     <option value="ALLOW_BY_DEFAULT" {if $advanced_details->_country_access_policy eq 'ALLOW_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnallowbydefault}</option>
                     <option value="BLOCK_BY_DEFAULT" {if $advanced_details->_country_access_policy eq 'BLOCK_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnblockbydefault}</option>
@@ -253,7 +253,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdncountryaccess}
             </td>
             <td>
-                <select id="country_access" name="resource[countries][]" multiple>
+                <select class="selectfield" id="country_access" name="resource[countries][]" multiple>
                     {include file="$template/onappcdn/cdn_resources/countries_options.tpl"}
                 </select>
             </td>
@@ -266,7 +266,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdnhotlinkpolicy}</td>
             <td>
-                <select id="hotlinkpolicy" name="resource[hotlink_policy]">
+                <select class="selectfield" id="hotlinkpolicy" name="resource[hotlink_policy]">
                     <option value="NONE">{$_LANG.onappcdndisabled}</option>
                     <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
                     <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
