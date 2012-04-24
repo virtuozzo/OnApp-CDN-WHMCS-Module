@@ -13,6 +13,8 @@ require_once ROOT . "dbconnect.php";
 require_once ROOT . "includes/functions.php";
 require_once ROOT . "includes/clientareafunctions.php";
 require_once ROOT . "includes/wrapper/OnAppInit.php";
+require_once ROOT . 'includes/invoicefunctions.php';
+require_once ROOT . 'includes/processinvoices.php';
 
 $query = "
     SELECT
