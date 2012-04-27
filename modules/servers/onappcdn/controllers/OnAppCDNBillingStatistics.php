@@ -53,7 +53,7 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
 
         $total_amount_query= "
             SELECT 
-                SUM( ( price * currency_rate )  * ( cached + non_cached ) ) as total 
+                SUM( ( price * currency_rate )  * ( cached + non_cached ) ) / 1000 as total 
             FROM 
                 tblonappcdn_bandwidth 
             $where 
@@ -93,7 +93,7 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
             $rows[$i]                 = $row;
             $rows[$i]['traffic']      = round( $rows[$i]['cached']  + $rows[$i]['non_cached'], 4);
             $rows[$i]['localprice']   = $rows[$i]['price']   * $rows[$i]['currency_rate']; 
-            $rows[$i]['cost']         = round( $rows[$i]['traffic'] * $rows[$i]['localprice'], 4 );
+            $rows[$i]['cost']         = round( $rows[$i]['traffic'] / 1000 * $rows[$i]['localprice'], 4 );
             $i++;
         }
         

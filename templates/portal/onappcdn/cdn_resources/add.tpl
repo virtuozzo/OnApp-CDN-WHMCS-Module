@@ -413,6 +413,7 @@ $('#passwords_table').append( passwords_html )
 
     <tr>
         <td>
+            <b>{$group.label}</b> <br />
                 {foreach item=location from=$group.locations}
                     {$location->_city}, {$location->_country}    <br />
                 {/foreach}

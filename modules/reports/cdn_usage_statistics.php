@@ -9,8 +9,8 @@ if ( isset( $_POST['update']) && $_POST['update'] == 'run' ) {
     ob_end_clean();
 }
 
-error_reporting(E_ERROR);
-ini_set("display_errors", 1);
+//error_reporting(E_ERROR);
+//ini_set("display_errors", 1);
 
 // Getting Product Name filter selects //
 ////////////////////////////////////////
@@ -141,7 +141,7 @@ $query1 = "
         sum( bandwidth.cached )       as cached,
         sum( bandwidth.non_cached )   as non_cached,
         sum( bandwidth.non_cached) + sum( bandwidth.cached ) as total_bandwidth,
-        (sum( bandwidth.non_cached) + sum( bandwidth.cached )) * bandwidth.price as cost,
+        (sum( bandwidth.non_cached) + sum( bandwidth.cached )) * bandwidth.price / 1000 as cost,
         bandwidth.cdn_hostname,
         hosting.id                    as hostingid,
         bandwidth.created_at,

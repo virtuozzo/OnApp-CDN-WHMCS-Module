@@ -27,9 +27,9 @@
         <th id="cdntabledate">{$_LANG.onappcdndate}</th>
         <th>{$_LANG.onappcdnresource}</th>
         <th id="cdntabletraffic">{$_LANG.onappcdntraffic}</th>
-        <th id="cdntablepricebc">{$_LANG.onappcdnbasecurrencyprice}</th>
+        <th id="cdntablepricebc">{$_LANG.onappcdnbasecurrencypricepergb}</th>
         <th id="cdntablecurrencyrate">{$_LANG.onappcdncurrencyrate}</th>
-        <th id="cdntableprice">{$_LANG.onappcdnprice}</th>
+        <th id="cdntableprice">{$_LANG.onappcdnpricepergb}</th>
         <th id="cdntablecost">{$_LANG.onappcdncost}</th>
     </tr>
     {if $statistics|count}

@@ -95,7 +95,7 @@ echo PHP_EOL . '****************************************************************
     
     while ( $cost_row = mysql_fetch_assoc( $cost_result ) ) {
         $price = $cost_row[price];
-        $cost =  ( $cost_row[cached] + $cost_row[non_cached] ) * ( $price * $cost_row['rate'] );       
+        $cost =  ( $cost_row[cached] + $cost_row[non_cached] ) / 1000 * ( $price * $cost_row['rate'] );       
         
         $billing_stat_for_whole_period .= '***'. PHP_EOL .
             'Start Date: (' . $cost_row[min_date] . ') End Date: (' . $cost_row[max_date] . ') :' . PHP_EOL . PHP_EOL .

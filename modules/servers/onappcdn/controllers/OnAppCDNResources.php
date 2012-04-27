@@ -353,7 +353,6 @@ class OnAppCDNResources extends OnAppCDN {
 
             $countries   = ( is_null( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
 
-
             $this->show_template(
                 'onappcdn/cdn_resources/add',
                 array(

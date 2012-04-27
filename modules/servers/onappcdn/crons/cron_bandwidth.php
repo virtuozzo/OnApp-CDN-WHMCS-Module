@@ -31,7 +31,7 @@ $query = "
         onappc.password,
         h.id                  as hostingid,
         curr.rate             as currency_rate,
-        p.overagesbwprice     as price
+        p.configoption6       as price
     FROM
         tblservers as s
     LEFT JOIN
