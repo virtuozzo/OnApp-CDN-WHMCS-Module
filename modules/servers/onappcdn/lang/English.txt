@@ -136,3 +136,4 @@ $_LANG["onappcdnbillingstatisticsinfo"] = "Here you can view daily usage costs a
 $_LANG["onappcdnresource"] = "CDN Resource";
 $_LANG["onappcdnpricepergb"] = "CDN bandwidth price ( per GB )";
 $_LANG["onappcdninbasecurrency"] = "( in base currency )";
+$_LANG["onappcdntaxesnottakeninacount"] = "Amounts are presented without taking in account taxes.";

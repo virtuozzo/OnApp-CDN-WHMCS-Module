@@ -56,6 +56,8 @@
     {$pagination}
 {/if}
 <br /><br />
+<h5>{$_LANG.onappcdntaxesnottakeninacount}</h5>
+
 <pre>
 {$_LANG.onappcdntotalamount}:           <b> {$whmcs_client_details.currencyprefix} {$total} {$whmcs_client_details.currencycode}</b>
 {$_LANG.onappcdnpaidinvoicesamount}:   <b> {$whmcs_client_details.currencyprefix} {$invoices_data.paid} {$whmcs_client_details.currencycode}</b>
