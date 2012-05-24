@@ -130,11 +130,9 @@ class OnAppCDN {
             if( ! $hosting )
                 return "Can't execute SQL query \"$sql\"";
 
-            if ( ! strpos('.', $this->hostname ) ){
-                $this->hostname .= '.com'; 
-            }
+            $hostname = $this->hostnameShort( $this->hostname );
             
-            $email    = 'cdnuser'.$this->serviceid.'@'.$this->hostname;
+            $email =  'cdnuser'.$this->serviceid.'@'.$hostname; 
             
             $password = md5($this->serviceid . $this->salt . date('h-i-s, j-m-y') );
 
@@ -175,6 +173,23 @@ class OnAppCDN {
         }
 
         return 'Something went wrong';
+    }
+    
+    private function hostnameShort( $hostname ) {
+        $length = strlen( $hostname );
+        
+        if ( ! strpos($hostname, '.'  )  ){
+            $hostname .= '.com'; 
+        }
+        
+        if ( $length < 24 )
+            return $hostname;
+
+        if( substr_count($hostname, '.') > 1 ){
+            $hostname = substr($hostname, strpos($hostname, '.'  ) - 1 );
+        }
+
+        return ( $length < 24 ) ? $hostname : substr( $hostname, $length - 24 );
     }
 
     public function delete_user() {
