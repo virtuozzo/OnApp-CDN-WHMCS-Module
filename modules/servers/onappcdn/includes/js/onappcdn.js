@@ -24,11 +24,12 @@ $(document).ready(function(){
     }
 
    rolesObj.change( function () {
-       var selected = $(this).find('option:selected');
        var input = Array();
-       for (var i in selected.toArray()) {
-           input.push( $(selected[i]).val() );
-       }
+
+       $(this).find("option:selected").each(function () {
+           input.push( $(this).val() )
+       })
+
        $('input[name="packageconfigoption[2]"]').val(input.join(','));
    })
 
