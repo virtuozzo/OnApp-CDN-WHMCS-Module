@@ -324,7 +324,7 @@ class OnAppCDNResources extends OnAppCDN {
             foreach ( $baseresources as $edge_group ) {
                 if ( $edge_group->_resource_name == 'edge_group' )
                 {
-                    $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices[0]->_price * $whmcs_client_details['currencyrate'], 2 );
+                    $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices->_price * $whmcs_client_details['currencyrate'], 2 );
 
                     foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
                         if ( $group->_id == $edge_group->_target_id ) {
