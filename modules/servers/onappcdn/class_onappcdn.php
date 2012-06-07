@@ -416,6 +416,12 @@ WHERE
             $server['password'] = decrypt($server['password']);
 
             $servers[$server['id']] = $server;
+
+            $servers[$server['id']]['address'] = $server['ipaddress'] != '' ? $server['ipaddress'] : $server['hostname'];
+
+            if ($server['secure'] == 'on')
+                $servers[$server['id']]['address'] = 'https://'.$servers[$server['id']]['address'];            
+            
         }
         
         return $servers;

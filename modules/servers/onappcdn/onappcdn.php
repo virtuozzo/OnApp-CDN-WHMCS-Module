@@ -90,14 +90,13 @@ function onappcdn_ConfigOptions() {
 /// Get OnApp Instance /////////
 ////////////////////////////////
     
-    $ipaddress = $cdnservers[$server_id]['ipaddress'];
-    $hostname  = $cdnservers[$server_id]['hostname'];
+    $address = $cdnservers[$server_id]['address'];
     $username  = $cdnservers[$server_id]['username'];
     $password  = $cdnservers[$server_id]['password'];
 
-    if ( $username && $password && ( $hostname || $ipaddress )  ) {
+    if ( $username && $password && $address   ) {
         $onapp_instance = new OnApp_Factory(
-            ( $ipaddress ) ? $ipaddress : $hostname,
+            $address,
             $username,
             $password
         );
