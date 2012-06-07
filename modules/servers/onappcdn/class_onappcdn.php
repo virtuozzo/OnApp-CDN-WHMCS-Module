@@ -405,7 +405,7 @@ FROM
     LEFT JOIN tblproducts ON
         tblproducts.id = $product_id 
 WHERE
-    AND tblservers.type = 'onappcdn'";
+    tblservers.type = 'onappcdn'";
 
         $sql_servers_result = full_query($sql);      
 
@@ -417,7 +417,7 @@ WHERE
 
             $servers[$server['id']] = $server;
         }
-
+        
         return $servers;
     }
 
