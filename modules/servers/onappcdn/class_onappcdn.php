@@ -405,7 +405,6 @@ FROM
     LEFT JOIN tblproducts ON
         tblproducts.id = $product_id 
 WHERE
-    tblservers.disabled = 0
     AND tblservers.type = 'onappcdn'";
 
         $sql_servers_result = full_query($sql);      
