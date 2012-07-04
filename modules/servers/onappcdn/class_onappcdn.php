@@ -134,6 +134,10 @@ class OnAppCDN {
             
             $email =  'cdnuser'.$this->serviceid.'@'.$hostname; 
             
+            if ( ! filter_var($email, FILTER_VALIDATE_EMAIL) ) {
+                $email = $user->_login = 'cdnuser' . $this->serviceid . '@' . 'cdn.com';
+            }
+            
             $password = md5($this->serviceid . $this->salt . date('h-i-s, j-m-y') );
 
             $user = $onapp->factory( 'User', true );
