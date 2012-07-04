@@ -190,7 +190,6 @@ class OnAppCDNResources extends OnAppCDN {
         else {
             $resource = parent::get_value('resource');
             
-            
             if ( is_null( $resource['advanced_settings'] ) ) {
                 foreach( $resource as $key => $field ) {
                     if ( $key != 'cdn_hostname'       &&
@@ -205,18 +204,16 @@ class OnAppCDNResources extends OnAppCDN {
             }
             else {
                 if ( $resource['ip_access_policy'] == 'NONE' ) {
-                    unset( $resource['ip_access_policy'] );
                     unset( $resource['ip_addresses'] );
                 }
                 if ( $resource['country_access_policy'] == 'NONE' ) {
-                    unset( $resource['country_access_policy'] );
                     unset( $resource['countries'] );
                 }
                 if ( $resource['hotlink_policy'] == 'NONE' ) {
-                    unset( $resource['hotlink_policy'] );
                     unset( $resource['domains'] );
                 }
                 if ( is_null( $resource['url_signing_on'] ) ) {
+                    $resource['url_signing_on'] = 0;
                     unset( $resource['url_signing_key'] );
                 }
 
