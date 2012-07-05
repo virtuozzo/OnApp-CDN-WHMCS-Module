@@ -3,6 +3,9 @@
  * Manages CDN Resources
  * 
  */
+error_reporting( E_ALL );
+ini_set( 'display_errors', 1 );
+ini_set('html_errors', 1);
 class OnAppCDNResources extends OnAppCDN {
 
     public function __construct () {
@@ -69,8 +72,8 @@ class OnAppCDNResources extends OnAppCDN {
                 'id'                =>  parent::get_value('id'),
                 'resources'         =>  $__resources,
                 'resources_enabled' =>  $resources_enabled,
-                'errors'            =>  implode( PHP_EOL, $errors ),
-                'messages'          =>  implode( PHP_EOL, $messages ),
+                'errors'            =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
+                'messages'          =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
                 'outstanding_amount'=>  $outstanding_amount,
             )
         );
@@ -182,8 +185,8 @@ class OnAppCDNResources extends OnAppCDN {
                     'id'                        =>  parent::get_value('id'),
                     'whmcs_client_details'      =>  $this->getWhmcsClientDetails(),
                     'edge_group_baseresources'  =>  $edge_group_baseresources,
-                    'errors'                    =>  implode( PHP_EOL, $errors ),
-                    'messages'                  =>  implode( PHP_EOL, $messages ),
+                    'errors'            =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
+                    'messages'          =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
                 )
             );
         }
@@ -212,7 +215,7 @@ class OnAppCDNResources extends OnAppCDN {
                 if ( $resource['hotlink_policy'] == 'NONE' ) {
                     unset( $resource['domains'] );
                 }
-                if ( is_null( $resource['url_signing_on'] ) ) {
+                if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
                     $resource['url_signing_on'] = 0;
                     unset( $resource['url_signing_key'] );
                 }
@@ -231,9 +234,12 @@ class OnAppCDNResources extends OnAppCDN {
                     $_resource->$key = $value;
                 }
             }
-
+            
+// needed to disable WHMCS html auto escape in forms.            
+            $_resource->_password_unauthorized_html = html_entity_decode( $_resource->_password_unauthorized_html );
+            
             $_resource->save();
-
+            
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Edit CDN Resource Error: </b>' . implode( PHP_EOL , $_resource->getErrorsAsArray() );
 
@@ -357,8 +363,8 @@ class OnAppCDNResources extends OnAppCDN {
                     'resource'                  =>  parent::get_value('resource'),
                     'whmcs_client_details'      =>  $this->getWhmcsClientDetails(),
                     'edge_group_baseresources'  =>  $edge_group_baseresources,
-                    'errors'                    =>  implode( PHP_EOL, $errors ),
-                    'messages'                  =>  implode( PHP_EOL, $messages ),
+                    'errors'                    =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
+                    'messages'                  =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
                     'session_resource'          =>  $session_resource,
                     'passwords_html'            =>  $passwords_html,
                     'countries'                 =>  $countries,
