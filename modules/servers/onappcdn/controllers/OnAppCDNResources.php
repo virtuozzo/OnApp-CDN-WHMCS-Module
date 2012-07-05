@@ -3,9 +3,6 @@
  * Manages CDN Resources
  * 
  */
-error_reporting( E_ALL );
-ini_set( 'display_errors', 1 );
-ini_set('html_errors', 1);
 class OnAppCDNResources extends OnAppCDN {
 
     public function __construct () {
