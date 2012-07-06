@@ -203,23 +203,12 @@ class OnAppCDNResources extends OnAppCDN {
                 }
             }
             else {
-                if ( $resource['ip_access_policy'] == 'NONE' ) {
-                    unset( $resource['ip_addresses'] );
-                }
-                if ( $resource['country_access_policy'] == 'NONE' ) {
-                    unset( $resource['countries'] );
-                }
-                if ( $resource['hotlink_policy'] == 'NONE' ) {
-                    unset( $resource['domains'] );
-                }
                 if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
                     $resource['url_signing_on'] = 0;
-                    unset( $resource['url_signing_key'] );
                 }
-
-                if ( is_null( $resource['password_on'] ) ) {
-                    unset( $resource['password_unauthorized_html'] );
-                    unset( $resource['form_pass'] );
+                
+                if ( !isset ( $resource['countries']) ){
+                    $resource['countries'] = array();
                 }
             }
 
