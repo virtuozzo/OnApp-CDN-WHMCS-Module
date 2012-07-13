@@ -305,7 +305,7 @@ class OnAppCDN {
  * Get GET or POST value
  */
     public static function get_value($value) {
-        return $_GET[$value] ? $_GET[$value] : ( $_POST[$value] ? $_POST[$value] : null );
+        return isset( $_GET[$value] ) ? $_GET[$value] : ( isset( $_POST[$value] ) ? $_POST[$value] : null );
     }
 
 /**

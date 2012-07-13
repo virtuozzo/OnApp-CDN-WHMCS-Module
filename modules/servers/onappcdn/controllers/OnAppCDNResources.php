@@ -3,6 +3,10 @@
  * Manages CDN Resources
  * 
  */
+
+error_reporting( E_ALL );
+ini_set( 'display_errors', 1 );
+ini_set('html_errors', 1);
 class OnAppCDNResources extends OnAppCDN {
 
     public function __construct () {
@@ -30,14 +34,16 @@ class OnAppCDNResources extends OnAppCDN {
                 unset( $resources[$key] );
             }
         }
-
-        if ( $resources[0]->_user_id ) {
+        
+        if ( isset ( $resources[0]->_user_id ) ) {
             $users = $onapp->factory('User');
             $user  = $users->load( $resources[0]->_user_id );
             
             $outstanding_amount = $whmcs_client_details['currencyprefix'] .
             round ( $user->_outstanding_amount  *  $whmcs_client_details['currencyrate'], 2)
                 . ' ' . $whmcs_client_details['currencycode'] ;
+        } else {
+            $outstanding_amount = 0;
         }
 
         $__resources = array();
@@ -49,7 +55,7 @@ class OnAppCDNResources extends OnAppCDN {
             $__resources[ $_resources->_id ]['_resource_type'] = $_resources->_resource_type;
             $__resources[ $_resources->_id ]['_cdn_hostname'] = $_resources->_cdn_hostname;
             $__resources[ $_resources->_id ]['_origins_for_api'] = '';
-            foreach( $_resources->_origins_for_api as $origin ) {
+            foreach( $_resources->_origins as $origin ) {
                 $__resources[ $_resources->_id ]['_origins_for_api'] = $origin->_value . PHP_EOL;
             }
         }
@@ -121,6 +127,10 @@ class OnAppCDNResources extends OnAppCDN {
             $_resource  = $onapp->factory('CDNResource', true );
 
             $resource   = $_resource->load( $resource_id );
+            
+//            print('<pre>');
+//            print_r($resource);
+//            die();
 
             $edge_group_ids = array();
             foreach( $resource->_edge_groups as $group ) {
@@ -282,7 +292,7 @@ class OnAppCDNResources extends OnAppCDN {
     protected function add ( $errors = null, $messages = null ) {
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
-
+        
         if ( $errors || $messages ) {
             unset( $_POST['add'] );
         }
@@ -333,14 +343,19 @@ class OnAppCDNResources extends OnAppCDN {
                 $session_resource = $_SESSION['resource'];
                 unset( $_SESSION['resource'] );
             }
-            
-            foreach( $session_resource['form_pass']['user'] as $key => $value ) {
-                $passwords_array[$value] = $session_resource['form_pass']['pass'][$key];
-            }
 
+            $passwords_array = array();
+            if( isset( $session_resource ) ){
+                foreach( $session_resource['form_pass']['user'] as $key => $value ) {
+                    $passwords_array[$value] = $session_resource['form_pass']['pass'][$key];
+                }
+            } else {
+                $session_resource = null;
+            }
+            
             $passwords_html = $this->generate_passwords_html( $passwords_array );
 
-            $countries   = ( is_null( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
+            $countries   = ( ! isset ( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
 
             $this->show_template(
                 'onappcdn/cdn_resources/add',
@@ -360,7 +375,7 @@ class OnAppCDNResources extends OnAppCDN {
         else {
             $resource = parent::get_value('resource');
 
-            if ( is_null( $resource['advanced_settings'] ) ) {
+            if ( ! isset ( $resource['advanced_settings'] ) ) {
                 foreach( $resource as $key => $field ) {
                     if ( $key != 'cdn_hostname'       &&
                          $key != 'origin'             &&
@@ -403,9 +418,12 @@ class OnAppCDNResources extends OnAppCDN {
 
                 }
             }
+
             
             $_resource->save();
-
+//            print('<pre>');
+//            print_r($_resource);
+//            die();        
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Create CDN Resource Error: </b>' . implode( PHP_EOL , $_resource->getErrorsAsArray() );
 

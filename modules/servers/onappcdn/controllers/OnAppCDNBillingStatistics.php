@@ -18,6 +18,9 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
      */
     public function show($errors = null, $messages = null) {
         
+        $edge_group_labels = array();
+        $edge_group_ids = array();
+        
         $whmcs_client_details = $this->getWhmcsClientDetails();
         
         $hosting_id = parent::get_value('id');
@@ -97,8 +100,32 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
             $i++;
         }
         
+        foreach( $rows as $row ){
+            $edge_group_ids[$row['edge_group_id']] = $row['edge_group_id'];
+        }
+        
+        if ( ! empty( $edge_group_ids ) ) {
+
+            $onapp = $this->getOnAppInstance();
+            
+            $user = $this->get_user();
+            
+            $base_resources = $onapp->factory('BillingPlan_BaseResource');
+            $onapp_users    = $onapp->factory('User');
+            
+            $onapp_user     = $onapp_users->load( $user['onapp_user_id'] );
+            
+            foreach ( $base_resources->getList( $onapp_user->_billing_plan_id ) as $resource ){
+                $edge_group_labels[ $resource->_target_id ] = $resource->_label; 
+            }
+        }
+            
         $not_invoiced = round( $total_row['total'] - $invoices_data['paid'] - $invoices_data['unpaid'], 2);
         
+        
+//        print('<pre>');
+//        print_r($rows);
+//        die();
         $this->show_template(
             'onappcdn/cdn_resources/billing_statistics',
             array(
@@ -113,9 +140,9 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
                 'whmcs_client_details' =>  $this->getWhmcsClientDetails(), 
                 'invoices_data'        =>  $invoices_data,
                 'not_invoiced_amount'  =>  $not_invoiced,
+                'edge_group_labels'    =>  $edge_group_labels,
             )
         );
-
     }
 }
 
