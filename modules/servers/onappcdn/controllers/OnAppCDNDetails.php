@@ -23,6 +23,7 @@ class OnAppCDNDetails extends OnAppCDN {
 
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
+        
         parent::loadcdn_language();
 
         $onapp = $this->getOnAppInstance();
@@ -72,6 +73,10 @@ class OnAppCDNDetails extends OnAppCDN {
             $errors[] = $_SESSION['errors'];
             unset($_SESSION['errors']);
         }
+        
+//        print('<pre>');
+//        print_r($edge_group_baseresources);
+//        die();
 
         $this->show_template(
             'onappcdn/cdn_resources/details',

@@ -26,15 +26,15 @@ $page   = ( $page )   ? $page    : 'resources';
 
 // Register pages
 $pages = array(
-    'advanced_details'     =>  'AdvancedDetails',
-    'bandwidth_statistics' =>  'BandwidthStatistics',
-    'billing_statistics'   =>  'BillingStatistics',
-    'prefetch'             =>  'Prefetch',
-    'purge'                =>  'Purge',
-    'resources'            =>  'Resources',
-    'details'              =>  'Details',
-    'default'              =>  'Default',
-    'error'                =>  'Error'
+    'advanced_details'           =>  'AdvancedDetails',
+    'billing_statistics'         =>  'BillingStatistics',
+    'total_billing_statistics'   =>  'TotalBillingStatistics',
+    'prefetch'                   =>  'Prefetch',
+    'purge'                      =>  'Purge',
+    'resources'                  =>  'Resources',
+    'details'                    =>  'Details',
+    'default'                    =>  'Default',
+    'error'                      =>  'Error'
 );
 
 $action = OnAppCDN::get_value( 'action' );
@@ -42,15 +42,15 @@ $action = ( $action ) ? $action  : 'show';
 
 // Register actions
 $actions = array(
-    'default'              => array('create'),
-    'details'              => array(),
-    'advanced_details'     => array(),
-    'bandwidth_statistics' => array(),
-    'billing_statistics'   => array(),
-    'prefetch'             => array('prefetch'),
-    'purge'                => array('purge'),
-    'resources'            => array('enable', 'edit', 'delete', 'add'),
-    'error'                => array(),
+    'default'                    => array('create'),
+    'details'                    => array(),
+    'advanced_details'           => array(),
+    'billing_statistics'         => array(),
+    'total_billing_statistics'   => array(),
+    'prefetch'                   => array('prefetch'),
+    'purge'                      => array('purge'),
+    'resources'                  => array('enable', 'edit', 'delete', 'add'),
+    'error'                      => array(),
 );
 
 if ( ! in_array( $action, $actions[$page] ) && $action != 'show' ) {

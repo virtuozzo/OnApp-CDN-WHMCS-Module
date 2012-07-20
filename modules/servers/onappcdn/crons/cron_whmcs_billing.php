@@ -32,7 +32,7 @@ $query = "
         s.hostname,
         onappc.onapp_user_id,
         s.ipaddress,
-        h.id                 as hostingid
+        h.id                  as hostingid
     FROM
         tblservers as s
     LEFT JOIN
@@ -64,59 +64,34 @@ if ( ! $result || mysql_num_rows( $result ) < 1 ) {
 $duedate = $today = date( 'Y-m-d H:i:s' );
 
 while ( $row = mysql_fetch_assoc( $result ) ) {
-echo PHP_EOL . '************************************************************************ H O S T I N G  L I N E *************************' . PHP_EOL ;    
+    echo PHP_EOL . '************************************************************************ H O S T I N G  L I N E (' . $row[hostingid]. ') *************************' . PHP_EOL ;    
     
     $cost_query = "
         SELECT
-            SUM( bandwidth.cached )      as cached,
-            SUM( bandwidth.non_cached )  as non_cached,
-            MIN( bandwidth.created_at )  as min_date,
-            MAX( bandwidth.created_at )  as max_date,
-           /* MIN( bandwidth.currency_rate)as rate, */
-            bandwidth.currency_rate as rate,
-            bandwidth.price
+            SUM( cost * currency_rate ) as price
         FROM 
-            tblonappcdn_bandwidth as bandwidth
+            tblonappcdn_billing
         WHERE
-            bandwidth.hosting_id = $row[hostingid]
-        GROUP BY
-            bandwidth.price, rate  
-        ORDER BY
-            bandwidth.created_at
+            hosting_id = $row[hostingid]
     ";
     
     $cost_result = full_query( $cost_query );
-    if ( ! $cost_result ) {
-        die('Cost Query Error ' . PHP_EOL . mysql_error() . PHP_EOL );
+    
+    if( ! $cost_result ) {
+        echo 'Total cost query error ' . mysql_error();
+        continue;
     }
     
-    $billing_stat_for_whole_period = 'CDN Usage:' . PHP_EOL;
-    $total_cost = 0;
+    $cost_row = mysql_fetch_assoc( $cost_result );
     
-    while ( $cost_row = mysql_fetch_assoc( $cost_result ) ) {
-        $price = $cost_row[price];
-        $cost =  ( $cost_row[cached] + $cost_row[non_cached] ) / 1000 * ( $price * $cost_row['rate'] );       
-        
-        $billing_stat_for_whole_period .= '***'. PHP_EOL .
-            'Start Date: (' . $cost_row[min_date] . ') End Date: (' . $cost_row[max_date] . ') :' . PHP_EOL . PHP_EOL .
-            'Data Cached           ' . $cost_row[cached] .'MB'. PHP_EOL .
-            'Data Non Cached       ' . $cost_row[non_cached] . 'MB'.  PHP_EOL .
-            'Base Currency Price   ' . $cost_row[price]. PHP_EOL .
-            'Currency Rate         ' . $cost_row['rate'] . PHP_EOL .       
-            'Cost                  ' . $cost . PHP_EOL;
-        
-        $total_cost += $cost;    
-        print('<pre>');
-        print_r( $cost_row );
+    $total_cost = $cost_row['price'];
+    
+    if ( is_null( $total_cost ) ) {
+        print_r( $row );
+        echo 'No CDN Usage for this hosting account (' .$row[hostingid]. '). Skipping' . PHP_EOL;
+        continue;
     }
-    
-    $billing_stat_for_whole_period .= 
-       PHP_EOL.  '___' .PHP_EOL . PHP_EOL . 
-        'Total Cost              ' . $total_cost; 
-        ; 
 
-        echo $billing_stat_for_whole_period . PHP_EOL;
-    
     $client_amount_query =
         "SELECT
 	        SUM( i.subtotal ) AS amount
@@ -133,12 +108,14 @@ echo PHP_EOL . '****************************************************************
     $client_amount_result = full_query($client_amount_query);
     
     if ( ! $client_amount_result ) {
-        echo '******** Cron Failed MySQL error *********' . PHP_EOL;
-        die( mysql_error() );
+        echo '******** Client Amount MySQL error ' . mysql_error() . ' *********' . PHP_EOL;
+        continue;
     }
 
     $invoiced_amount = mysql_fetch_assoc($client_amount_result);
     
+// debug 
+    echo 'Total Cost              ' . $total_cost . PHP_EOL;    
 // debug    
     echo 'Total Invoices Amount   ' . $invoiced_amount['amount'] . PHP_EOL;  
     

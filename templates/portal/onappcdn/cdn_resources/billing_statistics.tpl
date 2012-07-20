@@ -11,11 +11,15 @@
 {/if}
 
 <div class="contentbox">
-      <a title="{$LANG.onappcdnresources}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}">{$LANG.onappcdnresources}</a>
+      <a title="{$LANG.onappcdnresourceslist}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}">{$LANG.onappcdnresourceslist}</a>
+    | <a title="{$LANG.onappcdninstructionssettings}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=details&id={$id}&resource_id={$resource_id}">{$LANG.onappcdninstructionssettings}</a>
+    | <a title="{$LANG.onappcdnadvanceddetails}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=advanced_details&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnadvanceddetails}</a>
+    | <a title="{$LANG.onappcdnprefetch}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=prefetch&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnprefetch}</a>
+    | <a title="{$LANG.onappcdnpurge}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=purge&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnpurge}</a>
     | <strong>{$LANG.onappcdnbillingstatistics}</strong>
 </div>
 <h2>{$_LANG.onappcdnbillingstatistics}</h2>
-<p>{$_LANG.onappcdnbillingstatisticsinfo}</p>
+<p>{$_LANG.onappcdnbandwidthstatisticsinfo}</p>
 
 {if $statistics|count}
     {$pagination} <div class="items_per_page"> {$items_per_page}</div>
@@ -24,24 +28,21 @@
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%" class="data">
     <tr>
-        <th id="cdntabledate">{$_LANG.onappcdndate}</th>
-        <th>{$_LANG.onappcdnresource}</th>
-        <th id="cdntabletraffic">{$_LANG.onappcdntraffic}</th>
-        <th id="cdntablepricebc">{$_LANG.onappcdnbasecurrencypricepergb}</th>
-        <th id="cdntablecurrencyrate">{$_LANG.onappcdncurrencyrate}</th>
-        <th id="cdntableprice">{$_LANG.onappcdnpricepergb}</th>
-        <th id="cdntablecost">{$_LANG.onappcdncost}</th>
+        <th>{$_LANG.onappcdndate}</th>
+        <th>{$_LANG.onappcdnedgegroup}</th>
+        <th>{$_LANG.onappcdntraffic}</th>
+        <th>{$_LANG.onappcdncurrencyrate}</th>
+        <th>{$_LANG.onappcdncost}</th>
     </tr>
     {if $statistics|count}
         {foreach from=$statistics item=statistic}
+            
         <tr>
-            <td>{$statistic.created_at}</td>
-            <td>{$statistic.cdn_hostname}</td>
-            <td>{$statistic.traffic} MB</td>
-            <td> {$statistic.price}</td>
+            <td>{$statistic.stat_time}</td>
+            <td>{$statistic.edge_group_label}</td>
+            <td>{$statistic.traffic*1024} MB</td>
             <td>{$statistic.currency_rate}</td>
-            <td>{$whmcs_client_details.currencyprefix} {$statistic.localprice} {$whmcs_client_details.currencycode}</td> 
-            <td>{$whmcs_client_details.currencyprefix} {$statistic.cost} {$whmcs_client_details.currencycode}</td>
+            <td>{$statistic.cost|round:7}</td>
         </tr>
         {/foreach}
 
@@ -51,17 +52,11 @@
             </tr>
     {/if}
 
+
 </table>
 {if $statistics|count}
     {$pagination}
 {/if}
 <br /><br />
-<h5>{$_LANG.onappcdntaxesnottakeninacount}</h5>
 
-<pre>
-{$_LANG.onappcdntotalamount}:           <b> {$whmcs_client_details.currencyprefix} {$total} {$whmcs_client_details.currencycode}</b>
-{$_LANG.onappcdnpaidinvoicesamount}:   <b> {$whmcs_client_details.currencyprefix} {$invoices_data.paid} {$whmcs_client_details.currencycode}</b>
-{$_LANG.onappcdnunpaidinvoicesamount}: <b> {$whmcs_client_details.currencyprefix} {$invoices_data.unpaid} {$whmcs_client_details.currencycode}</b>
-{$_LANG.onappcdnnotinvoicedamount}:    <b> {$whmcs_client_details.currencyprefix} {$not_invoiced_amount} {$whmcs_client_details.currencycode}</b>
-</pre>
 

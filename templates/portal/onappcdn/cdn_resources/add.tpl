@@ -412,14 +412,15 @@ $('#passwords_table').append( passwords_html )
 {foreach item=group from=$edge_group_baseresources}
 
     <tr>
-        <td>
-            <b>{$group.label}</b> <br />
+            <td valign="top">
+                <b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} <br />
+                
                 {foreach item=location from=$group.locations}
-                    {$location->_city}, {$location->_country}    <br />
+                    {$location->_city|ucfirst}, {$location->_country}    <br />
                 {/foreach}
-        </td>
+            </td> 
         <td>
-            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" {if $group.id|in_array:$session_resource.edge_group_ids}checked{/if}/>
+            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" {if isset($session_resource.edge_group_ids) }{if $group.id|in_array:$session_resource.edge_group_ids}checked{/if}{/if}/>
         </td>
     </tr>
 

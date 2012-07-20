@@ -370,7 +370,7 @@ $('#passwords_table').append( passwords_html )
 
     <tr>
         <td>
-             <b>{$group.label}</b> <br />
+             <b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} <br />
                 {foreach item=location from=$group.locations}
                     {$location->_city}, {$location->_country}    <br />
                 {/foreach}

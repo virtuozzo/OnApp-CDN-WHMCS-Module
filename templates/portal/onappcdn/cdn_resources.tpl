@@ -21,7 +21,7 @@
 {else}
 <div class="contentbox">
       <strong>{$LANG.onappcdnresources}</strong>
-      | <a title="{$LANG.onappcdnbillingstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=billing_statistics&id={$id}">{$LANG.onappcdnbillingstatistics}</a>
+      | <a title="{$LANG.onappcdntotalbillingstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=total_billing_statistics&id={$id}">{$LANG.onappcdntotalbillingstatistics}</a>
 </div>
 
 <h2>{$_LANG.onappcdnresources}</h2>

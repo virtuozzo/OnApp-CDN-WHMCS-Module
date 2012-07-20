@@ -14,325 +14,238 @@ require_once ROOT . "includes/functions.php";
 require_once ROOT . "includes/clientareafunctions.php";
 require_once ROOT . "includes/wrapper/OnAppInit.php";
 
-
-if( file_exists( dirname( __FILE__ ) . '/bandwidth.sql' ) ) {
-    runSQL();
+if ( $argv[1] == '--fullupdate'  ) {
+    new Cron_Job( true );
+    
+} else {
+    new Cron_Job();
 }
 
-update_schema();
-
-$query = "
-    SELECT
-        h.userid,
-        h.domain,
-        c.email               as whmcsclientemail,
-        s.hostname,
-        s.ipaddress,
-        s.id                  as serverid,
-        onappc.onapp_user_id,
-        onappc.email          as username,
-        onappc.password,
-        h.id                  as hostingid,
-        curr.rate             as currency_rate,
-        p.configoption6       as price
-    FROM
-        tblservers as s
-    LEFT JOIN
-        tblhosting as h
-        ON h.server = s.id
-    LEFT JOIN
-        tblonappcdnclients as onappc
-        ON onappc.service_id = h.id
-    LEFT JOIN
-        tblproducts as p
-        ON h.packageid = p.id
-    LEFT JOIN
-        tblclients as c
-        ON h.userid = c.id
-    LEFT JOIN
-        tblcurrencies as curr
-        ON curr.id = c.currency
-    WHERE
-        s.type = 'onappcdn' AND
-        onappc.onapp_user_id != ''
-";
-
-$result   = full_query( $query );
-$today    = date( 'Y-m-d' );
-$now      = date('Y-m-d H:i:s'); 
-
-echo '<pre>';
-echo PHP_EOL . PHP_EOL . 'CDN Bandwidth CronJob Runs at ' . $now, ' (UTC)', PHP_EOL, PHP_EOL;
-
-while ( $row = mysql_fetch_assoc( $result ) ) {
-// debug
-    echo '*********************************** HOSTING ACCOUNT LINE ******************************************************************' .PHP_EOL .PHP_EOL;
-    print_r($row);
-    echo PHP_EOL;
-
-    $onapp = new OnApp_Factory(
-        ( $row['hostname'] ) ? $row['hostname'] : $row['ipaddress'],
-        $row['username'],
-        $row['password']
-    );
-
-    if ($onapp->getErrorsAsArray()) {
-        print_r($onapp->getErrorsAsArray());
-        echo PHP_EOL;
-        echo 'OnApp Login Error' . PHP_EOL;
-        continue;
+class Cron_Job {
+    private $first_time = false;
+    private $sql_file;
+    private $cron_query = "
+        SELECT
+            h.userid,
+            h.domain,
+            c.email               as whmcsclientemail,
+            s.hostname,
+            s.ipaddress,
+            s.id                  as serverid,
+            onappc.onapp_user_id,
+            onappc.email          as username,
+            onappc.password,
+            h.id                  as hostingid,
+            curr.rate             as currency_rate,
+            p.configoption6       as price
+        FROM
+            tblservers as s
+        LEFT JOIN
+            tblhosting as h
+            ON h.server = s.id
+        LEFT JOIN
+            tblonappcdnclients as onappc
+            ON onappc.service_id = h.id
+        LEFT JOIN
+            tblproducts as p
+            ON h.packageid = p.id
+        LEFT JOIN
+            tblclients as c
+            ON h.userid = c.id
+        LEFT JOIN
+            tblcurrencies as curr
+            ON curr.id = c.currency
+        WHERE
+            s.type = 'onappcdn' AND
+            onappc.onapp_user_id != ''
+    "; 
+    
+    private $max_stat_time_query = "SELECT MAX(stat_time) as stat_time FROM `tblonappcdn_billing`";
+    
+    /**
+     * Class construct
+     * 
+     * @param boolean $full_update  
+     */
+    public function __construct( $full_update = false ) {
+        
+        $this->first_time = $full_update;
+        $this->sql_file = dirname( __FILE__ ) . '/billing.sql';
+        $this->bootstrap();
+        $this->run_cron();
     }
+    
+    /**
+     * Cron bootstrap
+     * 
+     * @return void
+     */
+    private function bootstrap(){
+        $bandwidth_table_exists = ( boolean )mysql_num_rows ( full_query("SHOW TABLES LIKE 'tblonappcdn_bandwidth'") );
+        $billing_table_exists   = ( boolean )mysql_num_rows ( full_query("SHOW TABLES LIKE 'tblonappcdn_billing'") );
 
-    $_resource  = $onapp->factory('CDNResource', true );
-    $resources = $_resource->getList( );
+        if ( $bandwidth_table_exists || ! $billing_table_exists ) {
 
-    if (  $_resource->getErrorsAsArray() ) {
-// debug
-        echo 'Error Loading OnApp_CDNResource Object '  . PHP_EOL;
-        print_r( $_resource->getErrorsAsArray() );
-        echo PHP_EOL;
-        continue;
-//        print_r( $resources);
+            full_query('DROP TABLE IF EXISTS tblonappcdn_bandwidth');
+
+            if( file_exists( $this->sql_file ) ) {
+                $this->runSQLFromFile( $this->sql_file );
+            } else {
+                $this->error( 'Module Install Error:File not found ' . $this->sql_file );
+            }
+
+            $this->first_time = true;
+        }        
     }
+    
+    /**
+     * Run sql form the file
+     * 
+     * @param string $path 
+     */
+    private function runSQLFromFile( $path ) {
+        $sql  = file_get_contents( $path );
+        $sql  = explode( PHP_EOL . PHP_EOL, $sql );
 
-    if ( count( $resources ) < 1 ) {
-// debug
-        echo PHP_EOL . 'This user have no CDN Resources. Skipping' . PHP_EOL . PHP_EOL ;
-        continue;
-    }
+        foreach( $sql as $qry ) {
+            full_query( $qry );
+        }
+    }    
 
-    foreach ( $resources as $resource ) {
-        if ( $resource->_user_id == $row['onapp_user_id'] ){
-            $query = "
-                SELECT
-                    *
-                FROM
-                    tblonappcdn_bandwidth
-                WHERE
-                    aflexi_resource_id = $resource->_aflexi_resource_id
-                ORDER BY
-                    created_at
-                DESC LIMIT 1
-            ";
+    /**
+     * Run cron
+     * 
+     * @return void 
+     */
+    private function run_cron(){
+        $today = date('Y-m-d');
+        $tomorrow = date('Y-m-d', strtotime( $today ) + 86400 );
+        
+        $result = full_query( $this->cron_query );
+        
+        if ( ! $result ){
+            $this->error('Main query error: ' . mysql_error() );
+        }
+        
+        if ( mysql_num_rows($result) < 1 ) {
+            $this->error( 'No active CDN resources exiting..' );
+        }
+        
+        while ( $row = mysql_fetch_assoc( $result ) ) {
+            
+            $this->debug('****************************************************** H O S T I N G   L I N E ********************************************'); 
+            
+            $onapp = new OnApp_Factory(
+                ( $row['hostname'] ) ? $row['hostname'] : $row['ipaddress'],
+                $row['username'],
+                $row['password']
+            ); 
+            
+            if ( $onapp->getErrorsAsArray() ) {
+                $this->debug( 'OnApp Login Error' . PHP_EOL . print_r( $onapp->getErrorsAsArray( ) ) );
+                continue;
+            }            
+            
+            $_resource  = $onapp->factory('CDNResource', true );
+            $resources = $_resource->getList( );
 
-// debug
-            echo $query . PHP_EOL;
-
-            $result_bw = full_query( $query );
-
-            $row_bw    = mysql_fetch_assoc( $result_bw );
-
-            if ( ! $result_bw ) {
-// debug
-                echo 'ERROR selecting last statistics query' . mysql_error() . PHP_EOL;
+            if (  $_resource->getErrorsAsArray() ) {
+                $this->debug( 'Error Loading OnApp_CDNResource Object '  . PHP_EOL . print_r( $_resource->getErrorsAsArray() ));
                 continue;
             }
 
-            if ( ! $row_bw['hosting_id'] ) {
-// debug ///////////////////////////////////////////////////////////////////////////////////////////
-                echo 'No records about this resource in database yet' . PHP_EOL;
-
-                onappcdn_update_bandwidth_statistics( '0000-00-00', $resource, $_bw, $row, $onapp );
+            if ( count( $resources ) < 1 ) {
+                $this->debug('This user have no CDN Resources. Skipping' . PHP_EOL );
+                continue;
             }
-            else {
-// debug //////////////////////////////////////////////////////////////////////////////////////////////////////////
-                echo 'There are some records in database. Here is the last one' . PHP_EOL;
-                print_r( $row_bw ); echo PHP_EOL;
+            
+            foreach ( $resources as $resource ) {
+                
+                $bs = $onapp->factory('CDNResource_BillingStatistic', true );
 
-                if ( $row_bw['created_at'] == $today ) {
-// debug
-                    echo 'Cron was already running today. Updating todays bandwidth' . PHP_EOL;
-
-                    onappcdn_update_bandwidth_statistics( $today, $resource, $_bw, $row, $onapp );
+                $this->debug( $this->max_stat_time_query );
+                $max_result = full_query( $this->max_stat_time_query );
+                
+                if ( ! $max_result ) {
+                    $this->debug( 'Max Result Query Error: ' . mysql_error() );
+                    continue;
+                } elseif ( mysql_num_rows($max_result) < 1 ){
+                    $this->debug('Billing Table is Empty, launch fullupdate');
+                    $this->first_time = true;
+                } else { 
+                    $max_row = mysql_fetch_assoc( $max_result );
+                    $this->debug( print_r( $max_row['stat_time'] ) );
+                }               
+                
+                if ( $this->first_time ){
+                    $_bs = $bs->getList( $resource->_id, array( 'per_page' => 'all' ) );
+                } else {
+                   
+                    $_bs = $bs->getList( 
+                            $resource->_id, 
+                            array( 
+                                'per_page' => 'all',
+                                'period[startdate]' => date('Y-m-d H:i:s', strtotime( $max_row['stat_time'] ) - 7200 ),
+                                'period[enddate]'   => $tomorrow,
+                            ) );
                 }
-                else {
-// debug
-                    echo 'It\'s the first time Cron is running today. Updating bandwidth from the last time till today' . PHP_EOL;
+                
+                $this->debug( print_r($bs->getResponse()) );
 
-                    onappcdn_update_bandwidth_statistics( $row_bw['created_at'], $resource, $_bw, $row, $onapp );
-
-                }
-            }
-        }    
-    }
-}
-
-function onappcdn_update_bandwidth_statistics( $start, $resource, $_bw, $row, $onapp ) {
-    global      $today;
-    $tomorrow = date('Y-m-d', strtotime( $today ) + 86400 );
-    
-    $users = $onapp->factory('User');
-    $user = $users->load( $resource->_user_id );
-    
-    $_bw = $onapp->factory('CDNResource_Bandwidth', true);
-    
-    $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
-
-    $baseresources = $baseresource->getList( $user->_billing_plan_id );
-
-    $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
-
-    $edge_group_baseresources = array();
-    
-    $edge_group_info = array();
-    foreach ( $baseresources as $edge_group ) {
-        if ( $edge_group->_resource_name == 'edge_group' ) {
-            $edge_group_info[$edge_group->_target_id]['price'] = round( $edge_group->_prices->_price * $row[currency_rate], 2 );
-            $edge_group_info[$edge_group->_target_id]['edge_group_id'] = $edge_group->_target_id;
-            $edge_group_info[$edge_group->_target_id]['billing_plan_resource_id'] = $edge_group->_id;
-        }
-    }
-    
-//    print('<pre>');
-//    print_r($available_edge_groups->getList(  ));
-//    die();
-    
-//    print('<pre>');
-//    print_r($edge_group_info);
-//    die();
-
-    foreach ( $available_edge_groups->getList(  ) as $group ) {
-        if ( array_key_exists( $group->_id, $edge_group_info ) ) {
-            $edge_group_baseresources[$edge_group_info[$group->_id]['edge_group_id']] ['price'] = $edge_group_info[$group->_id]['price'];
-            $edge_group_baseresources[$edge_group_info[$group->_id]['edge_group_id']] ['billing_plan_resource_id'] = $edge_group_info[$group->_id]['billing_plan_resource_id'];
-//            $location_ids = array();
-            foreach ( $group->_edge_group_locations as $location ){
-                $edge_group_baseresources[ $edge_group_info[$group->_id]['edge_group_id'] ]['location_ids'][] = $location->_aflexi_location_id;
+                foreach ( $_bs as $_obj ) {
+                    $replace_query = "
+                        REPLACE INTO
+                            tblonappcdn_billing(
+                                cost,
+                                edge_group_id,
+                                edge_group_label,
+                                stat_time,
+                                traffic,
+                                cdn_resource_id,
+                                hosting_id,
+                                currency_rate
+                            )
+                            VALUES (
+                                '$_obj->_cost',
+                                $_obj->_edge_group_id,
+                                '$_obj->_edge_group_label',
+                                '$_obj->_stat_time',
+                                '$_obj->_value',
+                                $resource->_id,
+                                $row[hostingid],
+                                $row[currency_rate]
+                            )
+                    ";
+                    
+                    $this->debug( $replace_query );
+                    
+                    $replace_result = full_query( $replace_query );
+                    
+                    if ( ! $replace_result ) {
+                        $this->debug( 'Replace error: ' . mysql_error());
+                    }
+                }                 
             }
         }
     }
+
+    /**
+     * Error message and exit 
+     * 
+     * @param string $message 
+     */
+    private function error( $message ) {
+        echo PHP_EOL . $message . PHP_EOL ;
+        exit();
+    }
     
-    foreach ( $edge_group_baseresources as $edge_group_id => $edge_group ) {    
-
-    // debug    
-        echo 'Geting data from OnApp:   ' . PHP_EOL;
-        echo '( start )                 ' . $start . PHP_EOL;
-        echo '( end )                   ' . $tomorrow . PHP_EOL;
-        echo '( resource_id )           ' . $resource->_id . PHP_EOL;
-        echo '( resource_aflexi_id )    ' . $resource->_aflexi_resource_id . PHP_EOL . PHP_EOL;
-        echo '( location ids )   ';
-        foreach ( $edge_group['location_ids'] as $location_id ) {
-            echo ' '. $location_id . ',';
-
-        } 
-        
-        $url_args = array(
-            'start'         => $start,
-            'end'           => $tomorrow,
-            'resource_type' => 'resource',
-            'resources[]'   => $resource->_aflexi_resource_id,
-            'type'          => 'GB',
-            'locations'     => $edge_group['location_ids'],        
-        );
-        
-        $bw = $_bw->getList($url_args);
-        
-        print('<pre>');
-        print_r($_bw);
-
-        foreach ($bw as $stat) {
-            $date       = substr($stat->_date, 0, 10);
-            $non_cached = $stat->_non_cached;
-            $cached     = $stat->_cached;
-    // debug
-            echo '( non_cached )     ' . $non_cached . PHP_EOL;
-            echo '( cached )         ' . $cached . PHP_EOL;
-            echo '( created_at )     ' . $date . PHP_EOL;
-            echo '( cdn_hostname )   ' . $resource->_cdn_hostname . PHP_EOL;
-            echo '( edge_group_id )  ' . $edge_group_id . PHP_EOL . PHP_EOL;
-
-            $query = "
-                REPLACE INTO
-                    tblonappcdn_bandwidth(
-                        created_at,
-                        hosting_id,
-                        cached,
-                        non_cached,
-                        aflexi_resource_id,
-                        cdn_hostname,
-                        resource_id,
-                        price,
-                        currency_rate,
-                        edge_group_id,
-                        billing_plan_resource_id
-                    )
-                    VALUES (
-                        '$date',
-                        $row[hostingid],
-                        $cached,
-                        $non_cached,
-                        $resource->_aflexi_resource_id,
-                        '$resource->_cdn_hostname',
-                        $resource->_id,
-                        $edge_group[price],
-                        $row[currency_rate],
-                        $edge_group_id,
-                        $edge_group[billing_plan_resource_id]
-                    )
-            ";
-    // debug
-            echo $query . PHP_EOL;
-
-            $update_result = full_query($query);
-
-    // debug
-            if (!$update_result) {
-                echo 'REPLACE failed ' . PHP_EOL . mysql_error() . PHP_EOL;
-            }
-    // debug
-            echo '( REPLACE Result ) ';  var_dump($update_result) . PHP_EOL;
-        } 
-
+    /**
+     * Debug message
+     * 
+     * @param string $message 
+     */
+    private function debug( $message ){
+        echo PHP_EOL . $message . PHP_EOL . PHP_EOL;
     }
-
+    
 }
-
-function runSQL() {
-	$file = dirname( __FILE__ ) . '/bandwidth.sql';
-	$sql  = file_get_contents( $file );
-	$sql  = explode( PHP_EOL . PHP_EOL, $sql );
-
-	foreach( $sql as $qry ) {
-		full_query( $qry );
-	}
-}
-
-function update_schema() {
-// debug
-    $query = 'SHOW COLUMNS FROM tblonappcdn_bandwidth';
-    if ( ! $result = full_query( $query ) ) {
-        die(mysql_error());
-    }
-
-    while ( $field_rows = mysql_fetch_assoc($result) ) {
-        $fields[] = $field_rows['Field'];
-    }
-
-    if ( ! in_array( 'edge_group_id', $fields ) ) {
-// debug         
-        echo 'Updating schema, delete all records from tblonappcdn_bandwidth, adding edge_group_id field ';        
-        
-        $query = 'DELETE FROM `tblonappcdn_bandwidth`';
-        if ( ! full_query( $query )) {
-// debug 
-            echo 'Delete records error '. mysql_error();
-        }
-        
-        
-        $query = 'ALTER TABLE  `tblonappcdn_bandwidth` ADD  `edge_group_id` INT NOT NULL';
-        if ( ! full_query( $query )) {
-// debug
-            echo 'Adding edge_group_id field failed '. mysql_error();
-        }
-        
-        $query = 'ALTER TABLE  `tblonappcdn_bandwidth` ADD  `billing_plan_resource_id` INT NOT NULL';
-        if ( ! full_query( $query )) {
-// debug
-            echo 'Adding billing_plan_resource_id field failed '. mysql_error();
-        }        
-    }    
-}
-
-
-echo 'CDN Billing CronJob was Finished Successfully', PHP_EOL;
-

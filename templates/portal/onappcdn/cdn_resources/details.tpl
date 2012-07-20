@@ -18,7 +18,7 @@
     | <a title="{$LANG.onappcdnadvanceddetails}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=advanced_details&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnadvanceddetails}</a>
     | <a title="{$LANG.onappcdnprefetch}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=prefetch&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnprefetch}</a>
     | <a title="{$LANG.onappcdnpurge}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=purge&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnpurge}</a>
-    | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnbwstatistics}</a>
+    | <a title="{$LANG.onappcdnbillingstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=billing_statistics&id={$id}&resource_id={$resource_id}">{$LANG.onappcdnbillingstatistics}</a>
 </div>
 
 <div class="description">
@@ -62,10 +62,10 @@
     
     {foreach item=group from=$edge_group_baseresources}
             <tr>
-                <td valign="top"><b>{$group.label}</b></td>
+                <td valign="top"><b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} </td>
                 <td valign="top">   
                     {foreach item=location from=$group.locations}
-                        {$location->_city}, {$location->_country}    <br />
+                        {$location->_city|ucfirst}, {$location->_country}    <br />
                     {/foreach}
                 </td>
             </tr>
