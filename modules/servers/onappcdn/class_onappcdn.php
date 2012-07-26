@@ -114,7 +114,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
+            return 'Getting OnApp Version Error: ' . $onapp->getErrorsAsString(', ');
         } else {
             $sql = "SELECT
                 tblproducts.*
@@ -155,8 +155,8 @@ class OnAppCDN {
 
             $user->save();
 
-            if( $user->error )
-                return implode( "\n", $user->error );
+            if(  $user->getErrorsAsArray() )
+                return $user->getErrorsAsString(', ');
             else {
                 $user_id = $user->_id;
 
@@ -208,7 +208,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
+            return 'Getting OnApp Version Error: ' . $onapp->getErrorsAsArray(', ');
         } else {
             $user = $this->get_user();
 
@@ -220,8 +220,8 @@ class OnAppCDN {
 
             $onapp_user->delete();
 
-            if( $onapp_user->error )
-                return implode( "\n", $onapp_user->error );
+            if( $onapp_user->getErrorsAsArray() )
+                return $onapp_user->getErrorsAsString(', ');
             else {
                 $sql = "DELETE FROM tblonappcdnclients WHERE service_id = " . $this->serviceid;
 
@@ -247,7 +247,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
+            return 'Getting OnApp Version Error: ' . $onapp->getErrorsAsString(', ');
         } else {
             $user = $this->get_user();
 
@@ -260,8 +260,8 @@ class OnAppCDN {
 
             $onapp_user->suspend();
 
-            if( $onapp_user->error )
-                return implode( "\n", $onapp_user->error );
+            if( $onapp_user->getErrorsAsArray() )
+                return $onapp_user->getErrorsAsString(', ');
             else
                 return 'success';
         }
@@ -280,7 +280,7 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return '<b>Getting OnApp Version Error: </b>' . implode("\n", $onapp->getErrorsAsArray());
+            return 'Getting OnApp Version Error: ' . $onapp->getErrorsAsString(', ');
         } else {
             $user = $this->get_user();
 
@@ -293,8 +293,8 @@ class OnAppCDN {
 
             $onapp_user->activate_user();
 
-            if( $onapp_user->error )
-                return implode( "\n", $onapp_user->error );
+            if( $onapp_user->getErrorsAsArray() )
+                return $onapp_user->getErrorsAsString(', ');
             else
                 return 'success';
         }
@@ -538,7 +538,7 @@ WHERE
         );
         
         if ( $this->onapp->getErrorsAsArray() ) {
-            die('<b>Get OnApp Version Permission Error: </b>' . implode( PHP_EOL , $this->onapp->getErrorsAsArray() )); 
+            die('<b>Get OnApp Version Permission Error: </b>' . PHP_EOL .  getErrorsAsString() ); 
         }
         
         return $this->onapp;
@@ -583,7 +583,7 @@ WHERE
         $list = $resources->getList();
         
         if ( $resources->getErrorsAsArray() ) {
-            die('<b>Getting Resource Error: </b>' . implode( PHP_EOL , $resources->getErrorsAsArray() ) );
+            die('<b>Getting Resource Error: </b>' . PHP_EOL . $resources->getErrorsAsString()  );
         }         
         
         $resource_ids = array();

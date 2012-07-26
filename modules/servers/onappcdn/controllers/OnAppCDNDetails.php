@@ -74,10 +74,6 @@ class OnAppCDNDetails extends OnAppCDN {
             unset($_SESSION['errors']);
         }
         
-//        print('<pre>');
-//        print_r($edge_group_baseresources);
-//        die();
-
         $this->show_template(
             'onappcdn/cdn_resources/details',
             array(

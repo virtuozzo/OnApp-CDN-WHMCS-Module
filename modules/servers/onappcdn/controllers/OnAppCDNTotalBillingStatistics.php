@@ -105,16 +105,6 @@ class OnAppCDNTotalBillingStatistics extends OnAppCDN {
         
         $not_invoiced = round( $total_row['total'] - $invoices_data['paid'] - $invoices_data['unpaid'], 2);
         
-//        print('<pre>');
-//        print_r($not_invoiced);
-//        die();
-//        print('<pre>');
-//        print_r($resources);
-//        die();
-        
-//        print('<pre>');
-//        print_r($rows);
-//        die();
         $this->show_template(
             'onappcdn/cdn_resources/total_billing_statistics',
             array(

@@ -128,10 +128,6 @@ class OnAppCDNResources extends OnAppCDN {
 
             $resource   = $_resource->load( $resource_id );
             
-//            print('<pre>');
-//            print_r($resource);
-//            die();
-
             $edge_group_ids = array();
             foreach( $resource->_edge_groups as $group ) {
                 $edge_group_ids[] = $group->_id;
@@ -237,7 +233,7 @@ class OnAppCDNResources extends OnAppCDN {
             $_resource->save();
             
             if ( $_resource->getErrorsAsArray() )
-                $errors[] = '<b>Edit CDN Resource Error: </b>' . implode( PHP_EOL , $_resource->getErrorsAsArray() );
+                $errors[] = '<b>Edit CDN Resource Error: </br >' . $_resource->getErrorsAsString();
 
             if ( ! $errors ) {
                 $messages = $_LANG['onappcdnresourceupdatedsuccessfully'];
@@ -274,7 +270,7 @@ class OnAppCDNResources extends OnAppCDN {
         $resource->delete();
 
         if ( $resource->getErrorsAsArray() )
-            $errors[] = '<b>Delete CDN Resource Error: </b>' . implode( PHP_EOL , $resource->getErrorsAsArray() );
+            $errors[] = '<b>Delete CDN Resource Error: </b>' . $resource->getErrorsAsString();
 
         if ( ! $errors )
             $messages[] = $_LANG['onappcdnresourcedeletesuccessfully'];
@@ -307,14 +303,14 @@ class OnAppCDNResources extends OnAppCDN {
             $onappuser     = $onappusers->load( $whmcsuser['onapp_user_id'] );
             
             if ( $onappusers->getErrorsAsArray() )
-                die( '<b>Getting User Error</b> - ' . implode( PHP_EOL , $onappusers->getErrorsAsArray() ));            
+                die( '<b>Getting User Error</b> - ' . $onappusers->getErrorsAsString() );            
             
             $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
 
             $baseresources = $baseresource->getList( $onappuser->_billing_plan_id );
             
             if ( $baseresource->getErrorsAsArray() )
-                $errors[] = '<b>Getting Edge Groups Error</b> - '. implode( PHP_EOL , $baseresource->getErrorsAsArray() );
+                $errors[] = '<b>Getting Edge Groups Error</b> - '. $baseresource->getErrorsAsString();
 
             $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
  
@@ -425,7 +421,7 @@ class OnAppCDNResources extends OnAppCDN {
 //            print_r($_resource);
 //            die();        
             if ( $_resource->getErrorsAsArray() )
-                $errors[] = '<b>Create CDN Resource Error: </b>' . implode( PHP_EOL , $_resource->getErrorsAsArray() );
+                $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
 
             if ( ! $errors ) {
                 $messages = $_LANG['onappcdnresourcecreatedsuccessfully'];

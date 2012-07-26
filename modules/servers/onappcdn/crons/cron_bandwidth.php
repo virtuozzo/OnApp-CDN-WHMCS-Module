@@ -142,7 +142,7 @@ class Cron_Job {
             ); 
             
             if ( $onapp->getErrorsAsArray() ) {
-                $this->debug( 'OnApp Login Error' . PHP_EOL . print_r( $onapp->getErrorsAsArray( ) ) );
+                $this->debug( 'OnApp Login Error' . PHP_EOL . $onapp->getErrorsAsString( ) );
                 continue;
             }            
             
@@ -150,7 +150,7 @@ class Cron_Job {
             $resources = $_resource->getList( );
 
             if (  $_resource->getErrorsAsArray() ) {
-                $this->debug( 'Error Loading OnApp_CDNResource Object '  . PHP_EOL . print_r( $_resource->getErrorsAsArray() ));
+                $this->debug( 'Error Loading OnApp_CDNResource Object '  . PHP_EOL . $_resource->getErrorsAsString() );
                 continue;
             }
 

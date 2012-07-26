@@ -76,7 +76,7 @@ class OnAppCDNPrefetch extends OnAppCDN {
         $cdn_resource->prefetch( $resource_id, $prefetch_paths );
 
         if ( $cdn_resource->getErrorsAsArray() )
-            $errors[] = '<b>Prefetch Error: </b>' . implode( PHP_EOL , $cdn_resource->getErrorsAsArray() );
+            $errors[] = '<b>Prefetch Error: </b>' . $cdn_resource->getErrorsAsString();
 
         $url = ONAPPCDN_FILE_NAME . '?page=prefetch&id=' . parent::get_value('id') . '&resource_id=' . $resource_id;
         
