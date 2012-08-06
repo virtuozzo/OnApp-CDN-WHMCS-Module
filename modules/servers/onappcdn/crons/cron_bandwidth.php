@@ -147,7 +147,14 @@ class Cron_Job {
             }            
             
             $_resource  = $onapp->factory('CDNResource', true );
-            $resources = $_resource->getList( );
+            $_resources = $_resource->getList( );
+            
+            $resources = array();
+            foreach( $_resources as $resource ){
+                if( $resource->_user_id == $row['onapp_user_id'] ){
+                    $resources[] = $resource;
+                }
+            }
 
             if (  $_resource->getErrorsAsArray() ) {
                 $this->debug( 'Error Loading OnApp_CDNResource Object '  . PHP_EOL . $_resource->getErrorsAsString() );
