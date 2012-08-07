@@ -84,6 +84,7 @@ class OnAppCDNDetails extends OnAppCDN {
                 'resource'                  =>  $resource,
                 'errors'                    =>  implode( PHP_EOL, $errors ),
                 'messages'                  =>  implode( PHP_EOL, $messages ),
+                'ssl_mode'                  =>  ( boolean )strpos( $resource->_cdn_hostname, 'worldssl' )
             )
         );
     }

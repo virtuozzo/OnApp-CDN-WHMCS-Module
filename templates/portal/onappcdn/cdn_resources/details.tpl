@@ -50,11 +50,18 @@
 
 <h2>{$_LANG.onappcdndnssettings}</h2>
 
+{if $ssl_mode == false}
+
 <h5>{$_LANG.onappcdndnssettingsinfo} </h5>
 <b>
    {$resource->_cdn_hostname} IN CNAME {$resource->_aflexi_resource_id}.r.worldcdn.net
 </b>
-
+{else}   
+  <h5>{$_LANG.onappcdndnssettingsinfossl} </h5>
+<b>
+   {$resource->_cdn_hostname} 
+</b>  
+{/if}
 
 <h2>{$_LANG.onappcdnedgegroups}</h2>
 

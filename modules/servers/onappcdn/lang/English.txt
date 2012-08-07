@@ -61,6 +61,7 @@ $_LANG["onappcdnprefetchinfo1"] = "Specify paths on the CDN Resource (not the or
 $_LANG["onappcdnpathtoprefetch"] = "Paths to Prefetch";
 $_LANG["onappcdnprefetchsuccessfully"] = "The prefetch request was successfully issued";
 $_LANG["onappcdndnssettingsinfo"] = "Add a CNAME for the CDN Hostname which can then be used to view the contents.";
+$_LANG["onappcdndnssettingsinfossl"] = "CDN Hostname which can then be used to view the contents.";
 $_LANG["onappcdnresourceadvanceddetails"] = "Advanced CDN Resource Details";
 $_LANG["onappcdnresourceadvancedstatus"] = "Advanced CDN Status";
 $_LANG["onappcdnresourceadvancedstatusinfo"] = "The list of settings specified as advanced when you created a CDN Resource.";
