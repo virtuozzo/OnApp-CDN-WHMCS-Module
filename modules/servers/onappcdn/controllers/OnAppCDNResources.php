@@ -4,9 +4,9 @@
  * 
  */
 
-error_reporting( E_ALL );
-ini_set( 'display_errors', 1 );
-ini_set('html_errors', 1);
+//error_reporting( E_ALL );
+//ini_set( 'display_errors', 1 );
+//ini_set('html_errors', 1);
 class OnAppCDNResources extends OnAppCDN {
 
     public function __construct () {
@@ -141,7 +141,7 @@ class OnAppCDNResources extends OnAppCDN {
 
             $advanced  = $onapp->factory('CDNResource_Advanced', true );
             $advanced_details = $advanced->getList( $resource_id );
-
+            
             $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
 
             $edge_group_baseresources = array();
@@ -188,8 +188,9 @@ class OnAppCDNResources extends OnAppCDN {
                     'id'                        =>  parent::get_value('id'),
                     'whmcs_client_details'      =>  $this->getWhmcsClientDetails(),
                     'edge_group_baseresources'  =>  $edge_group_baseresources,
-                    'errors'            =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
-                    'messages'          =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
+                    'errors'                    =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
+                    'messages'                  =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
+                    'ssl_on'                    =>  ( boolean )strpos( $resource->_cdn_hostname, 'worldssl' ),
                 )
             );
         }
@@ -200,7 +201,7 @@ class OnAppCDNResources extends OnAppCDN {
                 foreach( $resource as $key => $field ) {
                     if ( $key != 'cdn_hostname'       &&
                          $key != 'origin'             &&
-                         $key != 'type'               &&
+                         $key != 'resource_type'      &&
                          $key != 'edge_group_ids'     &&
                          $key != 'id'
                     ){
@@ -268,7 +269,7 @@ class OnAppCDNResources extends OnAppCDN {
         $resource      = $onapp->factory('CDNResource', true );
         $resource->_id = parent::get_value('resource_id');
         $resource->delete();
-
+        
         if ( $resource->getErrorsAsArray() )
             $errors[] = '<b>Delete CDN Resource Error: </b>' . $resource->getErrorsAsString();
 
@@ -375,8 +376,10 @@ class OnAppCDNResources extends OnAppCDN {
                 foreach( $resource as $key => $field ) {
                     if ( $key != 'cdn_hostname'       &&
                          $key != 'origin'             &&
-                         $key != 'type'               &&
-                         $key != 'edge_group_ids' 
+                         $key != 'resource_type'      &&
+                         $key != 'edge_group_ids'     &&
+                         $key != 'ftp_password'       &&
+                         $key != 'ssl_on'   
                     ){
                         unset( $resource[$key] );
                     }
@@ -406,6 +409,10 @@ class OnAppCDNResources extends OnAppCDN {
             }
 
             $_resource      = $onapp->factory('CDNResource', true );
+            
+            if ( $resource['ssl_on'] == '1' ) {
+                $resource['cdn_hostname'] .= '.r.worldssl.net';
+            }
 
             foreach( $resource as $key => $value ) {
                 if ( $key != 'advanced_settings' ) {
@@ -415,11 +422,12 @@ class OnAppCDNResources extends OnAppCDN {
                 }
             }
 
-            
             $_resource->save();
+            
 //            print('<pre>');
 //            print_r($_resource);
-//            die();        
+//            die();
+            
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
 
