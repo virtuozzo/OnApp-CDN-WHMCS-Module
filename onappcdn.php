@@ -34,7 +34,7 @@ $pages = array(
     'resources'                  =>  'Resources',
     'details'                    =>  'Details',
     'default'                    =>  'Default',
-    'error'                      =>  'Error'
+    'error'                      =>  'Error',
 );
 
 $action = OnAppCDN::get_value( 'action' );
@@ -49,7 +49,7 @@ $actions = array(
     'total_billing_statistics'   => array(),
     'prefetch'                   => array('prefetch'),
     'purge'                      => array('purge'),
-    'resources'                  => array('enable', 'edit', 'delete', 'add'),
+    'resources'                  => array('enable', 'edit', 'delete', 'add', 'choose_resource_type'),
     'error'                      => array(),
 );
 

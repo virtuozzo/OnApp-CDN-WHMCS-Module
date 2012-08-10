@@ -42,4 +42,3 @@ class OnAppCDNAdvancedDetails extends OnAppCDN {
     }
 
 }
-

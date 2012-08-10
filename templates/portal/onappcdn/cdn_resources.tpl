@@ -63,9 +63,9 @@
     {/if}
 </table>
 
-<form action='{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=add}' method="get">
+<form action='{$smarty.const.ONAPPCDN_FILE_NAME}' method="get">
     <input type="hidden" name="page" value="resources" />
-    <input type="hidden" name="action" value="add" />
+    <input type="hidden" name="action" value="choose_resource_type" />
     <input type="hidden" name="id" value="{$id}" />
     <input type="submit" value="{$_LANG.onappcdnnewresource}" />
 </form>

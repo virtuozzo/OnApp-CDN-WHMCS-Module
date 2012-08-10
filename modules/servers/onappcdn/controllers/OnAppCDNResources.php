@@ -4,9 +4,9 @@
  * 
  */
 
-//error_reporting( E_ALL );
-//ini_set( 'display_errors', 1 );
-//ini_set('html_errors', 1);
+error_reporting( E_ALL );
+ini_set( 'display_errors', 1 );
+ini_set('html_errors', 1);
 class OnAppCDNResources extends OnAppCDN {
 
     public function __construct () {
@@ -210,9 +210,22 @@ class OnAppCDNResources extends OnAppCDN {
                 }
             }
             else {
+// checkboxes
                 if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
                     $resource['url_signing_on'] = 0;
                 }
+                
+                if ( !isset( $resource['mp4_pseudo_on'] ) || is_null( $resource['mp4_pseudo_on'] )  ){
+                    $resource['mp4_pseudo_on'] = 0;
+                }
+                
+                if ( !isset( $resource['flv_pseudo_on'] ) || is_null( $resource['flv_pseudo_on'] )  ){
+                    $resource['flv_pseudo_on'] = 0;
+                } 
+                
+                if ( !isset( $resource['ignore_set_cookie_on'] ) || is_null( $resource['ignore_set_cookie_on'] )  ){
+                    $resource['ignore_set_cookie_on'] = 0;
+                }                 
                 
                 if ( !isset ( $resource['countries']) ){
                     $resource['countries'] = array();
@@ -287,6 +300,7 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages
      */
     protected function add ( $errors = null, $messages = null ) {
+        parent::loadcdn_language();
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
         
@@ -353,9 +367,11 @@ class OnAppCDNResources extends OnAppCDN {
             $passwords_html = $this->generate_passwords_html( $passwords_array );
 
             $countries   = ( ! isset ( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
+            
+            $template = 'onappcdn/cdn_resources/' . parent::get_value('template');
 
             $this->show_template(
-                'onappcdn/cdn_resources/add',
+                $template,
                 array(
                     'id'                        =>  parent::get_value('id'),
                     'resource'                  =>  parent::get_value('resource'),
@@ -424,10 +440,6 @@ class OnAppCDNResources extends OnAppCDN {
 
             $_resource->save();
             
-//            print('<pre>');
-//            print_r($_resource);
-//            die();
-            
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
 
@@ -460,6 +472,40 @@ class OnAppCDNResources extends OnAppCDN {
                     '</tr>' . '\n';
         }
         return $passwords_html;
+    }
+    
+    /**
+     * Show choose CDN resource type page
+     * 
+     * @global mixed $LANG 
+     */
+    protected function choose_resource_type(){
+        parent::loadcdn_language();
+        global $_LANG;
+        
+        $this->show_template(
+            'onappcdn/cdn_resources/choose_resource_type',
+            array(
+                'resource_types' => array(
+                    'HTTP' => array( 
+                        'label'       => 'HTTP', 
+                        'description' => $_LANG['onappcdnhttppullorpushresource'],
+                        'template'    => 'add'
+                    ),
+                    'STREAM_LIVE' => array(
+                        'label'          =>  $_LANG['onappcdnlivestreaming'],
+                        'description'    =>  $_LANG['onappcdnlivestreamingresource'],
+                        'template'       =>  'add_live_streaming_resources',
+                    ),
+                    'STREAM_VOD' => array(
+                        'label'          =>  $_LANG['onappcdnvideoondemand'],
+                        'description'    =>  $_LANG['onappcdnvideoondemandresource'],
+                        'template'       =>  'add_video_on_demand',
+                    ),
+                 ),
+                'id'                     =>  parent::get_value('id'),
+            )
+        );
     }
 }
 
