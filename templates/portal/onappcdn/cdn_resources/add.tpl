@@ -432,7 +432,6 @@ $('#passwords_table').append( passwords_html )
 
 </div>
 
-                    
     <h4>{$_LANG.onappcdnpseudostreaming}</h4> <hr />
 
     <h5>{$_LANG.onappcdnpseudostreaminginfo}</h5>
@@ -502,5 +501,6 @@ $('#passwords_table').append( passwords_html )
 </table>
 <input type="hidden" name="add" value="1" /> <br /> <br />
 <input type="submit" value="{$_LANG.onappcdncreateresource}" />
+<input type="hidden" name="template" value="add" />
 </form>
 <br /><br />

@@ -111,51 +111,15 @@ function in_array(needle, haystack){
         }
     });
 
-// Check Url Signing Url checkbox
+// Check Secure wowza checkbox
  {/literal}
     {if $session_resource.secure_wowza_on eq true}
         secure_wowza_on_checkbox.attr( 'checked', 'checked' ).change()
     {/if}
 {literal}
-// END URL Signing Checkbox //
-/////////////////////////////
-
-// Fill up passwords fields //
-/////////////////////////////
-
-// Check Password checkbox
- {/literal}
-    {if $session_resource.password_on eq true}
-        $('#passwordon_input').attr( 'checked', 'checked' ).change()
-    {/if}
-{literal}
-
+// END Secure wowza Checkbox //
+//////////////////////////////
     
-{/literal}
-  var passwords_html = '{$passwords_html}'
-{literal}
-
-$('#passwords_table tr').eq(1).remove()
-$('#passwords_table').append( passwords_html )
-
-// END Fill up password fields //
-////////////////////////////////
-    var ofselect = $('select[name="resource[resource_type]"]')
-        
-    ofselect.change( function(){
-        var ofinput = $('input#origin_ftppass_field') 
-        var labeltd = ofinput.parent().prev()
-         
-         if ( $(this).val() == 'HTTP_PUSH' ){
-             ofinput.attr('name', 'resource[ftp_password]').val('{/literal}{$session_resource.ftp_password}{literal}')
-             labeltd.html('{/literal}{$LANG.onappcdnftppassword}{literal}')    
-         } else {
-             ofinput.attr('name', 'resource[origin]').val('{/literal}{$session_resource.origin}{literal}')
-             labeltd.html('{/literal}{$LANG.onappcdnorigins}{literal}')    
-         }
-    })
-        
-    ofselect.change()    
 });
 
 </script>
@@ -320,6 +284,9 @@ $('#passwords_table').append( passwords_html )
 {/foreach}
 </table>
 <input type="hidden" name="add" value="1" /> <br /> <br />
+<input type="hidden" name="template" value="add_live_streaming_resources" />
+<input type="hidden" name="resource[resource_type]" value="STREAM_LIVE" />
 <input type="submit" value="{$_LANG.onappcdncreateresource}" />
+
 </form>
 <br /><br />

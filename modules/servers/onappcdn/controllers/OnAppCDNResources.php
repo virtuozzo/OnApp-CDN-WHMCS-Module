@@ -4,9 +4,9 @@
  * 
  */
 
-error_reporting( E_ALL );
-ini_set( 'display_errors', 1 );
-ini_set('html_errors', 1);
+//error_reporting( E_ALL );
+//ini_set( 'display_errors', 1 );
+//ini_set('html_errors', 1);
 class OnAppCDNResources extends OnAppCDN {
 
     public function __construct () {
@@ -300,6 +300,7 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages
      */
     protected function add ( $errors = null, $messages = null ) {
+        
         parent::loadcdn_language();
         global $_LANG;
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
@@ -308,7 +309,6 @@ class OnAppCDNResources extends OnAppCDN {
             unset( $_POST['add'] );
         }
 
-        parent::loadcdn_language(); 
         $onapp = $this->getOnAppInstance();
         
         if ( parent::get_value('add') != 1 ) {
@@ -368,7 +368,7 @@ class OnAppCDNResources extends OnAppCDN {
 
             $countries   = ( ! isset ( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
             
-            $template = 'onappcdn/cdn_resources/' . parent::get_value('template');
+            $template = ( parent::get_value('template') ) ? 'onappcdn/cdn_resources/' . parent::get_value('template') : 'onappcdn/cdn_resources/add';
 
             $this->show_template(
                 $template,
@@ -390,12 +390,13 @@ class OnAppCDNResources extends OnAppCDN {
 
             if ( ! isset ( $resource['advanced_settings'] ) ) {
                 foreach( $resource as $key => $field ) {
-                    if ( $key != 'cdn_hostname'       &&
-                         $key != 'origin'             &&
-                         $key != 'resource_type'      &&
-                         $key != 'edge_group_ids'     &&
-                         $key != 'ftp_password'       &&
-                         $key != 'ssl_on'   
+                    if ( $key != 'cdn_hostname'                      &&
+                         $key != 'origin'                            &&
+                         $key != 'resource_type'                     &&
+                         $key != 'edge_group_ids'                    &&
+                         $key != 'ftp_password'                      &&
+                         $key != 'ssl_on'                            &&
+                         $key != '_cdn_resource_publishing_point'    
                     ){
                         unset( $resource[$key] );
                     }
@@ -406,6 +407,11 @@ class OnAppCDNResources extends OnAppCDN {
                     unset( $resource['ip_access_policy'] );
                     unset( $resource['ip_addresses'] );
                 }
+                if ( $resource['_anti_leech_on'] == 'NONE' ) {
+                    unset( $resource['anti_leech_on'] );
+                    unset( $resource['anti_leech_domains'] );
+                }                
+                
                 if ( $resource['country_access_policy'] == 'NONE' ) {
                     unset( $resource['country_access_policy'] );
                     unset( $resource['countries'] );
@@ -416,14 +422,23 @@ class OnAppCDNResources extends OnAppCDN {
                 }
                 if ( is_null( $resource['url_signing_on'] ) ) {
                     unset( $resource['url_signing_key'] );
+                    
                 }
-
+                if ( is_null( $resource['secure_wowza_on'] ) ) {
+                    unset( $resource['secure_wowza_token'] );
+                    $resource['secure_wowza_on'] = '0';
+                }                
                 if ( is_null( $resource['password_on'] ) ) {
                     unset( $resource['password_unauthorized_html'] );
                     unset( $resource['form_pass'] );
                 }
+                
             }
 
+            
+//            print('<pre>');
+//            print_r($resource);
+//            die();
             $_resource      = $onapp->factory('CDNResource', true );
             
             if ( $resource['ssl_on'] == '1' ) {
@@ -437,8 +452,16 @@ class OnAppCDNResources extends OnAppCDN {
 
                 }
             }
-
+            
+//            print('<pre>');
+//            print_r($_resource);
+//            die();
+            
             $_resource->save();
+            
+            print('<pre>');
+            print_r( $_resource );
+            die();
             
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
@@ -452,7 +475,7 @@ class OnAppCDNResources extends OnAppCDN {
                 $_SESSION['resource'] = $_POST['resource'];
                 $_SESSION['errors'] = implode( PHP_EOL, $errors );
                 
-                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&action=add&id=' . parent::get_value('id') );
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&template=' . parent::get_value('template') . '&action=add&id=' . parent::get_value('id') );
             }
         }
     }
