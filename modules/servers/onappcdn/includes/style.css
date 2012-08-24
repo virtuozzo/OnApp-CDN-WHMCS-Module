@@ -97,5 +97,7 @@ div.items_per_page{
     float:right;
 }
 
+select.multiselect { height: 200px;}
+
 
 /* END Pagination Styles */

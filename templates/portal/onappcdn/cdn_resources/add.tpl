@@ -246,7 +246,7 @@ $('#passwords_table').append( passwords_html )
             
             <select class="selectfield" name="resource[resource_type]">
                 <option value="HTTP_PULL" {if $session_resource.resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
-                <option value="HTTP_PUSH" {if $session_resource.resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>
+                {* <option value="HTTP_PUSH" {if $session_resource.resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option> *}
             </select>
         </td>
     </tr>   
@@ -465,7 +465,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdningnoresetcookie}
             </td>
             <td class="label_width" valign="top">
-                <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[mp4_pseudo_on]" />
+                <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[ignore_set_cookie_on]" />
             </td>
         </tr>
     </table>            

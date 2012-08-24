@@ -160,10 +160,7 @@ class OnAppCDNResources extends OnAppCDN {
                 }
             }
 
-            $countries_ids = array();
-            foreach( $advanced_details[0]->_countries as $country ) {
-                $countries_ids[] = $country->_id;
-            }
+            $countries_ids = ( $advanced_details[0]->_countries ) ? $advanced_details[0]->_countries : array();
 
             $passwords_html = $this->generate_passwords_html( $advanced_details[0]->_passwords );
 
@@ -459,9 +456,9 @@ class OnAppCDNResources extends OnAppCDN {
             
             $_resource->save();
             
-            print('<pre>');
-            print_r( $_resource );
-            die();
+//            print('<pre>');
+//            print_r( $_resource );
+//            die();
             
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();

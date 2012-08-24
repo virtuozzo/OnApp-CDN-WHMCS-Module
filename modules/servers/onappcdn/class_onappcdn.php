@@ -208,17 +208,15 @@ class OnAppCDN {
         if( ! $onapp->_is_auth ) {
             return "Can not login as '".$server['username']."' on '".$server['address'];
         } else if ( $onapp->getErrorsAsArray() ) {
-            return 'Getting OnApp Version Error: ' . $onapp->getErrorsAsArray(', ');
+            return 'Getting OnApp Version Error: ' . $onapp->getErrorsAsString(', ');
         } else {
             $user = $this->get_user();
 
             $onapp_user = $onapp->factory( 'User', true );
 
-            $onapp_user->load($user["onapp_user_id"]);
+            $onapp_user->_id = $user["onapp_user_id"];
 
-            $onapp_user->delete();
-
-            $onapp_user->delete();
+            $onapp_user->delete( 1 );
 
             if( $onapp_user->getErrorsAsArray() )
                 return $onapp_user->getErrorsAsString(', ');
@@ -538,7 +536,7 @@ WHERE
         );
         
         if ( $this->onapp->getErrorsAsArray() ) {
-            die('<b>Get OnApp Version Permission Error: </b>' . PHP_EOL .  getErrorsAsString() ); 
+            die('<b>Get OnApp Version Permission Error: </b>' . PHP_EOL .  $this->onapp->getErrorsAsString() ); 
         }
         
         return $this->onapp;

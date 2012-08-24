@@ -46,8 +46,8 @@
     <tr>
         <td valign="top">{$LANG.onappcdncountryaccess}</td>
         <td>
-            {foreach item=country from=$details->_countries}
-                {$country->_name} <br />
+            {foreach  item=country from=$selected_countries}
+                {$country} <br />
             {/foreach}
         </td>
     </tr>

@@ -12,7 +12,6 @@ $(document).ready(function(){
 
     var advanced_container    = $("#advanced_settings")
     var advanced_checkbox     = $("#advanced_settings_input")
-    var domains               = $('#domains')
     var urlsigning_checkbox   = $('#urlsigning_input')
     var password_fields_tr    = '<tr>' + $('#passwords_table tr').eq(1).html() + '</tr>'
     var passwords_container   = $('#passwords_container')
@@ -89,12 +88,16 @@ $(document).ready(function(){
     advanced_checkbox.change();
 
 // Select countries
-    countries_ids = {/literal}{$countries_ids}{literal}
+    var countries_ids = {/literal}{$countries_ids}{literal}
+        
+        console.log(countries_ids)
 
     if ( countries_ids ) {
         $('#country_access option').each( function(){
-            if ( in_array( this.value, countries_ids ) ) {
-                this.selected = true
+            console.log( $(this).val())
+            if ( in_array( $(this).val(), countries_ids ) ) {
+                
+                $(this).attr('selected', 'true')
             }
         })
     }
@@ -182,7 +185,7 @@ $('#passwords_table').append( passwords_html )
         <td class="label_width" valign="top">
             <select class="selectfield" name="resource[resource_type]" disabled>
                 <option value="HTTP_PULL" {if $resource->_resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
-                <option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>
+                {*<option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>*}
             </select>
         </td>
     </tr>
@@ -265,7 +268,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdncountryaccess}
             </td>
             <td class="label_width" valign="top">
-                <select class="selectfield" id="country_access" name="resource[countries][]" multiple>
+                <select class="selectfield multiselect" id="country_access" name="resource[countries][]" multiple>
                     {include file="$template/onappcdn/cdn_resources/countries_options.tpl"}
                 </select>
             </td>
