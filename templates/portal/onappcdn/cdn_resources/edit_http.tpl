@@ -1,6 +1,13 @@
 {literal}
 <script type="text/javascript">
-    
+
+function in_array(needle, haystack){
+    for(var i=0; i<haystack.length; i++)
+        if(needle == haystack[i])
+            return true;
+    return false;
+}
+  
 $(document).ready(function(){
 
     var advanced_container    = $("#advanced_settings")
@@ -10,14 +17,8 @@ $(document).ready(function(){
     var passwords_container   = $('#passwords_container')
 
 
-function in_array(needle, haystack){
-    for(var i=0; i<haystack.length; i++)
-        if(needle == haystack[i])
-            return true;
-    return false;
-}
-// Password Container Checkbox //
-////////////////////////////////
+// Advanced Settings Checkbox //
+///////////////////////////////
 
     passwords_container.hide()
 
@@ -29,15 +30,12 @@ function in_array(needle, haystack){
             passwords_container.hide()
         }
     });
-// END Password Container //
-///////////////////////////
+// END Advanced Settings Checkbox //
+///////////////////////////////////
 
     $('#plus_user').click(function() {
         $('#passwords_table').append( password_fields_tr )
     })
-
-// CSS cosmetics
-//    $('table tbody tr td:even').attr('class', 'label_width').attr('valign', 'top')
 
 // Advanced Settings Checkbox //
 ///////////////////////////////
@@ -50,15 +48,9 @@ function in_array(needle, haystack){
             advanced_container.slideUp()
         }
     });
-
-{/literal}
-    {if $session_resource.advanced_settings eq true}
-        advanced_checkbox.attr('checked', 'checked').change()
-    {/if}
-{literal}
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
-
+    
 // Hotlink Policy Checkbox //
 ////////////////////////////
     $('#domains_tr').hide()
@@ -72,75 +64,11 @@ function in_array(needle, haystack){
         }
     })
 
-{/literal}
-    hotlink_policy = '{$session_resource.hotlink_policy}'
-{literal}
-
-    $('#hotlinkpolicy option').each( function() {
-        if ( this.value == hotlink_policy ) {
-            this.selected = true
-            $('#hotlinkpolicy').change()
-        }
-    })
-        
 // END Hotlink Policy Checkbox //
 ////////////////////////////////
 
-
-// Country Access Policy //
-//////////////////////////
-
-{/literal}
-    country_access_policy = '{$session_resource.country_access_policy}'
-{literal}
-
-    $('#country_access_policy option').each( function() {
-        if ( this.value == country_access_policy ) {
-            this.selected = true
-            $('#country_access_policy').change()
-        }
-    })
-
-// END Country Access Policy //
-//////////////////////////////
-
-// Selecting Countries //
-////////////////////////
-
-// Select countries
-    {/literal} 
-        countries_ids = {$countries}
-    {literal}
-    if ( countries_ids ) {console.log(countries_ids)
-        $('#country_access option').each( function(){
-            if ( in_array( this.value, countries_ids ) ) {
-                this.selected = true
-            }
-        })
-    }
-        
-// END Selecting Countries //
-////////////////////////////
-
-// Ip policy //
-//////////////
-
-    {/literal}
-        ip_access_policy = '{$session_resource.ip_access_policy}'
-    {literal}
-
-    $('#ip_access_policy option').each( function() {
-        if ( this.value == ip_access_policy ) {
-            this.selected = true
-            $('#ip_access_policy').change()
-        }
-    })
-
-// END Ip Policy //
-//////////////////
-
-// URL signing Checkbox //
-/////////////////////////
+// Advanced Settings Checkbox //
+///////////////////////////////
     
     $('#urlsigning_tr').hide()
 
@@ -152,27 +80,55 @@ function in_array(needle, haystack){
             $('#urlsigning_tr').hide()
         }
     });
+// END Advanced Settings Checkbox //
+///////////////////////////////////
 
-// Check Url Signing Url checkbox
+// Check advanced checkbox
+    advanced_checkbox.attr('checked', 'checked');
+    advanced_checkbox.change();
+
+// Select countries
+    var countries_ids = {/literal}{$countries_ids}{literal}
+        
+        console.log(countries_ids)
+
+    if ( countries_ids ) {
+        $('#country_access option').each( function(){
+            console.log( $(this).val())
+            if ( in_array( $(this).val(), countries_ids ) ) {
+                
+                $(this).attr('selected', 'true')
+            }
+        })
+    }
+
+ // Check Url Signing Url checkbox
  {/literal}
-    {if $session_resource.url_signing_on eq true}
-        urlsigning_checkbox.attr( 'checked', 'checked' ).change()
+    {if $advanced_details->_url_signing_on eq true}
+        urlsigning_checkbox.attr( 'checked', 'cheched' ).change()
     {/if}
 {literal}
-// END URL Signing Checkbox //
-/////////////////////////////
 
-// Fill up passwords fields //
-/////////////////////////////
+// Hot policy
+{/literal}
+    hotlink_policy = '{$advanced_details->_hotlink_policy}'
+{literal}
 
-// Check Password checkbox
+    $('#hotlinkpolicy option').each( function() {
+        if ( this.value == hotlink_policy ) {
+            this.selected = true
+            $('#hotlinkpolicy').change()
+        }
+    })
+
+ // Check Password checkbox
  {/literal}
-    {if $session_resource.password_on eq true}
+    {if $advanced_details->_password_on eq true}
         $('#passwordon_input').attr( 'checked', 'checked' ).change()
     {/if}
 {literal}
 
-    
+// Fill up passwords fields
 {/literal}
   var passwords_html = '{$passwords_html}'
 {literal}
@@ -180,24 +136,7 @@ function in_array(needle, haystack){
 $('#passwords_table tr').eq(1).remove()
 $('#passwords_table').append( passwords_html )
 
-// END Fill up password fields //
-////////////////////////////////
-    var ofselect = $('select[name="resource[resource_type]"]')
-        
-    ofselect.change( function(){
-        var ofinput = $('input#origin_ftppass_field') 
-        var labeltd = ofinput.parent().prev()
-         
-         if ( $(this).val() == 'HTTP_PUSH' ){
-             ofinput.attr('name', 'resource[ftp_password]').val('{/literal}{$session_resource.ftp_password}{literal}')
-             labeltd.html('{/literal}{$LANG.onappcdnftppassword}{literal}')    
-         } else {
-             ofinput.attr('name', 'resource[origin]').val('{/literal}{$session_resource.origin}{literal}')
-             labeltd.html('{/literal}{$LANG.onappcdnorigins}{literal}')    
-         }
-    })
-        
-    ofselect.change()    
+// TODO add form validation
 });
 
 </script>
@@ -217,10 +156,10 @@ $('#passwords_table').append( passwords_html )
 
   <div class="contentbox">
       <a title="{$LANG.onappcdnresources}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}">{$LANG.onappcdnresources}</a>
-    <!-- | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> -->
+{*    | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> *}
   </div>
 
-<h2>{$_LANG.onappcdnnewresource}</h2>
+<h2>{$_LANG.onappcdneditresource}</h2>
 
 {$_LANG.onappcdnresourceadddescription}
 
@@ -228,48 +167,51 @@ $('#passwords_table').append( passwords_html )
 <hr />
 <h5>{$_LANG.onappcdnresourcepropertiesinfo}</h5>
 <form action="" method="post" >
+
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
     <tr>
         <td>
             {$_LANG.onappcdnhostname}
         </td>
         <td class="label_width" valign="top">
-            <input class="textfield" type="text" value="{$session_resource.cdn_hostname}" name="resource[cdn_hostname]" />
+            <input class="textfield" value="{$resource->_cdn_hostname}" type="text" name="resource[cdn_hostname]" />
         </td>
-    </tr>
+    </tr>    
     
     <tr>
         <td>
             {$_LANG.onappcdnresourcetype}
         </td>
         <td class="label_width" valign="top">
-            
-            <select class="selectfield" name="resource[resource_type]">
-                <option value="HTTP_PULL" {if $session_resource.resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
-                {* <option value="HTTP_PUSH" {if $session_resource.resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option> *}
+            <select class="selectfield" name="resource[resource_type]" disabled>
+                <option value="HTTP_PULL" {if $resource->_resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
+                <option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>
             </select>
         </td>
-    </tr>   
+    </tr>
+    {if $ssl_on eq false}
     <tr>
         <td>
             {$_LANG.onappcdnorigins}
         </td>
         <td class="label_width" valign="top">
-            <input id="origin_ftppass_field" class="textfield" type="text" value="{$session_resource.origin}" name="resource[origin]" />
+            <input class="textfield" value="{foreach item=origin from=$resource->_origins}{$origin->_value}{/foreach}" type="text" name="resource[origin]" />
         </td>
     </tr>
-    <tr><td colspan="2"><h5 class="without_padding">{$_LANG.onappcdnsslmodeinfo}</h5></td></tr>
+    {/if}
+    
     <tr>
         <td>
             {$_LANG.onappcdnsslmode}
         </td>
         <td class="label_width" valign="top">
-            <select class="selectfield" name="resource[ssl_on]">
-                <option value="0" {if $session_resource.ssl_on == '0'}selected{/if}>{$_LANG.onappcdnwithoutssl}</option>
-                <option value="1" {if $session_resource.ssl_on == '1'}selected{/if}>{$_LANG.onappcdnwithssl}</option>
+            <select class="selectfield" name="resource[ssl_on]" disabled>
+                <option value="0" {if $ssl_on eq false}selected{/if}>{$_LANG.onappcdnwithoutssl}</option>
+                <option value="1" {if $ssl_on eq true}selected{/if}>{$_LANG.onappcdnwithssl}</option>
             </select>
         </td>
     </tr>
+
     <tr>
         <td>
             {$_LANG.onappcdnadvancedsettings}
@@ -289,10 +231,10 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdnipaccesspolicy}</td>
             <td class="label_width" valign="top">
-                <select class="selectfield" id="ip_access_policy" name="resource[ip_access_policy]">
-                    <option value="NONE">{$_LANG.onappcdndisabled}</option>
-                    <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
-                    <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
+                <select class="selectfield" name="resource[ip_access_policy]">
+                    <option value="NONE" {if $advanced_details->_ip_access_policy eq 'NONE'}selected{/if}>{$_LANG.onappcdndisabled}</option>
+                    <option value="ALLOW_BY_DEFAULT" {if $advanced_details->_ip_access_policy eq 'ALLOW_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnallowbydefault}</option>
+                    <option value="BLOCK_BY_DEFAULT" {if $advanced_details->_ip_access_policy eq 'BLOCK_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnblockbydefault}</option>
                 </select>
             </td>
         </tr>
@@ -300,8 +242,10 @@ $('#passwords_table').append( passwords_html )
             <td >
                 {$_LANG.onappcdnipaccess}
             </td>
-            <td>
-                <textarea id="ip_access" cols="40" rows="5" placeholder="10.10.10.10, 20.20.20.0/24, ..." name="resource[ip_addresses]" >{$session_resource.ip_addresses}</textarea>
+            <td class="label_width" valign="top">
+                <div id="ip_wrapper">
+                <textarea placeholder="10.10.10.10, 20.20.20.0/24, ..." id="ip_access" cols="40" rows="5" name="resource[ip_addresses]" >{$advanced_details->_ip_addresses}</textarea>
+                </div>
             </td>
         </tr>
     </table>
@@ -312,10 +256,10 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdncountryaccesspolicy}</td>
             <td class="label_width" valign="top">
-                <select class="selectfield" id="country_access_policy" name="resource[country_access_policy]">
-                    <option value="NONE">{$_LANG.onappcdndisabled}</option>
-                    <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
-                    <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
+                <select class="selectfield" name="resource[country_access_policy]">
+                    <option value="NONE" {if $advanced_details->_country_access_policy eq 'NONE'}selected{/if}>{$_LANG.onappcdndisabled}</option>
+                    <option value="ALLOW_BY_DEFAULT" {if $advanced_details->_country_access_policy eq 'ALLOW_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnallowbydefault}</option>
+                    <option value="BLOCK_BY_DEFAULT" {if $advanced_details->_country_access_policy eq 'BLOCK_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnblockbydefault}</option>
                 </select>
             </td>
         </tr>
@@ -324,11 +268,9 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdncountryaccess}
             </td>
             <td class="label_width" valign="top">
-                <div id="country_wrapper">
-                <select class="selectfield" id="country_access" name="resource[countries][]" multiple>
+                <select class="selectfield multiselect" id="country_access" name="resource[countries][]" multiple>
                     {include file="$template/onappcdn/cdn_resources/countries_options.tpl"}
                 </select>
-                </div>
             </td>
         </tr>
     </table>
@@ -349,7 +291,7 @@ $('#passwords_table').append( passwords_html )
         <tr id="domains_tr" >
             <td>{$_LANG.onappcdnexceptfordomains}</td>
             <td class="label_width" valign="top">
-                <textarea placeholder="www.yoursite.com mirror.yoursite.com" id="domains" cols="40" rows="5" name="resource[domains]" >{$session_resource.domains}</textarea>
+                <textarea placeholder="www.yoursite.com mirror.yoursite.com" id="domains" cols="40" rows="5" name="resource[domains]" >{$advanced_details->_domains}</textarea>
             </td>
         </tr>
     </table>
@@ -365,12 +307,12 @@ $('#passwords_table').append( passwords_html )
             </td>
             <td class="label_width" valign="top">
                 <input id="urlsigning_input" value="1" type="checkbox" name="resource[url_signing_on]" />
-            </td>
+            </td >
         </tr>
         <tr id="urlsigning_tr">
             <td>{$_LANG.onappcdnurlsigningkey}</td>
             <td class="label_width" valign="top">
-                <input class="textfield" value="{$session_resource.url_signing_key}" type="text" name="resource[url_signing_key]" />
+                <input class="textfield" type="text" value="{$advanced_details->_url_signing_key}" name="resource[url_signing_key]" />
             </td>
         </tr>
     </table>
@@ -383,7 +325,7 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdncacheexpiry}</td>
             <td class="label_width" valign="top">
-                <input class="textfield" value="{$session_resource.cache_expiry}" id="cache_input" type="text" name="resource[cache_expiry]" />
+                <input class="textfield" id="cache_input" type="text" value="{$advanced_details->_cache_expiry}" name="resource[cache_expiry]" />
             </td>
         </tr>
 
@@ -405,12 +347,12 @@ $('#passwords_table').append( passwords_html )
         <tr>
             <td>{$_LANG.onappcdnunauthorizedhtml}</td>
             <td class="label_width" valign="top">
-                <textarea id="auth_html" cols="40" rows="5" placeholder="<span style='color: red'>Invalid username or password</span>" name="resource[password_unauthorized_html]" >{$session_resource.password_unauthorized_html}</textarea>
+                <textarea id="auth_html" cols="40" rows="5" placeholder="<span style='color: red'>Invalid username or password</span>" name="resource[password_unauthorized_html]" >{$advanced_details->_password_unauthorized_html}</textarea>
             </td>
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td class="label_width" valign="top">
+            <td>
                 <table id="passwords_table" cellspacing="0" cellpadding="10" border="0" width="100%">
                     <tr>
                         <th>{$_LANG.onappcdnusername}</th>
@@ -431,7 +373,7 @@ $('#passwords_table').append( passwords_html )
     </table>
 
 </div>
-
+                    
     <h4>{$_LANG.onappcdnpseudostreaming}</h4> <hr />
 
     <h5>{$_LANG.onappcdnpseudostreaminginfo}</h5>
@@ -442,7 +384,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdnenablemp4pseudostreaming}
             </td>
             <td class="label_width" valign="top">
-                <input id="mp4_pseudo_on_input" value="1" type="checkbox" name="resource[mp4_pseudo_on]" />
+                <input id="mp4_pseudo_on_input" value="1" type="checkbox" name="resource[mp4_pseudo_on]" {if $advanced_details->_mp4_pseudo_on eq true}checked{/if} />
             </td>
         </tr>
         <tr >
@@ -450,7 +392,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdnpenableflvpseudostreaming}
             </td>
             <td class="label_width" valign="top">
-                <input id="flv_pseudo_on_input" value="1" type="checkbox" name="resource[flv_pseudo_on]" />
+                <input id="flv_pseudo_on_input" value="1" type="checkbox" name="resource[flv_pseudo_on]" {if $advanced_details->_flv_pseudo_on eq true}checked{/if}/>
             </td>
         </tr>        
     </table>
@@ -465,42 +407,36 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdningnoresetcookie}
             </td>
             <td class="label_width" valign="top">
-                <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[ignore_set_cookie_on]" />
+                <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[ignore_set_cookie_on]" {if $advanced_details->_ignore_set_cookie_on eq true}checked{/if} />
             </td>
         </tr>
-    </table>            
-            
-</div>   <!--end advanced -->                 
+    </table>                     
                     
+</div>
 
 <h4>{$_LANG.onappcdnedgegroups}</h4>
 <hr />
-
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
 
 {foreach item=group from=$edge_group_baseresources}
 
     <tr>
-            <td valign="top">
-                <b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} <br />
-                
+        <td>
+             <b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} <br />
                 {foreach item=location from=$group.locations}
                     {$location->_city|ucfirst}, {$location->_country}    <br />
                 {/foreach}
-            </td> 
+        </td>
         <td class="label_width" valign="top">
-            <div >
-            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" 
-          {if isset($session_resource.edge_group_ids) }{if $group.id|in_array:$session_resource.edge_group_ids}checked{/if}{/if}/>
-        </div>
+            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" {if $group.id|in_array:$edge_group_ids}checked{/if} />
         </td>
     </tr>
 
 {/foreach}
 </table>
-<input type="hidden" name="add" value="1" /> <br /> <br />
-<input type="submit" value="{$_LANG.onappcdncreateresource}" />
-<input type="hidden" name="template" value="add" />
+<input type="hidden" name="resource[id]" value="{$resource_id}" />
+<input type="hidden" name="edit" value="1" /> <br /> <br />
+<input type="submit" value="{$_LANG.onappcdnapplychanges}" />
 </form>
 <br /><br />

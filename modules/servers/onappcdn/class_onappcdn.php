@@ -351,7 +351,7 @@ class OnAppCDN {
 
         closedir ($dh);
 
-        $language = $_SESSION['Language'];
+        $language = ( isset( $_SESSION['Language'] ) ) ? $_SESSION['Language'] : null;
 
         if( ! in_array ($language, $arrayoflanguagefiles) )
             $language =  "English";

@@ -105,12 +105,17 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages array
      */
     protected function edit ( $errors = null, $messages = null ) {
+        
+        $types = $this->getTypes();
+        $type =  parent::get_value('type');
+        $template = ( $type ) ? 
+            'onappcdn/cdn_resources/edit_' . $types[$type]['template'] : 'onappcdn/cdn_resources/edit_http';        
+        
         if ( ! parent::get_value('resource_id') ) {
             die('resource_id should be specified');
         }
         
         global $_LANG;
-        $whmcs_client_details  =  $this->getWhmcsClientDetails();
         $resource_id = parent::get_value( 'resource_id' );
         
         if ( $errors || $messages ) {
@@ -122,47 +127,11 @@ class OnAppCDNResources extends OnAppCDN {
      
         if ( parent::get_value('edit') != 1 ) {
             
-            $onapp = $this->getOnAppInstance();
+        $data = $this->getResourceData( $onapp, $type, $types, 'edit' );            
 
-            $_resource  = $onapp->factory('CDNResource', true );
-
-            $resource   = $_resource->load( $resource_id );
+            $countries_ids = ( $data['advanced_details']->_countries ) ? $data['advanced_details']->_countries : array();
             
-            $edge_group_ids = array();
-            foreach( $resource->_edge_groups as $group ) {
-                $edge_group_ids[] = $group->_id;
-            }
-
-            $onappusers    = $onapp->factory('User', true );
-            $onappuser     = $onappusers->load( $resource->_user_id );
-
-            $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
-            $baseresources = $baseresource->getList( $onappuser->_billing_plan_id );
-
-            $advanced  = $onapp->factory('CDNResource_Advanced', true );
-            $advanced_details = $advanced->getList( $resource_id );
-            
-            $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
-
-            $edge_group_baseresources = array();
-            foreach ( $baseresources as $edge_group ) {
-                if ( $edge_group->_resource_name == 'edge_group' )
-                {
-                    $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices->_price * $whmcs_client_details['currencyrate'], 2 );
-
-                    foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
-                        if ( $group->_id == $edge_group->_target_id ) {
-                            $edge_group_baseresources[ $edge_group->_id ]['locations']  = $group->_edge_group_locations;
-                            $edge_group_baseresources[ $edge_group->_id ]['id']         = $group->_id;
-                            $edge_group_baseresources[ $edge_group->_id ]['label']      = $group->_label;
-                        }
-                    }
-                }
-            }
-
-            $countries_ids = ( $advanced_details[0]->_countries ) ? $advanced_details[0]->_countries : array();
-
-            $passwords_html = $this->generate_passwords_html( $advanced_details[0]->_passwords );
+            $passwords_html = $this->generate_passwords_html( $data['advanced_details']->_passwords );
 
             if ( isset( $_SESSION['errors'] ) ) {
                 $errors[] = $_SESSION['errors'];
@@ -173,62 +142,28 @@ class OnAppCDNResources extends OnAppCDN {
                 unset( $_SESSION['successmessages'] );
             }
 
+            print_r($data['resource']->_cdn_hostname);
             $this->show_template(
-                'onappcdn/cdn_resources/edit',
+                $template,
                 array(
-                    'edge_group_ids'            =>  $edge_group_ids,
+                    'edge_group_ids'            =>  $data['edge_group_ids'],
                     'passwords_html'            =>  $passwords_html,
                     'countries_ids'             =>  json_encode( $countries_ids ),
-                    'resource'                  =>  $resource,
+                    'resource'                  =>  $data['resource'],
                     'resource_id'               =>  $resource_id,
-                    'advanced_details'          =>  $advanced_details[0],
+                    'advanced_details'          =>  $data['advanced_details'],
                     'id'                        =>  parent::get_value('id'),
-                    'whmcs_client_details'      =>  $this->getWhmcsClientDetails(),
-                    'edge_group_baseresources'  =>  $edge_group_baseresources,
+                    'whmcs_client_details'      =>  $data['whmcs_client_details'],
+                    'edge_group_baseresources'  =>  $data['edge_group_baseresources'],
                     'errors'                    =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
                     'messages'                  =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
-                    'ssl_on'                    =>  ( boolean )strpos( $resource->_cdn_hostname, 'worldssl' ),
+                    'ssl_on'                    =>  ( boolean )strpos( $data['resource']->_cdn_hostname, 'worldssl' ),
                 )
             );
         }
         else {
-            $resource = parent::get_value('resource');
+            $resource = $this->process_request( parent::get_value('resource') , 'edit' );
             
-            if ( is_null( $resource['advanced_settings'] ) ) {
-                foreach( $resource as $key => $field ) {
-                    if ( $key != 'cdn_hostname'       &&
-                         $key != 'origin'             &&
-                         $key != 'resource_type'      &&
-                         $key != 'edge_group_ids'     &&
-                         $key != 'id'
-                    ){
-                        unset( $resource[$key] );
-                    }
-                }
-            }
-            else {
-// checkboxes
-                if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
-                    $resource['url_signing_on'] = 0;
-                }
-                
-                if ( !isset( $resource['mp4_pseudo_on'] ) || is_null( $resource['mp4_pseudo_on'] )  ){
-                    $resource['mp4_pseudo_on'] = 0;
-                }
-                
-                if ( !isset( $resource['flv_pseudo_on'] ) || is_null( $resource['flv_pseudo_on'] )  ){
-                    $resource['flv_pseudo_on'] = 0;
-                } 
-                
-                if ( !isset( $resource['ignore_set_cookie_on'] ) || is_null( $resource['ignore_set_cookie_on'] )  ){
-                    $resource['ignore_set_cookie_on'] = 0;
-                }                 
-                
-                if ( !isset ( $resource['countries']) ){
-                    $resource['countries'] = array();
-                }
-            }
-
             $_resource      = $onapp->factory('CDNResource', true );
 
             foreach( $resource as $key => $value ) {
@@ -254,7 +189,7 @@ class OnAppCDNResources extends OnAppCDN {
             }
             else {
                 $_SESSION['errors'] = implode( PHP_EOL, $errors );
-                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&action=edit&resource_id='. parent::get_value('resource_id') .'&id=' . parent::get_value('id') );
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&action=edit&resource_id='. parent::get_value('resource_id') .'&id=' . parent::get_value('id').'&type=' . $type );
             }
         }
     }
@@ -297,10 +232,13 @@ class OnAppCDNResources extends OnAppCDN {
      * @param array $messages Messages
      */
     protected function add ( $errors = null, $messages = null ) {
-        
+        $types = $this->getTypes();
+        $type = parent::get_value('type');
         parent::loadcdn_language();
         global $_LANG;
-        $whmcs_client_details  =  $this->getWhmcsClientDetails();
+        
+        $template = ( parent::get_value('type') ) ? 
+            'onappcdn/cdn_resources/add_' . $types[$type]['template'] : 'onappcdn/cdn_resources/add_http';
         
         if ( $errors || $messages ) {
             unset( $_POST['add'] );
@@ -309,40 +247,10 @@ class OnAppCDNResources extends OnAppCDN {
         $onapp = $this->getOnAppInstance();
         
         if ( parent::get_value('add') != 1 ) {
-            $whmcsuser = $this->get_user();
-
-            $onappusers    = $onapp->factory('User', true );
-            $onappuser     = $onappusers->load( $whmcsuser['onapp_user_id'] );
             
-            if ( $onappusers->getErrorsAsArray() )
-                die( '<b>Getting User Error</b> - ' . $onappusers->getErrorsAsString() );            
+            $data = $this->getResourceData( $onapp, $type, $types, 'add' );
+            $errors = $data['errors'];
             
-            $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
-
-            $baseresources = $baseresource->getList( $onappuser->_billing_plan_id );
-            
-            if ( $baseresource->getErrorsAsArray() )
-                $errors[] = '<b>Getting Edge Groups Error</b> - '. $baseresource->getErrorsAsString();
-
-            $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
- 
-            $edge_group_baseresources = array();
-          
-            foreach ( $baseresources as $edge_group ) {
-                if ( $edge_group->_resource_name == 'edge_group' )
-                {
-                    $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices->_price * $whmcs_client_details['currencyrate'], 2 );
-
-                    foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
-                        if ( $group->_id == $edge_group->_target_id ) {
-                            $edge_group_baseresources[ $edge_group->_id ]['locations']  = $group->_edge_group_locations;
-                            $edge_group_baseresources[ $edge_group->_id ]['id']         = $group->_id;
-                            $edge_group_baseresources[ $edge_group->_id ]['label']      = $group->_label;
-                        }
-                    }
-                }
-            }
-
             if ( isset( $_SESSION['errors'] ) ) {
                 $errors[] = $_SESSION['errors'];
                 unset( $_SESSION['errors'] );
@@ -365,15 +273,14 @@ class OnAppCDNResources extends OnAppCDN {
 
             $countries   = ( ! isset ( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
             
-            $template = ( parent::get_value('template') ) ? 'onappcdn/cdn_resources/' . parent::get_value('template') : 'onappcdn/cdn_resources/add';
-
             $this->show_template(
                 $template,
                 array(
                     'id'                        =>  parent::get_value('id'),
                     'resource'                  =>  parent::get_value('resource'),
                     'whmcs_client_details'      =>  $this->getWhmcsClientDetails(),
-                    'edge_group_baseresources'  =>  $edge_group_baseresources,
+                    'edge_group_baseresources'  =>  $data['edge_group_baseresources'],
+                    'edge_group_locations_ids'  =>  json_encode($data['edge_group_locations_ids']),
                     'errors'                    =>  ( is_array( $errors )) ? implode( PHP_EOL, $errors ) : null,
                     'messages'                  =>  ( is_array( $messages )) ? implode( PHP_EOL, $messages ) : null,
                     'session_resource'          =>  $session_resource,
@@ -383,7 +290,93 @@ class OnAppCDNResources extends OnAppCDN {
             );
         }
         else {
-            $resource = parent::get_value('resource');
+            $resource = $this->process_request( parent::get_value('resource'), 'add' );
+            
+            $_resource      = $onapp->factory('CDNResource', true );
+            
+            foreach( $resource as $key => $value ) {
+                if ( $key != 'advanced_settings' ) {
+                    $key = '_'.$key;
+                    $_resource->$key = $value;
+
+                }
+            }
+            
+//            print('<pre>');
+//            print_r($_resource);
+//            die();
+            
+            $_resource->save();
+            
+            print('<pre>');
+            print_r( $_resource );
+            die();
+            
+            if ( $_resource->getErrorsAsArray() )
+                $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
+
+            if ( ! $errors ) {
+                $messages = $_LANG['onappcdnresourcecreatedsuccessfully'];
+                $_SESSION['successmessages'] = $messages;
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&id=' . parent::get_value('id') );
+            }
+            else {
+                $_SESSION['resource'] = $_POST['resource'];
+                $_SESSION['errors'] = implode( PHP_EOL, $errors );
+                
+                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&type=' . $type . '&action=add&id=' . parent::get_value('id') );
+            }
+        }
+    }
+
+    /**
+     * Show choose CDN resource type page
+     * 
+     * @global mixed $LANG 
+     */
+    protected function choose_resource_type(){
+        $this->show_template(
+            'onappcdn/cdn_resources/choose_resource_type',
+            array(
+                'resource_types' => $this->getTypes(),
+                'id'             =>  parent::get_value('id'),
+            )
+        );
+    }
+    
+    /**
+     *
+     * @global array $_LANG
+     * @return type 
+     */
+    public function getTypes(){
+        parent::loadcdn_language();
+        global $_LANG;
+        return array(
+            'STREAM_LIVE'     =>  array( 'template'     => 'live_streaming', 
+                                         'requirements' => 'streamSupported',
+                                         'description'  =>  $_LANG['onappcdnlivestreamingresource'],
+                                         'label'        =>  $_LANG['onappcdnlivestreaming'] ),
+            'HTTP_PULL'       =>  array( 'template'     => 'http', 
+                                         'requirements' => 'httpSupported',
+                                         'description'  =>  $_LANG['onappcdnhttppullorpushresource'],
+                                         'label'        =>  'HTTP' ),                
+            'HTTP_PUSH'       =>  array( 'template'     => 'http', 
+                                         'requirements' => 'httpSupported',
+                                         'description'  =>  $_LANG['onappcdnhttppullorpushresource'],
+                                         'label'        =>  'HTTP' ),                
+            'STREAM_VOD_PULL' =>  array( 'template'     => 'video_on_demand', 
+                                         'requirements' => 'streamSupported',
+                                         'description'  =>  $_LANG['onappcdnvideoondemandresource'],
+                                         'label'        =>  $_LANG['onappcdnvideoondemand'] ),                
+        );        
+    }
+    
+    public function process_request( $resource, $action ){
+            
+//            print('<pre>');
+//            print_r($resource);
+//            die();
 
             if ( ! isset ( $resource['advanced_settings'] ) ) {
                 foreach( $resource as $key => $field ) {
@@ -393,7 +386,11 @@ class OnAppCDNResources extends OnAppCDN {
                          $key != 'edge_group_ids'                    &&
                          $key != 'ftp_password'                      &&
                          $key != 'ssl_on'                            &&
-                         $key != '_cdn_resource_publishing_point'    
+                         $key != 'cdn_resource_publishing_point'     &&
+                         $key != 'external_publishing_url'           &&
+                         $key != 'internal_publishing_point'         && 
+                         $key != 'failover_external_publishing_url'  &&
+                         $key != 'failover_internal_publishing_point'         
                     ){
                         unset( $resource[$key] );
                     }
@@ -404,7 +401,7 @@ class OnAppCDNResources extends OnAppCDN {
                     unset( $resource['ip_access_policy'] );
                     unset( $resource['ip_addresses'] );
                 }
-                if ( $resource['_anti_leech_on'] == 'NONE' ) {
+                if ( $resource['anti_leech_on'] == 'NONE' ) {
                     unset( $resource['anti_leech_on'] );
                     unset( $resource['anti_leech_domains'] );
                 }                
@@ -430,53 +427,132 @@ class OnAppCDNResources extends OnAppCDN {
                     unset( $resource['form_pass'] );
                 }
                 
-            }
+                if( $action == 'edit') {
+    // checkboxes
+                    if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
+                        $resource['url_signing_on'] = 0;
+                    }
 
+                    if ( !isset( $resource['mp4_pseudo_on'] ) || is_null( $resource['mp4_pseudo_on'] )  ){
+                        $resource['mp4_pseudo_on'] = 0;
+                    }
+
+                    if ( !isset( $resource['flv_pseudo_on'] ) || is_null( $resource['flv_pseudo_on'] )  ){
+                        $resource['flv_pseudo_on'] = 0;
+                    } 
+
+                    if ( !isset( $resource['ignore_set_cookie_on'] ) || is_null( $resource['ignore_set_cookie_on'] )  ){
+                        $resource['ignore_set_cookie_on'] = 0;
+                    }                 
+
+                    if ( !isset ( $resource['countries']) ){
+                        $resource['countries'] = array();
+                    }                
+                }                
+                
+            }
             
-//            print('<pre>');
-//            print_r($resource);
-//            die();
-            $_resource      = $onapp->factory('CDNResource', true );
+            if ( $resource['cdn_resource_publishing_point'] == 'internal' ) {
+                unset($resource['external_publishing_url']);
+                unset($resource['failover_external_publishing_url']);
+            } elseif ( $resource['cdn_resource_publishing_point'] == 'external' ){
+                unset($resource['internal_publishing_point']);
+                unset($resource['failover_internal_publishing_point']);
+            }  
             
             if ( $resource['ssl_on'] == '1' ) {
                 $resource['cdn_hostname'] .= '.r.worldssl.net';
             }
+            
+//            print('<pre>');
+//            print_r($resource);
+//            die(); 
+            
+            
+            return $resource;
+            
 
-            foreach( $resource as $key => $value ) {
-                if ( $key != 'advanced_settings' ) {
-                    $key = '_'.$key;
-                    $_resource->$key = $value;
 
+       
+    }
+    
+    /**
+     *
+     * @return type 
+     */
+    private function getResourceData( $onapp, $type, $types, $action ){
+        $errors = '';
+        
+        if ( $action == 'edit' ) {
+            $_resource  = $onapp->factory('CDNResource', true );
+
+            $resource   = $_resource->load( parent::get_value( 'resource_id' ) );
+            
+            $edge_group_ids = array();
+            foreach( $resource->_edge_groups as $group ) {
+                $edge_group_ids[] = $group->_id;
+            }
+
+            $advanced  = $onapp->factory('CDNResource_Advanced', true );
+            $advanced_details = $advanced->getList( parent::get_value( 'resource_id' ) );
+            
+        }
+        
+        $whmcs_client_details  =  $this->getWhmcsClientDetails();
+        $whmcsuser = $this->get_user();
+
+        $onappusers    = $onapp->factory('User', true );
+        $onappuser     = $onappusers->load( $whmcsuser['onapp_user_id'] );
+
+        if ( $onappusers->getErrorsAsArray() )
+            die( '<b>Getting User Error</b> - ' . $onappusers->getErrorsAsString() );            
+
+        $baseresource  = $onapp->factory('BillingPlan_BaseResource', true );
+
+        $baseresources = $baseresource->getList( $onappuser->_billing_plan_id );
+
+        if ( $baseresource->getErrorsAsArray() )
+            $errors[] = '<b>Getting Edge Groups Error</b> - '. $baseresource->getErrorsAsString();
+
+        $available_edge_groups = $onapp->factory('CDNResource_AvailableEdgeGroup');
+
+        $edge_group_baseresources = array();
+        $edge_group_locations_ids = array();
+
+        foreach ( $baseresources as $edge_group ) {
+            if ( $edge_group->_resource_name == 'edge_group' )
+            {
+                $edge_group_baseresources[ $edge_group->_id ]['price']       = round( $edge_group->_prices->_price * $whmcs_client_details['currencyrate'], 2 );
+
+                foreach ( $available_edge_groups->getList( $edge_group->_id ) as $group ) {
+                    if ( $group->_id == $edge_group->_target_id ) {
+                        foreach( $group->_edge_group_locations as $location ) {
+
+                            $requirements =  '_'. $types[$type]['requirements'];
+                            // if ( $location->$requirements ){ TODO uncomment as ticket is solved
+                                $edge_group_baseresources[ $edge_group->_id ]['locations'][] = $location;
+                                $edge_group_locations_ids[ $group->_id ][ $location->_aflexi_location_id ] = ucfirst($location->_city) . ', ' . $location->_country;
+                            //}
+                        }
+
+                        $edge_group_baseresources[ $edge_group->_id ]['id']         = $group->_id;
+                        $edge_group_baseresources[ $edge_group->_id ]['label']      = $group->_label;
+                    }
                 }
             }
-            
-//            print('<pre>');
-//            print_r($_resource);
-//            die();
-            
-            $_resource->save();
-            
-//            print('<pre>');
-//            print_r( $_resource );
-//            die();
-            
-            if ( $_resource->getErrorsAsArray() )
-                $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
-
-            if ( ! $errors ) {
-                $messages = $_LANG['onappcdnresourcecreatedsuccessfully'];
-                $_SESSION['successmessages'] = $messages;
-                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&id=' . parent::get_value('id') );
-            }
-            else {
-                $_SESSION['resource'] = $_POST['resource'];
-                $_SESSION['errors'] = implode( PHP_EOL, $errors );
-                
-                $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&template=' . parent::get_value('template') . '&action=add&id=' . parent::get_value('id') );
-            }
         }
-    }
 
+        return array(
+            'edge_group_locations_ids'   => $edge_group_locations_ids,
+            'edge_group_baseresources'   => $edge_group_baseresources,
+            'whmcs_client_details'       => $whmcs_client_details,
+            'errors'                     => $errors,
+            'advanced_details'           => $advanced_details[0],
+            'resource'                   => $resource,
+            'edge_group_ids'             => $edge_group_ids,
+        );
+    }
+    
     private function generate_passwords_html ( $passwords_array ) {
         
         $passwords_html = '';
@@ -492,40 +568,6 @@ class OnAppCDNResources extends OnAppCDN {
                     '</tr>' . '\n';
         }
         return $passwords_html;
-    }
-    
-    /**
-     * Show choose CDN resource type page
-     * 
-     * @global mixed $LANG 
-     */
-    protected function choose_resource_type(){
-        parent::loadcdn_language();
-        global $_LANG;
-        
-        $this->show_template(
-            'onappcdn/cdn_resources/choose_resource_type',
-            array(
-                'resource_types' => array(
-                    'HTTP' => array( 
-                        'label'       => 'HTTP', 
-                        'description' => $_LANG['onappcdnhttppullorpushresource'],
-                        'template'    => 'add'
-                    ),
-                    'STREAM_LIVE' => array(
-                        'label'          =>  $_LANG['onappcdnlivestreaming'],
-                        'description'    =>  $_LANG['onappcdnlivestreamingresource'],
-                        'template'       =>  'add_live_streaming_resources',
-                    ),
-                    'STREAM_VOD' => array(
-                        'label'          =>  $_LANG['onappcdnvideoondemand'],
-                        'description'    =>  $_LANG['onappcdnvideoondemandresource'],
-                        'template'       =>  'add_video_on_demand',
-                    ),
-                 ),
-                'id'                     =>  parent::get_value('id'),
-            )
-        );
-    }
+    }    
 }
 

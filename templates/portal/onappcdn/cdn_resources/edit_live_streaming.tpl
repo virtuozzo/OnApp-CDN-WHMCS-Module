@@ -1,11 +1,5 @@
 {literal}
 <script type="text/javascript">
-    
-$(document).ready(function(){
-
-    var advanced_container    = $("#advanced_settings")
-    var advanced_checkbox     = $("#advanced_settings_input")
-    var secure_wowza_on_checkbox   = $('#secure_wowza_on_input')
 
 function in_array(needle, haystack){
     for(var i=0; i<haystack.length; i++)
@@ -13,6 +7,35 @@ function in_array(needle, haystack){
             return true;
     return false;
 }
+  
+$(document).ready(function(){
+
+    var advanced_container    = $("#advanced_settings")
+    var advanced_checkbox     = $("#advanced_settings_input")
+    var urlsigning_checkbox   = $('#urlsigning_input')
+    var password_fields_tr    = '<tr>' + $('#passwords_table tr').eq(1).html() + '</tr>'
+    var passwords_container   = $('#passwords_container')
+
+
+// Advanced Settings Checkbox //
+///////////////////////////////
+
+    passwords_container.hide()
+
+    $('#passwordon_input').change(function(){
+        if (this.checked) {
+            passwords_container.show()
+        }
+        else {
+            passwords_container.hide()
+        }
+    });
+// END Advanced Settings Checkbox //
+///////////////////////////////////
+
+    $('#plus_user').click(function() {
+        $('#passwords_table').append( password_fields_tr )
+    })
 
 // Advanced Settings Checkbox //
 ///////////////////////////////
@@ -25,105 +48,96 @@ function in_array(needle, haystack){
             advanced_container.slideUp()
         }
     });
-
-{/literal}
-    {if $session_resource.advanced_settings eq true}
-        advanced_checkbox.attr('checked', 'checked').change()
-    {/if}
-{literal}
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
-
-// Anti leech domains Checkbox //
+    
+// Hotlink Policy Checkbox //
 ////////////////////////////
-    $('#anti_leech_domains').hide()
+    $('#domains_tr').hide()
 
-    $('#anti_leech_on').change( function(){
+    $('#hotlinkpolicy').change( function(){
         if ( $(this).val() == 'NONE' ) {
-            $('#anti_leech_domains').hide()
+            $('#domains_tr').hide()
         }
         else {
-            $('#anti_leech_domains').show()
+            $('#domains_tr').show()
         }
     })
 
-{/literal}
-    var anti_leech_on = '{$session_resource.anti_leech_on}'
-{literal}
-
-    $('#anti_leech_on option').each( function() {
-        if ( this.value == anti_leech_on ) {
-            this.selected = true
-            $('#anti_leech_on').change()
-        }
-    })
-        
 // END Hotlink Policy Checkbox //
 ////////////////////////////////
 
+// Advanced Settings Checkbox //
+///////////////////////////////
+    
+    $('#urlsigning_tr').hide()
 
-// Country Access Policy //
-//////////////////////////
-
-{/literal}
-    country_access_policy = '{$session_resource.country_access_policy}'
-{literal}
-
-    $('#country_access_policy option').each( function() {
-        if ( this.value == country_access_policy ) {
-            this.selected = true
-            $('#country_access_policy').change()
+    urlsigning_checkbox.change(function(){
+        if (this.checked) {
+            $('#urlsigning_tr').show()
         }
-    })
+        else {
+            $('#urlsigning_tr').hide()
+        }
+    });
+// END Advanced Settings Checkbox //
+///////////////////////////////////
 
-// END Country Access Policy //
-//////////////////////////////
-
-// Selecting Countries //
-////////////////////////
+// Check advanced checkbox
+    advanced_checkbox.attr('checked', 'checked');
+    advanced_checkbox.change();
 
 // Select countries
-    {/literal} 
-        countries_ids = {$countries}
-    {literal}
+    var countries_ids = {/literal}{$countries_ids}{literal}
+        
     if ( countries_ids ) {
         $('#country_access option').each( function(){
-            if ( in_array( this.value, countries_ids ) ) {
-                this.selected = true
+            if ( in_array( $(this).val(), countries_ids ) ) {
+                $(this).attr('selected', 'true')
             }
         })
     }
-        
-// END Selecting Countries //
-////////////////////////////
 
-// URL signing Checkbox //
-/////////////////////////
-    
-    $('#secure_wowza_on_tr').hide()
-
-    secure_wowza_on_checkbox.change(function(){
-        if (this.checked) {
-            $('#secure_wowza_on_tr').show()
-        }
-        else {
-            $('#secure_wowza_on_tr').hide()
-        }
-    });
-
-// Check Secure wowza checkbox
+ // Check Url Signing Url checkbox
  {/literal}
-    {if $session_resource.secure_wowza_on eq true}
-        secure_wowza_on_checkbox.attr( 'checked', 'checked' ).change()
+    {if $advanced_details->_url_signing_on eq true}
+        urlsigning_checkbox.attr( 'checked', 'cheched' ).change()
     {/if}
 {literal}
-// END Secure wowza Checkbox //
-//////////////////////////////
-    
+
+// Hot policy
+{/literal}
+    hotlink_policy = '{$advanced_details->_hotlink_policy}'
+{literal}
+
+    $('#hotlinkpolicy option').each( function() {
+        if ( this.value == hotlink_policy ) {
+            this.selected = true
+            $('#hotlinkpolicy').change()
+        }
+    })
+
+ // Check Password checkbox
+ {/literal}
+    {if $advanced_details->_password_on eq true}
+        $('#passwordon_input').attr( 'checked', 'checked' ).change()
+    {/if}
+{literal}
+
+// Fill up passwords fields
+{/literal}
+  var passwords_html = '{$passwords_html}'
+{literal}
+
+$('#passwords_table tr').eq(1).remove()
+$('#passwords_table').append( passwords_html )
+
+// TODO add form validation
 });
 
 </script>
 {/literal}
+
 
 {if isset($errors)}
     <div class="errorbox">
@@ -139,7 +153,7 @@ function in_array(needle, haystack){
 
   <div class="contentbox">
       <a title="{$LANG.onappcdnresources}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}">{$LANG.onappcdnresources}</a>
-    <!-- | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> -->
+    {*-- | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> *}
   </div>
 
 <h2>{$_LANG.onappcdnnewresourcelivestreaming}</h2>
@@ -156,22 +170,40 @@ function in_array(needle, haystack){
             {$_LANG.onappcdnhostname}
         </td>
         <td class="label_width" valign="top">
-            <input class="textfield" type="text" value="{$session_resource.cdn_hostname}" name="resource[cdn_hostname]" />
+            <input class="textfield" type="text" value="{$resource->_cdn_hostname}" name="resource[cdn_hostname]" />
         </td>
     </tr>
     
-    <tr>
+ {*   <tr>
         <td>
             {$_LANG.onappcdnpublishingpoint}
         </td>
         <td class="label_width" valign="top">
-            <select class="selectfield" name="resource[cdn_resource_publishing_point]">
+            <select class="selectfield" name="resource[publishing_point]">
                 <option value="internal" >Internal</option>
                 <option value="external">External</option>
             </select>
         </td>
-    </tr>   
+    </tr> 
 
+    <tr class="external_publishing_point_tr">
+        <td>
+            {$_LANG.onappcdnexternalpublishingurl}
+        </td>
+        <td class="label_width" valign="top">
+            <input class="textfield" id="external_publishing_url_input" type="text" name="resource[external_publishing_url]" />
+        </td>
+    </tr>
+    
+    <tr class="external_publishing_point_tr">
+        <td>
+            {$_LANG.onappcdnfailoverexternalpublishingurl}
+        </td>
+        <td class="label_width" valign="top">
+            <input class="textfield" id="failover_external_publishing_url_input" type="text" name="resource[failover_external_publishing_url]" />
+        </td>
+    </tr>   *} 
+    
     <tr>
         <td>
             {$_LANG.onappcdnadvancedsettings}
@@ -201,7 +233,7 @@ function in_array(needle, haystack){
         <tr id="anti_leech_domains" >
             <td>{$_LANG.onappcdnalloweddomains}</td>
             <td class="label_width" valign="top">
-                <textarea placeholder="www.yoursite.com mirror.yoursite.com" id="" cols="40" rows="5" name="resource[anti_leech_domains]" >{$session_resource.anti_leech_domains}</textarea>
+                <textarea placeholder="www.yoursite.com mirror.yoursite.com" id="" cols="40" rows="5" name="resource[anti_leech_domains]" >{$resource->anti_leech_domains}</textarea>
             </td>
         </tr>
     </table>  
@@ -225,14 +257,13 @@ function in_array(needle, haystack){
             </td>
             <td class="label_width" valign="top">
                 <div id="country_wrapper">
-                <select class="selectfield" id="country_access" name="resource[countries][]" multiple>
+                <select class="selectfield multiselect" id="country_access" name="resource[countries][]" multiple>
                     {include file="$template/onappcdn/cdn_resources/countries_options.tpl"}
                 </select>
                 </div>
             </td>
         </tr>
     </table>            
-
 
     <h4>{$_LANG.onappcdnsecurewowza}</h4> <hr />
 
@@ -248,14 +279,13 @@ function in_array(needle, haystack){
         <tr id="secure_wowza_on_tr">
             <td>{$_LANG.onappcdntokenforedgeflashplayer}</td>
             <td class="label_width" valign="top">
-                <input class="textfield" value="{$session_resource.secure_wowza_token}" type="text" name="resource[secure_wowza_token]" />
+                <input class="textfield" value="{$resource->secure_wowza_token}" type="text" name="resource[secure_wowza_token]" />
             </td>
         </tr>
     </table>
            
             
 </div>   <!--end advanced -->                 
-                    
 
 <h4>{$_LANG.onappcdnedgegroups}</h4>
 <hr />
@@ -275,7 +305,7 @@ function in_array(needle, haystack){
             </td> 
         <td class="label_width" valign="top">
             <div >
-            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" 
+            <input id="advanced_settings_input_{$group.id}" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" 
           {if isset($session_resource.edge_group_ids) }{if $group.id|in_array:$session_resource.edge_group_ids}checked{/if}{/if}/>
         </div>
         </td>
@@ -283,6 +313,34 @@ function in_array(needle, haystack){
 
 {/foreach}
 </table>
+{*
+<div id="internal_publishing_point_div">
+    <h4>{$_LANG.onappcdnpublishingpoint}</h4> <hr />
+
+    <table cellspacing="0" cellpadding="10" border="0" width="100%">
+        <tr>
+        <td>
+            {$_LANG.onappcdninternalpublishingpoint}
+        </td>
+        <td class="label_width" valign="top">
+            <select id="internal_publishing_point_select" class="selectfield" name="resource[internal_publishing_point]">
+                <option value></option>
+            </select>
+        </td>
+        </tr>
+        <tr>
+        <td>
+            {$_LANG.onappcdnfailoverinternalpublishingpoint}
+        </td>
+        <td class="label_width" valign="top">
+            <select id="failover_internal_publishing_point_select" class="selectfield" name="resource[failover_internal_publishing_point]">
+                <option value></option>
+            </select>
+        </td> 
+        </tr>      
+    </table>
+</div> *}
+
 <input type="hidden" name="add" value="1" /> <br /> <br />
 <input type="hidden" name="template" value="add_live_streaming_resources" />
 <input type="hidden" name="resource[resource_type]" value="STREAM_LIVE" />

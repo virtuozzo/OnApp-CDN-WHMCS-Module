@@ -47,8 +47,8 @@ class OnAppCDNAdvancedDetails extends OnAppCDN {
                 'details'           =>  $details[0],
                 'selected_countries'=>  $countries,
                 'resource_id'       =>  $resource_id,
-                'errors'            =>  implode( PHP_EOL, $errors ),
-                'messages'          =>  implode( PHP_EOL, $messages ),
+                'errors'            =>  ( $errors ) ? implode( PHP_EOL, $errors ) : null,
+                'messages'          =>  ( $messages ) ? implode( PHP_EOL, $messages ) : null,
             )
         );
     }

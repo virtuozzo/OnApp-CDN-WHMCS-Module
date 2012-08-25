@@ -27,10 +27,10 @@
 <h4>{$_LANG.onappcdnresourceadvanceddetails}</h4> <hr />
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
-    <tr>
+  {*  <tr>
         <td valign="top" width="150px">{$LANG.onappcdnpublishername}</td>
         <td>{$details->_publisher_name}</td>
-    </tr>
+    </tr> *}
     <tr>
         <td valign="top">{$LANG.onappcdnipaccesspolicy}</td>
         <td>{$details->_ip_access_policy}</td>

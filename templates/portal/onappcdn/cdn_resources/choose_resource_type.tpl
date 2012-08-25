@@ -11,15 +11,17 @@
         <th>{$LANG.onappcdndescription}</th>
     </tr>
         {foreach item=type key=typekey from=$resource_types}
+        {if $typekey != 'HTTP_PUSH'}    
         <tr>
             <td>
                 <input value="{$type.label}" type="button" 
-                       onclick="$('#form').attr('action', '{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&template={$type.template}&action=add&id={$id}').submit()" />
+                       onclick="$('#form').attr('action', '{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&type={$typekey}&action=add&id={$id}').submit()" />
             </td>
             <td>
                 {$type.description}
             </td>
         </tr>
+        {/if}
         {/foreach}
         
 </table>

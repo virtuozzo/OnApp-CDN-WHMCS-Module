@@ -48,7 +48,7 @@
             <td>{$resource._origins_for_api}</td>
             <td>{$resource._resource_type}</td>
             <td>
-                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=edit&resource_id={$resource_id}">{$_LANG.onappcdnedit}</a> &nbsp
+                <a href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=edit&resource_id={$resource_id}&type={$resource._resource_type}">{$_LANG.onappcdnedit}</a> &nbsp
                 <a onclick="if( confirm('{$_LANG.onappcdnareyousureyouwantdelete}') ) return true; else return false" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}&action=delete&resource_id={$resource_id}">{$_LANG.onappcdndelete}</a>
             </td>
         </tr>
