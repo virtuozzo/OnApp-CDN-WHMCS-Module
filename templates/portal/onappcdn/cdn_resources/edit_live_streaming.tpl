@@ -132,7 +132,7 @@ $(document).ready(function(){
 $('#passwords_table tr').eq(1).remove()
 $('#passwords_table').append( passwords_html )
 
-// TODO add form validation
+
 });
 
 </script>
@@ -156,7 +156,7 @@ $('#passwords_table').append( passwords_html )
     {*-- | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> *}
   </div>
 
-<h2>{$_LANG.onappcdnnewresourcelivestreaming}</h2>
+<h2>{$_LANG.onappcdneditresource}</h2>
 
 {$_LANG.onappcdnresourceadddescription}
 
@@ -245,9 +245,9 @@ $('#passwords_table').append( passwords_html )
             <td>{$_LANG.onappcdncountryaccesspolicy}</td>
             <td class="label_width" valign="top">
                 <select class="selectfield" id="country_access_policy" name="resource[country_access_policy]">
-                    <option value="NONE">{$_LANG.onappcdndisabled}</option>
-                    <option value="ALLOW_BY_DEFAULT">{$_LANG.onappcdnallowbydefault}</option>
-                    <option value="BLOCK_BY_DEFAULT">{$_LANG.onappcdnblockbydefault}</option>
+                    <option value="NONE" {if $advanced_details->_country_access_policy eq 'NONE'}selected{/if}>{$_LANG.onappcdndisabled}</option>
+                    <option value="ALLOW_BY_DEFAULT" {if $advanced_details->_country_access_policy eq 'ALLOW_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnallowbydefault}</option>
+                    <option value="BLOCK_BY_DEFAULT" {if $advanced_details->_country_access_policy eq 'BLOCK_BY_DEFAULT'}selected{/if}>{$_LANG.onappcdnblockbydefault}</option>
                 </select>
             </td>
         </tr>
@@ -296,18 +296,14 @@ $('#passwords_table').append( passwords_html )
 {foreach item=group from=$edge_group_baseresources}
 
     <tr>
-            <td valign="top">
-                <b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} <br />
-                
+        <td>
+             <b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} <br />
                 {foreach item=location from=$group.locations}
                     {$location->_city|ucfirst}, {$location->_country}    <br />
                 {/foreach}
-            </td> 
+        </td>
         <td class="label_width" valign="top">
-            <div >
-            <input id="advanced_settings_input_{$group.id}" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" 
-          {if isset($session_resource.edge_group_ids) }{if $group.id|in_array:$session_resource.edge_group_ids}checked{/if}{/if}/>
-        </div>
+            <input id="advanced_settings_input" value="{$group.id}" type="checkbox" name="resource[edge_group_ids][]" {if $group.id|in_array:$edge_group_ids}checked{/if} />
         </td>
     </tr>
 
@@ -341,10 +337,9 @@ $('#passwords_table').append( passwords_html )
     </table>
 </div> *}
 
-<input type="hidden" name="add" value="1" /> <br /> <br />
-<input type="hidden" name="template" value="add_live_streaming_resources" />
+<input type="hidden" name="edit" value="1" /> <br /> <br />
 <input type="hidden" name="resource[resource_type]" value="STREAM_LIVE" />
-<input type="submit" value="{$_LANG.onappcdncreateresource}" />
+<input type="submit" value="{$_LANG.onappcdnapplychanges}" />
 
 </form>
 <br /><br />

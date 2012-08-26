@@ -7,13 +7,12 @@ $(document).ready(function(){
     var advanced_checkbox     = $("#advanced_settings_input")
     var secure_wowza_on_checkbox   = $('#secure_wowza_on_input')
 
-function in_array(needle, haystack){
-    for(var i=0; i<haystack.length; i++)
-        if(needle == haystack[i])
-            return true;
-    return false;
-}
-
+    function in_array(needle, haystack){
+        for(var i=0; i<haystack.length; i++)
+            if(needle == haystack[i])
+                return true;
+        return false;
+    }
 // Advanced Settings Checkbox //
 ///////////////////////////////
     advanced_container.hide()
@@ -33,7 +32,7 @@ function in_array(needle, haystack){
 {literal}
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
-
+    
 // Anti leech domains Checkbox //
 ////////////////////////////
     $('#anti_leech_domains').hide()
@@ -57,14 +56,10 @@ function in_array(needle, haystack){
             $('#anti_leech_on').change()
         }
     })
-        
 // END Hotlink Policy Checkbox //
 ////////////////////////////////
-
-
 // Country Access Policy //
 //////////////////////////
-
 {/literal}
     country_access_policy = '{$session_resource.country_access_policy}'
 {literal}
@@ -75,13 +70,12 @@ function in_array(needle, haystack){
             $('#country_access_policy').change()
         }
     })
-
 // END Country Access Policy //
 //////////////////////////////
 
 // Selecting Countries //
 ////////////////////////
-
+    
 // Select countries
     {/literal} 
         countries_ids = {$countries}
@@ -93,13 +87,11 @@ function in_array(needle, haystack){
             }
         })
     }
-        
 // END Selecting Countries //
 ////////////////////////////
 
 // URL signing Checkbox //
 /////////////////////////
-    
     $('#secure_wowza_on_tr').hide()
 
     secure_wowza_on_checkbox.change(function(){
@@ -110,7 +102,6 @@ function in_array(needle, haystack){
             $('#secure_wowza_on_tr').hide()
         }
     });
-
 // Check Secure wowza checkbox
  {/literal}
     {if $session_resource.secure_wowza_on eq true}
@@ -124,7 +115,14 @@ function in_array(needle, haystack){
 ////////////////////////////// 
     {/literal} 
         edge_group_locations_ids = {$edge_group_locations_ids}
+        {if $session_resource.publishing_point}
+            session_publishing_point = '{$session_resource.publishing_point}'
+        {/if}
     {literal} 
+        
+        if ( typeof session_publishing_point != 'undefined'){
+            $('select[name="resource[publishing_point]"]').val(session_publishing_point)
+        }        
         
         $('select[name="resource[publishing_point]"]').change( function(){
             if( $(this).val() == 'internal' ) {
@@ -132,6 +130,12 @@ function in_array(needle, haystack){
                 $('tr.external_publishing_point_tr').hide()
                 
                 fill_internal_select_options()
+                if( typeof session_publishing_point != 'undefined' &&
+                    session_publishing_point == 'internal'
+                ){
+                    $('#internal_publishing_point_select').val({/literal}'{$session_resource.internal_publishing_point}'{literal})
+                    $('#failover_internal_publishing_point_select').val({/literal}'{$session_resource.failover_internal_publishing_point}'{literal})
+                }
             } else {
                 $('tr.external_publishing_point_tr').show()
                 $('#internal_publishing_point_div').hide()
@@ -142,8 +146,8 @@ function in_array(needle, haystack){
             
         $('input[name="resource[edge_group_ids][]"]').change(function(){
             fill_internal_select_options()
-        })            
-        
+        }) 
+            
         function fill_internal_select_options() {
             var ipps    = $('#internal_publishing_point_select')
             var fipps   = $('#failover_internal_publishing_point_select') 
@@ -171,7 +175,8 @@ function in_array(needle, haystack){
                 
             ipps.html( options )
             fipps.html( options )    
-        }        
+        }
+            
 // END Internal Publishing Point //
 //////////////////////////////////    
 });
@@ -231,7 +236,7 @@ function in_array(needle, haystack){
             {$_LANG.onappcdnexternalpublishingurl}
         </td>
         <td class="label_width" valign="top">
-            <input class="textfield" id="external_publishing_url_input" type="text" name="resource[external_publishing_url]" />
+            <input class="textfield" id="external_publishing_url_input" type="text" value="{$session_resource.external_publishing_url}" name="resource[external_publishing_url]" />
         </td>
     </tr>
     
@@ -240,7 +245,7 @@ function in_array(needle, haystack){
             {$_LANG.onappcdnfailoverexternalpublishingurl}
         </td>
         <td class="label_width" valign="top">
-            <input class="textfield" id="failover_external_publishing_url_input" type="text" name="resource[failover_external_publishing_url]" />
+            <input class="textfield" id="failover_external_publishing_url_input" value="{$session_resource.failover_external_publishing_url}" type="text" name="resource[failover_external_publishing_url]" />
         </td>
     </tr>    
     

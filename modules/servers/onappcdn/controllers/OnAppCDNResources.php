@@ -127,7 +127,7 @@ class OnAppCDNResources extends OnAppCDN {
      
         if ( parent::get_value('edit') != 1 ) {
             
-        $data = $this->getResourceData( $onapp, $type, $types, 'edit' );            
+        $data = $this->getResourceData( $onapp, $type, $types, 'edit' ); 
 
             $countries_ids = ( $data['advanced_details']->_countries ) ? $data['advanced_details']->_countries : array();
             
@@ -261,18 +261,16 @@ class OnAppCDNResources extends OnAppCDN {
             }
 
             $passwords_array = array();
-            if( isset( $session_resource ) ){
+            if( isset( $session_resource['form_pass']['user'] ) ){
                 foreach( $session_resource['form_pass']['user'] as $key => $value ) {
                     $passwords_array[$value] = $session_resource['form_pass']['pass'][$key];
                 }
-            } else {
-                $session_resource = null;
-            }
+            } 
             
             $passwords_html = $this->generate_passwords_html( $passwords_array );
 
             $countries   = ( ! isset ( $session_resource['countries'] ) ) ? '[]' : json_encode($session_resource['countries']);
-            
+
             $this->show_template(
                 $template,
                 array(
@@ -301,17 +299,9 @@ class OnAppCDNResources extends OnAppCDN {
 
                 }
             }
-            
-//            print('<pre>');
-//            print_r($_resource);
-//            die();
-            
+ 
             $_resource->save();
-            
-            print('<pre>');
-            print_r( $_resource );
-            die();
-            
+
             if ( $_resource->getErrorsAsArray() )
                 $errors[] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
 
@@ -321,7 +311,7 @@ class OnAppCDNResources extends OnAppCDN {
                 $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&id=' . parent::get_value('id') );
             }
             else {
-                $_SESSION['resource'] = $_POST['resource'];
+                $_SESSION['resource'] = $resource;
                 $_SESSION['errors'] = implode( PHP_EOL, $errors );
                 
                 $this->redirect( ONAPPCDN_FILE_NAME . '?page=resources&type=' . $type . '&action=add&id=' . parent::get_value('id') );
@@ -373,11 +363,6 @@ class OnAppCDNResources extends OnAppCDN {
     }
     
     public function process_request( $resource, $action ){
-            
-//            print('<pre>');
-//            print_r($resource);
-//            die();
-
             if ( ! isset ( $resource['advanced_settings'] ) ) {
                 foreach( $resource as $key => $field ) {
                     if ( $key != 'cdn_hostname'                      &&
@@ -386,7 +371,7 @@ class OnAppCDNResources extends OnAppCDN {
                          $key != 'edge_group_ids'                    &&
                          $key != 'ftp_password'                      &&
                          $key != 'ssl_on'                            &&
-                         $key != 'cdn_resource_publishing_point'     &&
+                         $key != 'publishing_point'                  &&
                          $key != 'external_publishing_url'           &&
                          $key != 'internal_publishing_point'         && 
                          $key != 'failover_external_publishing_url'  &&
@@ -449,13 +434,12 @@ class OnAppCDNResources extends OnAppCDN {
                         $resource['countries'] = array();
                     }                
                 }                
-                
             }
             
-            if ( $resource['cdn_resource_publishing_point'] == 'internal' ) {
+            if ( $resource['publishing_point'] == 'internal' ) {
                 unset($resource['external_publishing_url']);
                 unset($resource['failover_external_publishing_url']);
-            } elseif ( $resource['cdn_resource_publishing_point'] == 'external' ){
+            } elseif ( $resource['publishing_point'] == 'external' ){
                 unset($resource['internal_publishing_point']);
                 unset($resource['failover_internal_publishing_point']);
             }  
@@ -464,16 +448,7 @@ class OnAppCDNResources extends OnAppCDN {
                 $resource['cdn_hostname'] .= '.r.worldssl.net';
             }
             
-//            print('<pre>');
-//            print_r($resource);
-//            die(); 
-            
-            
             return $resource;
-            
-
-
-       
     }
     
     /**
