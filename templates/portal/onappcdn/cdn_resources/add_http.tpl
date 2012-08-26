@@ -442,7 +442,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdnenablemp4pseudostreaming}
             </td>
             <td class="label_width" valign="top">
-                <input id="mp4_pseudo_on_input" value="1" type="checkbox" name="resource[mp4_pseudo_on]" />
+                <input id="mp4_pseudo_on_input" value="1" type="checkbox" name="resource[mp4_pseudo_on]" {if $session_resource.mp4_pseudo_on eq true}checked{/if}/>
             </td>
         </tr>
         <tr >
@@ -450,7 +450,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdnpenableflvpseudostreaming}
             </td>
             <td class="label_width" valign="top">
-                <input id="flv_pseudo_on_input" value="1" type="checkbox" name="resource[flv_pseudo_on]" />
+                <input id="flv_pseudo_on_input" value="1" type="checkbox" name="resource[flv_pseudo_on]" {if $session_resource.flv_pseudo_on eq true}checked{/if} />
             </td>
         </tr>        
     </table>
@@ -465,7 +465,7 @@ $('#passwords_table').append( passwords_html )
                 {$_LANG.onappcdningnoresetcookie}
             </td>
             <td class="label_width" valign="top">
-                <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[ignore_set_cookie_on]" />
+                <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[ignore_set_cookie_on]" {if $session_resource.ignore_set_cookie_on eq true}checked{/if} />
             </td>
         </tr>
     </table>            

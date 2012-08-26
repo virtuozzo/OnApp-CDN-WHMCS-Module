@@ -412,29 +412,26 @@ class OnAppCDNResources extends OnAppCDN {
                     unset( $resource['form_pass'] );
                 }
                 
-                if( $action == 'edit') {
-    // checkboxes
-                    if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
-                        $resource['url_signing_on'] = 0;
-                    }
+                if ( !isset( $resource['url_signing_on']) || is_null( $resource['url_signing_on'] ) ) {
+                    $resource['url_signing_on'] = 0;
+                }
 
-                    if ( !isset( $resource['mp4_pseudo_on'] ) || is_null( $resource['mp4_pseudo_on'] )  ){
-                        $resource['mp4_pseudo_on'] = 0;
-                    }
+                if ( !isset( $resource['mp4_pseudo_on'] ) || is_null( $resource['mp4_pseudo_on'] )  ){
+                    $resource['mp4_pseudo_on'] = 0;
+                }
 
-                    if ( !isset( $resource['flv_pseudo_on'] ) || is_null( $resource['flv_pseudo_on'] )  ){
-                        $resource['flv_pseudo_on'] = 0;
-                    } 
+                if ( !isset( $resource['flv_pseudo_on'] ) || is_null( $resource['flv_pseudo_on'] )  ){
+                    $resource['flv_pseudo_on'] = 0;
+                } 
 
-                    if ( !isset( $resource['ignore_set_cookie_on'] ) || is_null( $resource['ignore_set_cookie_on'] )  ){
-                        $resource['ignore_set_cookie_on'] = 0;
-                    }                 
+                if ( !isset( $resource['ignore_set_cookie_on'] ) || is_null( $resource['ignore_set_cookie_on'] )  ){
+                    $resource['ignore_set_cookie_on'] = 0;
+                }                 
 
-                    if ( !isset ( $resource['countries']) ){
-                        $resource['countries'] = array();
-                    }                
+                if ( !isset ( $resource['countries']) ){
+                    $resource['countries'] = array();
                 }                
-            }
+            }                
             
             if ( $resource['publishing_point'] == 'internal' ) {
                 unset($resource['external_publishing_url']);
