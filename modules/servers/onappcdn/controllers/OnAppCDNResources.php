@@ -142,7 +142,6 @@ class OnAppCDNResources extends OnAppCDN {
                 unset( $_SESSION['successmessages'] );
             }
 
-            print_r($data['resource']->_cdn_hostname);
             $this->show_template(
                 $template,
                 array(
