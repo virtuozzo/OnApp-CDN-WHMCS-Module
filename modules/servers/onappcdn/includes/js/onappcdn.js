@@ -71,15 +71,5 @@ $(document).ready(function(){
     userGroupTitle.remove();
     userGroupSelect.remove();
     
-// Drow cdnPrice Input 
-    $('input[name="packageconfigoption[6]"]').css('width', '300px')
-    lastElement   = $('input[name="packageconfigoption[6]"]').parent().parent()
-    cdnPriceTitle = lastElement.children('td:nth-child(3)')
-    cdnPriceInput = lastElement.children('td:nth-child(4)')
-    cdnPriceInput.css('width', '300px')
-    lastElement.after('<tr><td class="fieldlabel">' + cdnPriceTitle.html() + '</td><td class="fieldarea">' + cdnPriceInput.html() + '</td></tr>' )
-    cdnPriceTitle.remove()
-    cdnPriceInput.remove()
-    
     $('select').css('width' ,'300px');
 });

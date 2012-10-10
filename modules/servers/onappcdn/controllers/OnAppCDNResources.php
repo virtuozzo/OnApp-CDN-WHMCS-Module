@@ -24,7 +24,7 @@ class OnAppCDNResources extends OnAppCDN {
         $onapp = $this->getOnAppInstance();
 
         $whmcs_client_details  =  $this->getWhmcsClientDetails();
-
+        
         $resource  = $onapp->factory('CDNResource', true );
 
         $resources = $resource->getList();

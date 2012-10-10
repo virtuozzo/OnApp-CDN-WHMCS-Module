@@ -244,13 +244,6 @@ function onappcdn_ConfigOptions() {
         "Type"        => "text",
         "Description" => $javascript
     );
-    
-// Price Field //
-////////////////
-    $configarray[$_LANG['onappcdnpricepergb']] = array(
-        "Type"        => "text",
-        "Description" => "$_LANG[onappcdninbasecurrency]",
-    );
 
     return $configarray;
 }
