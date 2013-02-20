@@ -32,7 +32,7 @@
         {foreach from=$statistics item=statistic}
         <tr>
             <td>{$resources[$statistic.cdn_resource_id]->_cdn_hostname}</td>
-            <td>{$statistic.traffic|round:4} GB</td>
+            <td>{$statistic.formated_traffic}</td>
             <td> {$whmcs_client_details.currencyprefix} {$statistic.price|round:4} {$whmcs_client_details.currencycode}</td>
         </tr>
         {/foreach}
