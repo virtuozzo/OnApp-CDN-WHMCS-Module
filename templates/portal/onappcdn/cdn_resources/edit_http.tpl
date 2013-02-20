@@ -185,7 +185,7 @@ $('#passwords_table').append( passwords_html )
         <td class="label_width" valign="top">
             <select class="selectfield" name="resource[resource_type]" disabled>
                 <option value="HTTP_PULL" {if $resource->_resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
-                <option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>
+<!--                <option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option> -->
             </select>
         </td>
     </tr>
