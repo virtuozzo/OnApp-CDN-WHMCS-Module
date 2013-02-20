@@ -40,7 +40,7 @@
         <tr>
             <td>{$statistic.stat_time}</td>
             <td>{$statistic.edge_group_label}</td>
-            <td>{$statistic.traffic*1024} MB</td>
+            <td>{$statistic.formated_trafic}</td>
             <td>{$statistic.currency_rate}</td>
             <td>{$statistic.cost|round:7}</td>
         </tr>
