@@ -118,14 +118,32 @@ while ( $row = mysql_fetch_assoc( $result ) ) {
     echo 'Total Cost              ' . $total_cost . PHP_EOL;    
 // debug    
     echo 'Total Invoices Amount   ' . $invoiced_amount['amount'] . PHP_EOL;  
-    
-    $amount = round( $total_cost - $invoiced_amount['amount'], 2 );
- 
-// debug    
-    echo PHP_EOL .'Not Invoiced Amount     ' . $amount . PHP_EOL; 
-    
 
-    if ( $amount > 0.1 ) {
+    $taxed = empty($row['taxexempt']) && $CONFIG['TaxEnabled'];
+
+    $taxrate = 0;
+    $tax_amount = 0;
+    $amount = round( $total_cost - $invoiced_amount['amount'], 2 );
+
+    if ($taxed) {
+        echo 'taxed invoice' . PHP_EOL;
+        $_taxrate = getTaxRate(1, $row['state'], $row['country']);
+        $taxrate = $_taxrate['rate'];
+
+        if($CONFIG["TaxType"] == "Inclusive") {
+            $invoiced_amount['amount'] = $invoiced_amount['amount'] * (1 + $taxrate / 100);
+            $amount = round( $total_cost - $invoiced_amount['amount'], 2 );
+            $tax_amount = round($amount * $taxrate / (100 + $taxrate), 2);
+        } else {
+            $amount = round($total_cost - $invoiced_amount['amount'], 2 );
+            $tax_amount = round($amount * $taxrate / 100, 2);
+        }
+    }
+
+// debug    
+    echo PHP_EOL .'Not Invoiced Amount     ' . $amount . PHP_EOL;
+ 
+    if ( $amount > 0.2) {
 // debug
         echo 'Generating Invoice' . PHP_EOL;
 
@@ -135,26 +153,17 @@ while ( $row = mysql_fetch_assoc( $result ) ) {
 
         $admin = mysql_fetch_assoc($res);
 
-        $taxed = empty($row['taxexempt']) && $CONFIG['TaxEnabled'];
-
-        if ($taxed) {
-// debug
-            echo 'taxed invoice' . PHP_EOL;
-            $taxrate = getTaxRate(1, $row['state'], $row['country']);
-            $taxrate = $taxrate['rate'];
-        } else {
-            $taxrate = '';
-        }
-
         $data = array(
             'userid'           => $row['userid'],
             'date'             => $today,
             'duedate'          => $duedate,
             'paymentmethod'    => $row['paymentmethod'],
+            'tax_type'         => $CONFIG["TaxType"],
             'taxrate'          => $taxrate,
-            'itemdescription1' => 'CDN Service Usage',
-            'itemamount1'      => $amount,
-            'itemtaxed1'       => $taxed,
+            'tax_amount'       => $tax_amount,
+            'itemdescription'  => 'CDN Service Usage',
+            'itemamount'       => $amount,
+            'itemtaxed'        => $taxed,
             'notes'            => $row['hostingid'],
         );
 
