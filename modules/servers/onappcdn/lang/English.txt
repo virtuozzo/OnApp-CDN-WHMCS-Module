@@ -90,7 +90,7 @@ $_LANG["onappcdnurlsigninginfo"] = "Protect your files from unauthorized
     access with a key and optionally an expiration time. A signed URL looks 
     like `http://example.com/filename?secure=DMF1ucDxtqgxwYQ==,1322659070`.";
 $_LANG["onappcdnenableurlsigning"] = "Enable URL Signing";
-$_LANG["onappcdncacheexpiryinfo"] = "Cache expiry is set in minutes.";
+$_LANG["onappcdncacheexpiryinfo"] = "Cache expiry is set in seconds.";
 $_LANG["onappcdnpassword"] = "Password";
 $_LANG["onappcdnenablepassword"] = "Enable Password";
 $_LANG["onappcdnusername"] = "Username";
