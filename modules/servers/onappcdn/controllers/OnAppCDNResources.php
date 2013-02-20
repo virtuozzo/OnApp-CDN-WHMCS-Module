@@ -342,22 +342,22 @@ class OnAppCDNResources extends OnAppCDN {
         parent::loadcdn_language();
         global $_LANG;
         return array(
-            'STREAM_LIVE'     =>  array( 'template'     => 'live_streaming', 
-                                         'requirements' => 'streamSupported',
-                                         'description'  =>  $_LANG['onappcdnlivestreamingresource'],
-                                         'label'        =>  $_LANG['onappcdnlivestreaming'] ),
+//            'STREAM_LIVE'     =>  array( 'template'     => 'live_streaming', 
+//                                         'requirements' => 'streamSupported',
+//                                         'description'  =>  $_LANG['onappcdnlivestreamingresource'],
+//                                         'label'        =>  $_LANG['onappcdnlivestreaming'] ),
             'HTTP_PULL'       =>  array( 'template'     => 'http', 
                                          'requirements' => 'httpSupported',
                                          'description'  =>  $_LANG['onappcdnhttppullorpushresource'],
                                          'label'        =>  'HTTP' ),                
-            'HTTP_PUSH'       =>  array( 'template'     => 'http', 
-                                         'requirements' => 'httpSupported',
-                                         'description'  =>  $_LANG['onappcdnhttppullorpushresource'],
-                                         'label'        =>  'HTTP' ),                
-            'STREAM_VOD_PULL' =>  array( 'template'     => 'video_on_demand', 
-                                         'requirements' => 'streamSupported',
-                                         'description'  =>  $_LANG['onappcdnvideoondemandresource'],
-                                         'label'        =>  $_LANG['onappcdnvideoondemand'] ),                
+//            'HTTP_PUSH'       =>  array( 'template'     => 'http', 
+//                                         'requirements' => 'httpSupported',
+//                                         'description'  =>  $_LANG['onappcdnhttppullorpushresource'],
+//                                         'label'        =>  'HTTP' ),                
+//            'STREAM_VOD_PULL' =>  array( 'template'     => 'video_on_demand', 
+//                                         'requirements' => 'streamSupported',
+//                                         'description'  =>  $_LANG['onappcdnvideoondemandresource'],
+//                                         'label'        =>  $_LANG['onappcdnvideoondemand'] ),                
         );        
     }
     
