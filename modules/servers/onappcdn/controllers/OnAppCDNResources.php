@@ -55,6 +55,7 @@ class OnAppCDNResources extends OnAppCDN {
             $__resources[ $_resources->_id ]['_resource_type'] = $_resources->_resource_type;
             $__resources[ $_resources->_id ]['_cdn_hostname'] = $_resources->_cdn_hostname;
             $__resources[ $_resources->_id ]['_origins_for_api'] = '';
+
             foreach( $_resources->_origins as $origin ) {
                 $__resources[ $_resources->_id ]['_origins_for_api'] = $origin->_value . PHP_EOL;
             }
@@ -174,7 +175,10 @@ class OnAppCDNResources extends OnAppCDN {
             
 // needed to disable WHMCS html auto escape in forms.            
             $_resource->_password_unauthorized_html = html_entity_decode( $_resource->_password_unauthorized_html );
-            
+
+            if(is_numeric(parent::get_value('resource_id')))
+                $_resource->_id = parent::get_value('resource_id'); 
+
             $_resource->save();
             
             if ( $_resource->getErrorsAsArray() )
@@ -391,8 +395,8 @@ class OnAppCDNResources extends OnAppCDN {
                 }                
                 
                 if ( $resource['country_access_policy'] == 'NONE' ) {
-                    unset( $resource['country_access_policy'] );
-                    unset( $resource['countries'] );
+//                    unset( $resource['country_access_policy'] );
+//                    unset( $resource['countries'] );
                 }
                 if ( $resource['hotlink_policy'] == 'NONE' ) {
                     unset( $resource['hotlink_policy'] );
