@@ -24,6 +24,8 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
         );
  
         $value = 0;
+        $unit = 'B';
+
         if ($bytes > 0) {
 
             // Generate automatic prefix by bytes 
