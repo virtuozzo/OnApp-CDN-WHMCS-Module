@@ -91,6 +91,8 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
 
         while ( $row = mysql_fetch_assoc( $result ) ) {
             $row['formated_trafic'] = $this->byteFormat($row['traffic']);
+            $row['cost'] = round($row['cost'], 2);
+
             $rows[] = $row;
         }
 
