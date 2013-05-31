@@ -3,7 +3,7 @@
 
 require_once dirname( __FILE__ ) . '/class_onappcdn.php';
 
-OnAppCDN::loadcdn_language();
+OnAppCDN::loadCDNLanguage();
 OnAppCDN::init_wrapper();
 if( ! defined( 'ONAPPCDN_FILE_NAME' ) ) {
 	define( 'ONAPPCDN_FILE_NAME', 'onappcdn.php' );
@@ -77,10 +77,7 @@ function onappcdn_ConfigOptions() {
 	);
 
 	$server_id = $packageconfigoption[ 1 ];
-	if( is_null( $server_id ) // NULL
-			|| $server_id == 0 // not defined
-			|| ! in_array( $server_id, array_keys( $cdnservers ) ) // not in group
-	) {
+	if( is_null( $server_id ) || ( $server_id == 0 ) || ! in_array( $server_id, array_keys( $cdnservers ) ) ) {
 		$configarray[ 'CDN Server' ][ 'Description' ] .= '  ' . $_LANG[ 'onappcdnnoserverselected' ];
 		return $configarray;
 	}
@@ -240,14 +237,13 @@ function onappcdn_ConfigOptions() {
 
 function onappcdn_CreateAccount( $params ) {
 	$onappcdn = new OnAppCDN( $params[ 'serviceid' ] );
-
-	$user = $onappcdn->get_user();
+	$user = $onappcdn->getUser();
 
 	if( $user ) {
 		$result = 'OnApp CDN user already exists (onapp user id #' . $user[ 'onapp_user_id' ] . ')';
 	}
 	else {
-		$result = $onappcdn->create_user();
+		$result = $onappcdn->createUser();
 	}
 
 	return $result;
@@ -255,8 +251,7 @@ function onappcdn_CreateAccount( $params ) {
 
 function onappcdn_TerminateAccount( $params ) {
 	$onappcdn = new OnAppCDN( $params[ 'serviceid' ] );
-
-	$user = $onappcdn->get_user();
+	$user = $onappcdn->getUser();
 
 	if( ! $user ) {
 		$result = 'OnApp CDN user do not exists';
@@ -270,8 +265,7 @@ function onappcdn_TerminateAccount( $params ) {
 
 function onappcdn_SuspendAccount( $params ) {
 	$onappcdn = new OnAppCDN( $params[ 'serviceid' ] );
-
-	$user = $onappcdn->get_user();
+	$user = $onappcdn->getUser();
 
 	if( ! $user ) {
 		$result = 'OnApp CDN user do not exists';
@@ -285,8 +279,7 @@ function onappcdn_SuspendAccount( $params ) {
 
 function onappcdn_UnsuspendAccount( $params ) {
 	$onappcdn = new OnAppCDN( $params[ 'serviceid' ] );
-
-	$user = $onappcdn->get_user();
+	$user = $onappcdn->getUser();
 
 	if( ! $user ) {
 		$result = 'OnApp CDN user do not exists';
@@ -302,15 +295,11 @@ function onappcdn_ClientArea( $params ) {
 	global $_LANG;
 
 	if( ! $init_wrapper = OnAppCDN::init_wrapper() ) {
-		return
-				sprintf(
-					"%s ",
-					$_LANG[ 'onapponmaintenance' ]
-				);
+		return sprintf( "%s ", 'Wrapper not found in ' . ONAPP_WRAPPER_INIT );
 	}
 
 	$onappcdn = new OnAppCDN( $params[ 'serviceid' ] );
-	$user = $onappcdn->get_user();
+	$user = $onappcdn->getUser();
 
 	if( ! is_null( $user[ 'onapp_user_id' ] ) ) {
 		return '<a href="' . ONAPPCDN_FILE_NAME . '?page=resources&id=' . $params[ 'serviceid' ] . '">' . $_LANG[ 'onappcdnresources' ] . '</a>';
