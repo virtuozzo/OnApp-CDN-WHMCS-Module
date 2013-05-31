@@ -1,7 +1,6 @@
 <?php
 /**
  * Manages CDN Resource Errors
- *
  */
 class OnAppCDNError extends OnAppCDN {
 
@@ -11,7 +10,7 @@ class OnAppCDNError extends OnAppCDN {
 
     /**
      * Shows errors
-     * 
+     *
      */
     public function show(  ) {
 
@@ -19,11 +18,11 @@ class OnAppCDNError extends OnAppCDN {
             $errors = $_SESSION['failerrors'];
             unset( $_SESSION['failerrors'] );
         }
-        
-        $this->show_template(
+
+        $this->showTemplate(
             'onappcdn/error',
             array(
-                'id'                =>  parent::get_value('id'),
+                'id'                =>  parent::getValue('id'),
                 'errors'            =>  implode( PHP_EOL, $errors ),
             )
         );
