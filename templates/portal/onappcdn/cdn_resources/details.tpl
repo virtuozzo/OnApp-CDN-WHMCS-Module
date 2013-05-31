@@ -52,25 +52,26 @@
 
 {if $ssl_mode == false}
 
-<h5>{$_LANG.onappcdndnssettingsinfo} </h5>
+<h5>{$_LANG.onappcdndnssettingsinfo}</h5>
 <b>
-   {$resource->_cdn_hostname} IN CNAME {$resource->_aflexi_resource_id}.r.worldcdn.net
+   {*{$resource->_cdn_hostname} IN CNAME {$resource->_aflexi_resource_id}.r.worldcdn.net*}
+   {$resource->_cdn_hostname} IN CNAME {$resource->cname}
 </b>
-{else}   
+{else}
   <h5>{$_LANG.onappcdndnssettingsinfossl} </h5>
 <b>
-   {$resource->_cdn_hostname} 
-</b>  
+   {$resource->_cdn_hostname}
+</b>
 {/if}
 
 <h2>{$_LANG.onappcdnedgegroups}</h2>
 
 <table cellspacing="0" cellpadding="10" border="0" width="100%">
-    
+
     {foreach item=group from=$edge_group_baseresources}
             <tr>
                 <td valign="top"><b>{$group.label}</b> - {$whmcs_client_details.currencyprefix} {$group.price*$whmcs_client_details.currencyrate} {$whmcs_client_details.currencycode} </td>
-                <td valign="top">   
+                <td valign="top">
                     {foreach item=location from=$group.locations}
                         {$location->_city|ucfirst}, {$location->_country}    <br />
                     {/foreach}
@@ -90,4 +91,3 @@
 </form>
 
 <br /><br />
-

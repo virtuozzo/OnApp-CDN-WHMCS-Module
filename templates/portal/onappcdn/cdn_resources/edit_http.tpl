@@ -7,7 +7,7 @@ function in_array(needle, haystack){
             return true;
     return false;
 }
-  
+
 $(document).ready(function(){
 
     var advanced_container    = $("#advanced_settings")
@@ -50,7 +50,7 @@ $(document).ready(function(){
     });
 // END Advanced Settings Checkbox //
 ///////////////////////////////////
-    
+
 // Hotlink Policy Checkbox //
 ////////////////////////////
     $('#domains_tr').hide()
@@ -69,7 +69,7 @@ $(document).ready(function(){
 
 // Advanced Settings Checkbox //
 ///////////////////////////////
-    
+
     $('#urlsigning_tr').hide()
 
     urlsigning_checkbox.change(function(){
@@ -89,14 +89,12 @@ $(document).ready(function(){
 
 // Select countries
     var countries_ids = {/literal}{$countries_ids}{literal}
-        
-        console.log(countries_ids)
 
     if ( countries_ids ) {
         $('#country_access option').each( function(){
             console.log( $(this).val())
             if ( in_array( $(this).val(), countries_ids ) ) {
-                
+
                 $(this).attr('selected', 'true')
             }
         })
@@ -176,8 +174,8 @@ $('#passwords_table').append( passwords_html )
         <td class="label_width" valign="top">
             <input class="textfield" value="{$resource->_cdn_hostname}" type="text" name="resource[cdn_hostname]" />
         </td>
-    </tr>    
-    
+    </tr>
+
     <tr>
         <td>
             {$_LANG.onappcdnresourcetype}
@@ -185,7 +183,9 @@ $('#passwords_table').append( passwords_html )
         <td class="label_width" valign="top">
             <select class="selectfield" name="resource[resource_type]" disabled>
                 <option value="HTTP_PULL" {if $resource->_resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
-<!--                <option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option> -->
+				{*
+				<option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>
+				*}
             </select>
         </td>
     </tr>
@@ -194,12 +194,22 @@ $('#passwords_table').append( passwords_html )
         <td>
             {$_LANG.onappcdnorigins}
         </td>
-        <td class="label_width" valign="top">
-            <input class="textfield" value="{foreach item=origin from=$resource->_origins}{$origin->_value}{/foreach}" type="text" name="resource[origin]" />
-        </td>
+		<td class="label_width" valign="top">
+			{assign var=origins value=""}
+			{foreach item=origin from=$resource->_origins}
+				{if isset($origin->_value)}
+					{assign var=origins value=$origins|cat:$origin->_value}
+				{else}
+					{assign var=origins value=$origins|cat:$origin}
+				{/if}
+				{assign var=origins value=$origins|cat:"\r\n"}
+			{/foreach}
+			<textarea name="resource[origins]" rows="3">{$origins}</textarea>
+			{*<input class="textfield" value="{$origins}" type="text" name="resource[origin]"/>*}
+		</td>
     </tr>
     {/if}
-    
+
     <tr>
         <td>
             {$_LANG.onappcdnsslmode}
@@ -333,7 +343,7 @@ $('#passwords_table').append( passwords_html )
 
     <h4>{$_LANG.onappcdnpassword}</h4> <hr />
     <h5>{$_LANG.onappcdnclearbothfields}</h5>
-    
+
     <table cellspacing="0" cellpadding="10" border="0" width="100%">
         <tr>
             <td>{$_LANG.onappcdnenablepassword}</td>
@@ -373,7 +383,7 @@ $('#passwords_table').append( passwords_html )
     </table>
 
 </div>
-                    
+
     <h4>{$_LANG.onappcdnpseudostreaming}</h4> <hr />
 
     <h5>{$_LANG.onappcdnpseudostreaminginfo}</h5>
@@ -394,9 +404,9 @@ $('#passwords_table').append( passwords_html )
             <td class="label_width" valign="top">
                 <input id="flv_pseudo_on_input" value="1" type="checkbox" name="resource[flv_pseudo_on]" {if $advanced_details->_flv_pseudo_on eq true}checked{/if}/>
             </td>
-        </tr>        
+        </tr>
     </table>
-            
+
     <h4>{$_LANG.onappcdningnoresetcookie}</h4> <hr />
 
     <h5>{$_LANG.onappcdningnoresetcookieinfo}</h5>
@@ -410,8 +420,8 @@ $('#passwords_table').append( passwords_html )
                 <input id="ignore_set_cookie_on_input" value="1" type="checkbox" name="resource[ignore_set_cookie_on]" {if $advanced_details->_ignore_set_cookie_on eq true}checked{/if} />
             </td>
         </tr>
-    </table>                     
-                    
+    </table>
+
 </div>
 
 <h4>{$_LANG.onappcdnedgegroups}</h4>

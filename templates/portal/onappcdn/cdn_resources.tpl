@@ -53,7 +53,7 @@
             </td>
         </tr>
         {/foreach}
-        
+
         {else}
         <tr>
             <td>
