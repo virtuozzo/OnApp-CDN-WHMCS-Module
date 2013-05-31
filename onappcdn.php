@@ -4,7 +4,7 @@
 define( 'CLIENTAREA', true );
 
 if( ! defined( 'ROOTPATH' ) ) {
-	define( 'ROOTPATH', realpath( dirname( __FILE__ ) ) );
+	define( 'ROOTPATH', dirname( $_SERVER[ 'SCRIPT_FILENAME' ] ) );
 }
 if( ! defined( 'DS' ) ) {
 	define( 'DS', DIRECTORY_SEPARATOR );
@@ -27,7 +27,7 @@ else {
 	exit( 'CDN module is not installed correctly' );
 }
 
-$page = OnAppCDN::get_value( 'page' );
+$page = OnAppCDN::getValue( 'page' );
 $page = ( $page ) ? $page : 'resources';
 
 // Register pages
@@ -43,7 +43,7 @@ $pages = array(
 	'error'                    => 'Error',
 );
 
-$action = OnAppCDN::get_value( 'action' );
+$action = OnAppCDN::getValue( 'action' );
 $action = ( $action ) ? $action : 'show';
 
 // Register actions
@@ -73,8 +73,7 @@ else {
 require_once ONAPPCDN_DIR . 'controllers' . DS . $name . '.php';
 
 $class = new $name;
-
-$user = $class->get_user();
+$user = $class->getUser();
 
 if( ! isset( $user[ 'onapp_user_id' ] ) && $name != 'OnAppCDNDefault' && $name != 'OnAppCDNError' ) {
 	die( 'Invalid Token ( code : 3 )' ); // CDN User is not created yet
@@ -86,7 +85,7 @@ if( ! in_array( $class->getServiceId(), $class->getUserServisesIds() ) ) {
 } // Try to access not own hosting account or not loggedin
 
 // Verify whether User can access resource
-$resource_id = OnAppCDN::get_value( 'resource_id' );
+$resource_id = OnAppCDN::getValue( 'resource_id' );
 
 if( ! is_null( $resource_id ) ) {
 	$class->ifHaveAccessToResource( $resource_id );
