@@ -21,6 +21,15 @@
 <h2>{$_LANG.onappcdnbillingstatistics}</h2>
 <p>{$_LANG.onappcdnbandwidthstatisticsinfo}</p>
 
+{literal}
+<style>
+	a.current {
+		font-weight: bold;
+		font-size: 16px;
+		text-decoration: none;
+	}
+</style>
+{/literal}
 {if $statistics|count}
     {$pagination} <div class="items_per_page"> {$items_per_page}</div>
 {/if}
@@ -36,7 +45,7 @@
     </tr>
     {if $statistics|count}
         {foreach from=$statistics item=statistic}
-            
+
         <tr>
             <td>{$statistic.stat_time}</td>
             <td>{$statistic.edge_group_label}</td>
