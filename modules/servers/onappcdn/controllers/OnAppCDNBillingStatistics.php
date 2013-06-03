@@ -4,12 +4,12 @@
  */
 class OnAppCDNBillingStatistics extends OnAppCDN {
 	public function __construct() {
-		require_once dirname( __FILE__ ) . '/../class_paginator.php';
+		require_once dirname( dirname( __FILE__ ) ) . '/class_paginator.php';
 		parent::__construct();
 		parent::init_wrapper();
 	}
 
-	private function byteFormat( $bytes, $unit = "", $decimals = 3 ) {
+	private function byteFormat( $bytes, $unit = '', $decimals = 3 ) {
 		$units = array(
 			'B'  => 0,
 			'KB' => 1,
@@ -26,7 +26,6 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
 		$unit = 'B';
 
 		if( $bytes > 0 ) {
-
 			// Generate automatic prefix by bytes
 			// If wrong prefix given
 			if( ! array_key_exists( $unit, $units ) ) {
