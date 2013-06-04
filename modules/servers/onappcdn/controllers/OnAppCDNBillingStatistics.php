@@ -23,7 +23,6 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
 		);
 
 		$value = 0;
-		$unit = 'B';
 
 		if( $bytes > 0 ) {
 			// Generate automatic prefix by bytes
@@ -35,6 +34,9 @@ class OnAppCDNBillingStatistics extends OnAppCDN {
 
 			// Calculate byte value by prefix
 			$value = ( $bytes / pow( 1000, floor( $units[ $unit ] ) ) );
+		}
+		else {
+			$unit = 'B';
 		}
 
 		// If decimals is not numeric or decimals is less than 0
