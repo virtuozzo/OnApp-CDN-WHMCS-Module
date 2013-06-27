@@ -51,7 +51,7 @@
             <td>{$statistic.edge_group_label}</td>
             <td>{$statistic.formated_trafic}</td>
             <td>{$statistic.currency_rate}</td>
-            <td>{$statistic.cost|round:7}</td>
+            <td>{$statistic.cost|formatCurrency}</td>
         </tr>
         {/foreach}
 
