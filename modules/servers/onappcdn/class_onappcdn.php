@@ -373,41 +373,20 @@ class OnAppCDN {
 	 * Load $_LANG from language file
 	 */
 	public static function loadCDNLanguage() {
-		global $_LANG;
-		$dir = dirname( __FILE__ ) . '/lang/';
+		global $_LANG, $CONFIG;
 
-		if( ! file_exists( $dir ) ) {
-			return;
+		chdir( dirname( __FILE__ ) . '/lang/' );
+		$availableLangs = glob( '*.txt' );
+
+		$language = isset( $_SESSION[ 'Language' ] ) ? $_SESSION[ 'Language' ] : $CONFIG[ 'Language' ];
+		$language = ucfirst( $language ) . '.txt';
+
+		if( ! in_array( $language, $availableLangs ) ) {
+			$language = 'English.txt';
 		}
 
-		$dh = opendir( $dir );
-
-		while( false !== $file2 = readdir( $dh ) ) {
-			if( ! is_dir( '' . 'lang/' . $file2 ) ) {
-				$pieces = explode( '.', $file2 );
-				if( $pieces[ 1 ] == 'txt' ) {
-					$arrayoflanguagefiles[ ] = $pieces[ 0 ];
-					continue;
-				}
-				continue;
-			}
-		};
-
-		closedir( $dh );
-
-		$language = ( isset( $_SESSION[ 'Language' ] ) ) ? $_SESSION[ 'Language' ] : null;
-
-		if( ! in_array( $language, $arrayoflanguagefiles ) ) {
-			$language = "English";
-		}
-
-		if( file_exists( dirname( __FILE__ ) . "/lang/$language.txt" ) ) {
-			ob_start();
-			include dirname( __FILE__ ) . "/lang/$language.txt";
-			$templang = ob_get_contents();
-			ob_end_clean();
-			eval ( $templang );
-		}
+		$templang = file_get_contents( dirname( __FILE__ ) . '/lang/' . $language );
+		eval ( $templang );
 	}
 
 	/**
