@@ -124,7 +124,7 @@ class OnAppCDNTotalBillingStatistics extends OnAppCDN {
 						SUM( traffic )              as traffic,
 						cdn_resource_id
 					FROM
-						tblonappcdn_billing' .
+						tblonappcdn_billing ' .
 				$where . '
 					GROUP BY
 						cdn_resource_id' . $pages->limit;
