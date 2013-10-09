@@ -356,8 +356,6 @@ class OnAppCDN {
 				exit( 'ROOTDIR not defined' );
 			}
 		}
-		//echo'<pre>',ONAPP_WRAPPER_INIT;	print_r(get_defined_constants(1));exit(' die at ' . __LINE__ );
-		//echo'<pre>',ONAPP_WRAPPER_INIT;//exit(' die at ' . __LINE__ );
 
 		if( file_exists( ONAPP_WRAPPER_INIT ) ) {
 			require_once ONAPP_WRAPPER_INIT;
