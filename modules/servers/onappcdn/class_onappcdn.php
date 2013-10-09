@@ -375,6 +375,7 @@ class OnAppCDN {
 	public static function loadCDNLanguage() {
 		global $_LANG, $CONFIG;
 
+		$currentDir = getcwd();
 		chdir( dirname( __FILE__ ) . '/lang/' );
 		$availableLangs = glob( '*.txt' );
 
@@ -387,6 +388,7 @@ class OnAppCDN {
 
 		$templang = file_get_contents( dirname( __FILE__ ) . '/lang/' . $language );
 		eval ( $templang );
+		chdir( $currentDir );
 	}
 
 	/**
