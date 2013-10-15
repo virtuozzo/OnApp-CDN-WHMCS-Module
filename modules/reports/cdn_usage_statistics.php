@@ -4,12 +4,6 @@ if( ! defined( 'WHMCS' ) ) {
 	exit( 'This file cannot be accessed directly' );
 }
 
-if( isset( $_POST[ 'update' ] ) && $_POST[ 'update' ] == 'run' ) {
-	ob_start();
-	include '../modules/servers/onappcdn/crons/cron_bandwidth.php';
-	ob_end_clean();
-}
-
 // Getting Product Name filter selects //
 ////////////////////////////////////////
 // TODO multiselect
@@ -42,7 +36,7 @@ foreach( $product_names as $id => $name ) {
 
 // Getting Client Name filter selects //
 ///////////////////////////////////////
-$client_query = 'SELECT
+$client_query  = 'SELECT
 					hosting.userid,
 					client.firstname,
 					client.lastname
@@ -79,29 +73,29 @@ foreach( $client_names as $id => $name ) {
 // Filtering //
 //////////////
 if( isset( $_POST[ 'bw' ] ) ) {
-	$filter_condition = 'AND bandwidth.created_at != ""' . PHP_EOL;
-	$bw = $_POST[ 'bw' ];
+	$filter_condition  = 'AND bandwidth.stat_time != ""' . PHP_EOL;
+	$bw                = $_POST[ 'bw' ];
 	$filter_conditions = array();
 
 	if( isset ( $bw[ 'end' ] ) && $bw[ 'end' ] != '' ) {
 		// TODO DATE_FORMAT
-		$filter_conditions[ ] = "bandwidth.created_at >= '" . onappcdn_dates_mysql( $bw[ 'end' ] ) . "'";
+		$filter_conditions[ ] = "bandwidth.stat_time >= '" . onappcdn_dates_mysql( $bw[ 'end' ] ) . "'";
 	}
 
-	if( isset ( $bw[ 'start' ] ) && $bw[ start ] != "" ) {
+	if( isset ( $bw[ 'start' ] ) && $bw[ 'start' ] != "" ) {
 		// TODO DATE_FORMAT
-		$filter_conditions[ ] = "bandwidth.created_at <= '" . onappcdn_dates_mysql( $bw[ 'start' ] ) . "'";
+		$filter_conditions[ ] = "bandwidth.stat_time <= '" . onappcdn_dates_mysql( $bw[ 'start' ] ) . "'";
 	}
 
-	if( isset ( $bw[ serviceid ] ) && $bw[ serviceid ] != '' ) {
+	if( isset ( $bw[ 'serviceid' ] ) && $bw[ 'serviceid' ] != '' ) {
 		$filter_conditions[ ] = 'hosting.id = ' . $bw[ 'serviceid' ];
 	}
 
-	if( isset ( $bw[ clientid ] ) && $bw[ clientid ] != '' ) {
+	if( isset ( $bw[ 'clientid' ] ) && $bw[ 'clientid' ] != '' ) {
 		$filter_conditions[ ] = 'client.id = ' . $bw[ 'clientid' ];
 	}
 
-	if( isset ( $bw[ productid ] ) && $bw[ productid ] != '' ) {
+	if( isset ( $bw[ 'productid' ] ) && $bw[ 'productid' ] != '' ) {
 		$filter_conditions[ ] = 'product.id = ' . $bw[ 'productid' ];
 	}
 
@@ -113,22 +107,15 @@ if( isset( $_POST[ 'bw' ] ) ) {
 // TODO add pagenator
 	$query1 = "SELECT
 					bandwidth.currency_rate       AS rate,
-					bandwidth.price               AS price,
+					bandwidth.cost                AS price,
 					hosting.userid,
 					client.firstname              AS clientfirstname,
 					client.lastname               AS clientlastname,
 					client.id                     AS clientid,
-					server.hostname,
-					server.ipaddress,
-					server.id                     AS serverid,
 					onappclient.onapp_user_id,
-					sum( bandwidth.cached )       AS cached,
-					sum( bandwidth.non_cached )   AS non_cached,
-					sum( bandwidth.non_cached) + sum( bandwidth.cached ) AS total_bandwidth,
-					(sum( bandwidth.non_cached) + sum( bandwidth.cached )) * bandwidth.price / 1000 AS cost,
-					bandwidth.cdn_hostname,
+					bandwidth.traffic AS total_bandwidth,
 					hosting.id                    AS hostingid,
-					bandwidth.created_at,
+					bandwidth.stat_time,
 					product.name                  AS productname,
 					product.id                    AS productid,
 					hosting.domainstatus
@@ -147,23 +134,23 @@ if( isset( $_POST[ 'bw' ] ) ) {
 					tblproducts AS product
 					ON product.id = hosting.packageid
 				LEFT JOIN
-					tblonappcdn_bandwidth  AS bandwidth
+					tblonappcdn_billing  AS bandwidth
 					ON bandwidth.hosting_id = hosting.id
 				WHERE
 					server.type = 'onappcdn' AND
 					onappclient.onapp_user_id != ''
 					$filter_condition
 				GROUP BY
-					bandwidth.hosting_id, bandwidth.price
+					bandwidth.hosting_id, bandwidth.cost
 				ORDER BY
-					bandwidth.created_at DESC";
+					bandwidth.stat_time DESC";
 }
 // End Filtering //
 //////////////////
 
 // Filter HTML //
 ////////////////
-$reportdata[ 'title' ] = 'CDN Usage Statistics';
+$reportdata[ 'title' ]       = 'CDN Usage Statistics';
 $reportdata[ 'description' ] = "This report shows usage statistics of CDN Resources and billing information.<br /><br />
 
 <div id='tab_content'>
@@ -171,13 +158,13 @@ $reportdata[ 'description' ] = "This report shows usage statistics of CDN Resour
         <table class='form' width='100%' border='0' cellspacing='2' cellpadding='3'>
             <tr>
                 <td width='15%' class='fieldlabel'>Start Date</td>
-                <td class='fieldarea'><input class='datepick' type='text' name='bw[end]' size='20' value='{$bw[ end ]}'></td>
+                <td class='fieldarea'><input class='datepick' type='text' name='bw[end]' size='20' value='{$bw["end"]}'></td>
                 <td class='fieldlabel'>Service Id</td>
-                <td class='fieldarea'><input type='text' name='bw[serviceid]' size='20' value='{$bw[ serviceid ]}'></td>
+                <td class='fieldarea'><input type='text' name='bw[serviceid]' size='20' value='{$bw["serviceid"]}'></td>
             </tr>
             <tr>
                 <td class='fieldlabel'>End Date</td>
-                <td class='fieldarea'><input class='datepick' type='text' name='bw[start]' size='20' value='{$bw[ start ]}'></td>
+                <td class='fieldarea'><input class='datepick' type='text' name='bw[start]' size='20' value='{$bw["start"]}'></td>
                 <td class='fieldlabel'>Client Name</td>
                 <td class='fieldarea'>
                     <select name='bw[clientid]'>
@@ -208,18 +195,22 @@ $reportdata[ 'description' ] = "This report shows usage statistics of CDN Resour
 ////////////////////
 
 if( ( $bw[ 'end' ] != '' ) || ( $bw[ 'start' ] != '' ) ) {
-	$reportdata[ 'tableheadings' ] = array( "Status", "Service ID", "Client Name", "Product Name", "Cached", "Non Cached", "Total Bandwidht", "Cost" );
+	$reportdata[ 'tableheadings' ] = array(
+		'Status', 'Service ID', 'Client Name', 'Product Name', 'Total Bandwidht', 'Cost'
+	);
 }
 else {
-	$reportdata[ 'tableheadings' ] = array( "Status", "Service ID", "Client Name", "Product Name", "Cached", "Non Cached", "Total Bandwidht", "Cost", "Paid Invoices", "Unpaid Invoices", "Not Invoiced" );
+	$reportdata[ 'tableheadings' ] = array(
+		'Status', 'Service ID', 'Client Name', 'Product Name', 'Total Bandwidht', 'Cost', 'Paid Invoices', 'Unpaid Invoices', 'Not Invoiced'
+	);
 }
 
 $result = mysql_query( $query1 );
 
-$total = 0;
-$total_cost = 0;
-$total_paid = 0;
-$total_unpaid = 0;
+$total               = 0;
+$total_cost          = 0;
+$total_paid          = 0;
+$total_unpaid        = 0;
 $not_invoiced_amount = 0;
 
 $_data = array();
@@ -228,10 +219,8 @@ while( $row1 = mysql_fetch_assoc( $result ) ) {
 		$_data[ $row1[ 'hostingid' ] ] = $row1;
 	}
 	else {
-		$_data[ $row1[ 'hostingid' ] ][ 'cached' ] += $row1[ 'cached' ];
-		$_data[ $row1[ 'hostingid' ] ][ 'non_cached' ] += $row1[ 'non_cached' ];
-		$_data[ $row1[ 'hostingid' ] ][ 'total_bandwidth' ] += $row1[ 'total_bandwidth' ];
-		$_data[ $row1[ 'hostingid' ] ][ 'cost' ] += $row1[ 'cost' ];
+		$_data[ $row1[ 'hostingid' ] ][ 'cached' ] += $row1[ 'total_bandwidth' ];
+		$_data[ $row1[ 'hostingid' ] ][ 'cost' ] += $row1[ 'price' ];
 	}
 }
 
@@ -251,8 +240,8 @@ foreach( $_data as $data ) {
 
 	$invoices_result = full_query( $invoices_query );
 
-	$invoices_data = array();
-	$invoices_data[ 'paid' ] = 0;
+	$invoices_data             = array();
+	$invoices_data[ 'paid' ]   = 0;
 	$invoices_data[ 'unpaid' ] = 0;
 
 	while( $invoices = mysql_fetch_assoc( $invoices_result ) ) {
@@ -268,20 +257,23 @@ foreach( $_data as $data ) {
 
 	$total_paid += $invoices_data[ 'paid' ];
 	$total_unpaid += $invoices_data[ 'unpaid' ];
-	$total += $data[ 'total_bandwidth' ];
 	$total_cached += $data[ 'cached' ];
 	$total_non_cached += $data[ 'non_cached' ];
 	$total_cost += $data[ 'cost' ];
 	$total_not_invoiced += $not_invoiced_amount;
 
-	$clientlink = '<a href="clientssummary.php?userid=' . $data[ 'userid' ] . '">';
+	$clientlink  = '<a href="clientssummary.php?userid=' . $data[ 'userid' ] . '">';
 	$servicelink = '<a href="clientshosting.php?userid= ' . $data[ 'userid' ] . '&id=' . $data[ 'hostingid' ] . '">';;
 
 	if( ( $bw[ 'end' ] != '' ) || ( $bw[ 'start' ] != '' ) ) {
-		$reportdata[ 'tablevalues' ][ ] = array( $data[ 'domainstatus' ], $servicelink . $data[ 'hostingid' ] . '</a>', $clientlink . $data[ 'clientfirstname' ] . ' ' . $data[ 'clientlastname' ] . '</a>', $data[ 'productname' ], $data[ 'cached' ], $data[ 'non_cached' ], $total, $data[ 'cost' ] );
+		$reportdata[ 'tablevalues' ][ ] = array(
+			$data[ 'domainstatus' ], $servicelink . $data[ 'hostingid' ] . '</a>', $clientlink . $data[ 'clientfirstname' ] . ' ' . $data[ 'clientlastname' ] . '</a>', $data[ 'productname' ], $data[ 'cached' ],	$data[ 'cost' ]
+		);
 	}
 	else {
-		$reportdata[ 'tablevalues' ][ ] = array( $data[ 'domainstatus' ], $servicelink . $data[ 'hostingid' ] . '</a>', $clientlink . $data[ 'clientfirstname' ] . ' ' . $data[ 'clientlastname' ] . '</a>', $data[ 'productname' ], $data[ 'cached' ], $data[ 'non_cached' ], $total, $data[ 'cost' ], $invoices_data[ 'paid' ], $invoices_data[ 'unpaid' ], $not_invoiced_amount );
+		$reportdata[ 'tablevalues' ][ ] = array(
+			$data[ 'domainstatus' ], $servicelink . $data[ 'hostingid' ] . '</a>', $clientlink . $data[ 'clientfirstname' ] . ' ' . $data[ 'clientlastname' ] . '</a>', $data[ 'productname' ], $data[ 'cached' ], $data[ 'cost' ], $invoices_data[ 'paid' ], $invoices_data[ 'unpaid' ], $not_invoiced_amount
+		);
 	}
 }
 
@@ -304,10 +296,14 @@ $reportdata[ 'footertext' ] = '<a href="#" onClick="update_run();">Update Now</a
 
 if( ! mysql_num_rows( $result ) < 1 ) {
 	if( ( $bw[ 'end' ] != '' ) || ( $bw[ 'start' ] != '' ) ) {
-		$reportdata[ 'tablevalues' ][ ] = array( '<b>Total</b>', '', '', '', '<b>' . $total_cached . '</b>', '<b>' . $total_non_cached . '</b>', '<b>' . $total . '</b>', '<b>' . $total_cost . '</b>' );
+		$reportdata[ 'tablevalues' ][ ] = array(
+			'<b>Total</b>', '', '', '', '<b>' . $total_cached . '</b>', '<b>' . $total_cost . '</b>'
+		);
 	}
 	else {
-		$reportdata[ 'tablevalues' ][ ] = array( '<b>Total</b>', '', '', '', '<b>' . $total_cached . '</b>', '<b>' . $total_non_cached . '</b>', '<b>' . $total . '</b>', '<b>' . $total_cost . '</b>', '<b>' . $total_paid . '</b>', '<b>' . $total_unpaid . '</b>', '<b>' . $total_not_invoiced . '</b>' );
+		$reportdata[ 'tablevalues' ][ ] = array(
+			'<b>Total</b>', '', '', '', '<b>' . $total_cached . '</b>', '<b>' . $total_cost . '</b>', '<b>' . $total_paid . '</b>', '<b>' . $total_unpaid . '</b>', '<b>' . $total_not_invoiced . '</b>'
+		);
 	}
 }
 
