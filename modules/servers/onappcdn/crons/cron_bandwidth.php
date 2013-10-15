@@ -166,7 +166,6 @@ class Cron_Job {
 			}
 
 			foreach( $resources as $resource ) {
-
 				$bs = $onapp->factory( 'CDNResource_BillingStatistic', true );
 
 				$this->debug( $this->max_stat_time_query );
