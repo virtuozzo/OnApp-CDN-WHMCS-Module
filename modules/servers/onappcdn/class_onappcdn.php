@@ -146,6 +146,7 @@ class OnAppCDN {
 				$email = 'cdnuser' . $this->serviceid . '@' . $hostname;
 
 				$password = md5( $this->serviceid . $this->salt . date( 'h-i-s, j-m-y' ) );
+				$password .= '#A';
 
 				$user = $onapp->factory( 'User', true );
 
