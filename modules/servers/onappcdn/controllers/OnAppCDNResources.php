@@ -53,11 +53,7 @@ class OnAppCDNResources extends OnAppCDN {
 			foreach( $_resources->_origins as $origin ) {
 				$__resources[ $_resources->_id ][ '_origins_for_api' ][] = ( isset( $origin->_value ) ? $origin->_value : $origin );
 			}
-			$_origins = '';
-			foreach( $__resources[ $_resources->_id ][ '_origins_for_api' ] as $o ) {
-				$_origins = $o->_key . '<br>';
-			}
-			$__resources[ $_resources->_id ][ '_origins_for_api' ] = $_origins;
+			$__resources[ $_resources->_id ][ '_origins_for_api' ] = implode( '<br>', $__resources[ $_resources->_id ][ '_origins_for_api' ] );
 		}
 
 		$response = $resource->getResponse();
@@ -137,11 +133,7 @@ class OnAppCDNResources extends OnAppCDN {
 				unset( $_SESSION[ 'successmessages' ] );
 			}
 
-			$_origins = '';
-			foreach( $data[ 'resource' ]->_origins as $o ) {
-				$_origins = $o->_key . PHP_EOL;
-			}
-			$data[ 'resource' ]->_origins = $_origins;
+			$data[ 'resource' ]->_origins = implode( PHP_EOL, $data[ 'resource' ]->_origins );
 
 			$this->showTemplate(
 				$template,
