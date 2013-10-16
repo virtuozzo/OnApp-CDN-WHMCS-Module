@@ -78,9 +78,7 @@ class OnAppCDNDetails extends OnAppCDN {
 			$resource->_aflexi_resource_id = (int)$resource->cname;
 		}
 
-		if( ! isset( $resource->_origins_for_api ) ) {
-			$resource->_origins_for_api = $resource->_origins;
-		}
+		$resource->_origins = implode( '<br>', $resource->_origins );
 
 		$this->showTemplate(
 			'onappcdn/cdn_resources/details',
