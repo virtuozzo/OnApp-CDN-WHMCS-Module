@@ -33,20 +33,7 @@
 {$_LANG.onappcdnstatus}       - {$resource->_status} <br />
 
 <h2>{$_LANG.onappcdnorigins}</h2>
-
-<table cellspacing="0" cellpadding="10" border="0" width="100%" class="data">
-    <tr>
-        <th>{$LANG.onappcdnresourcepath}</th>
-        <th>{$LANG.onappcdnorigins}</th>
-    </tr>
-
-{foreach item=origin from=$resource->_origins_for_api}
-    <tr>
-        <td>/{$origin->_key}</td>
-        <td>{$origin->_value}</td>
-    </tr>
-{/foreach}
-</table>
+<p>{$resource->_origins_for_api}</p>
 
 <h2>{$_LANG.onappcdndnssettings}</h2>
 
@@ -54,7 +41,6 @@
 
 <h5>{$_LANG.onappcdndnssettingsinfo}</h5>
 <b>
-   {*{$resource->_cdn_hostname} IN CNAME {$resource->_aflexi_resource_id}.r.worldcdn.net*}
    {$resource->_cdn_hostname} IN CNAME {$resource->cname}
 </b>
 {else}
