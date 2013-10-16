@@ -55,7 +55,7 @@ class OnAppCDNResources extends OnAppCDN {
 			}
 			$_origins = '';
 			foreach( $__resources[ $_resources->_id ][ '_origins_for_api' ] as $o ) {
-				$_origins = $o->_key . '<br>';
+				$_origins .= $o->_key . '<br>';
 			}
 			$__resources[ $_resources->_id ][ '_origins_for_api' ] = $_origins;
 		}
@@ -139,7 +139,7 @@ class OnAppCDNResources extends OnAppCDN {
 
 			$_origins = '';
 			foreach( $data[ 'resource' ]->_origins as $o ) {
-				$_origins = $o->_key . PHP_EOL;
+				$_origins .= $o->_key . PHP_EOL;
 			}
 			$data[ 'resource' ]->_origins = $_origins;
 

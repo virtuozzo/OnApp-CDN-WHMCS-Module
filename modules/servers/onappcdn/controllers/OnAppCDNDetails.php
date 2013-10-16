@@ -79,6 +79,14 @@ class OnAppCDNDetails extends OnAppCDN {
 		}
 
 		if( ! isset( $resource->_origins_for_api ) ) {
+			$_origins = '';
+			foreach( $resource->_origins as $o ) {
+				$_origins .= $o->_key . '<br>';
+			}
+			$resource->_origins_for_api = $_origins;
+		}
+
+		if( ! isset( $resource->_origins_for_api ) ) {
 			$resource->_origins_for_api = $resource->_origins;
 		}
 
