@@ -192,7 +192,7 @@ $('#passwords_table').append( passwords_html )
              ofinput.attr('name', 'resource[ftp_password]').val('{/literal}{$session_resource.ftp_password}{literal}')
              labeltd.html('{/literal}{$LANG.onappcdnftppassword}{literal}')
          } else {
-             ofinput.attr('name', 'resource[origin]').val('{/literal}{$session_resource.origin}{literal}')
+             ofinput.attr('name', 'resource[origins]').val('{/literal}{$session_resource.origin}{literal}')
              labeltd.html('{/literal}{$LANG.onappcdnorigins}{literal}')
          }
     })
@@ -217,7 +217,6 @@ $('#passwords_table').append( passwords_html )
 
   <div class="contentbox">
       <a title="{$LANG.onappcdnresources}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}">{$LANG.onappcdnresources}</a>
-    {* | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> *}
   </div>
 
 <h2>{$_LANG.onappcdnnewresource}</h2>
@@ -255,7 +254,7 @@ $('#passwords_table').append( passwords_html )
             {$_LANG.onappcdnorigins}
         </td>
         <td class="label_width" valign="top">
-            <input id="origin_ftppass_field" class="textfield" type="text" value="{$session_resource.origin}" name="resource[origin]" />
+			<textarea name="resource[origins]" rows="3">{$origins}</textarea>
         </td>
     </tr>
     <tr><td colspan="2"><h5 class="without_padding">{$_LANG.onappcdnsslmodeinfo}</h5></td></tr>

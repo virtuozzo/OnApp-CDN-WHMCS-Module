@@ -305,12 +305,10 @@ class OnAppCDNResources extends OnAppCDN {
 					$_resource->$key = $value;
 				}
 			}
-
-			if( empty( $_resource->_origins[ 0 ] ) ) {
-				$_resource->_origins = (array)$_resource->_origin;
-			}
+			$_resource->_origins_for_api = $_resource->_origins;
 
 			$_resource->save();
+
 			if( $_resource->getErrorsAsArray() ) {
 				$errors[ ] = '<b>Create CDN Resource Error: </b>' . $_resource->getErrorsAsString();
 			}
@@ -366,6 +364,7 @@ class OnAppCDNResources extends OnAppCDN {
 			foreach( $resource as $key => $field ) {
 				if( $key != 'cdn_hostname' &&
 						$key != 'origin' &&
+						$key != 'origins' &&
 						$key != 'resource_type' &&
 						$key != 'edge_group_ids' &&
 						$key != 'ftp_password' &&

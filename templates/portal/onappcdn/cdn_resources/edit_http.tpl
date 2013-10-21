@@ -154,7 +154,6 @@ $('#passwords_table').append( passwords_html )
 
   <div class="contentbox">
       <a title="{$LANG.onappcdnresources}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=resources&id={$id}">{$LANG.onappcdnresources}</a>
-{*    | <a title="{$LANG.onappcdnbwstatistics}" href="{$smarty.const.ONAPPCDN_FILE_NAME}?page=bandwidth_statistics&id={$id}">{$LANG.onappcdnbwstatistics}</a> *}
   </div>
 
 <h2>{$_LANG.onappcdneditresource}</h2>
@@ -183,9 +182,6 @@ $('#passwords_table').append( passwords_html )
         <td class="label_width" valign="top">
             <select class="selectfield" name="resource[resource_type]" disabled>
                 <option value="HTTP_PULL" {if $resource->_resource_type == 'HTTP_PULL'}selected{/if}>HTTP PULL</option>
-				{*
-				<option value="HTTP_PUSH" {if $resource->_resource_type == 'HTTP_PUSH'}selected{/if}>HTTP PUSH</option>
-				*}
             </select>
         </td>
     </tr>
@@ -205,7 +201,6 @@ $('#passwords_table').append( passwords_html )
 				{assign var=origins value=$origins|cat:"\r\n"}
 			{/foreach}
 			<textarea name="resource[origins]" rows="3">{$origins}</textarea>
-			{*<input class="textfield" value="{$origins}" type="text" name="resource[origin]"/>*}
 		</td>
     </tr>
     {/if}
