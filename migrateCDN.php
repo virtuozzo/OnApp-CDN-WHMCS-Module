@@ -1,9 +1,10 @@
 <?php
 
-require __DIR__ . '/init.php';
-require __DIR__ . '/includes/onappWrapper/utility.php';
+require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/configuration.php';
+require_once __DIR__ . '/includes/onappWrapper/utility.php';
 
-error_reporting( E_ALL );
+error_reporting( E_ALL ^ E_NOTICE );
 ini_set( 'display_errors', 1 );
 
 $configOptionsCache = null;
