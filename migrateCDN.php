@@ -13,6 +13,8 @@ $db = new PDO( $dsn, $db_username, $db_password );
 
 # get configurable options
 getConfigOptions();
+var_dump( '=====================================================' );
+print_r( $configOptionsCache );
 
 # get CDN clients
 $sql = 'SELECT
@@ -68,6 +70,11 @@ foreach( $db->query( $sql, PDO::FETCH_CLASS, 'User' ) as $row ) {
 	$stm->bindValue( ':configID', $configOptionsCache[ $pid ]->configid );
 	$stm->bindParam( ':optionID', $configOptionsCache[ $pid ]->id );
 	$stm->execute();
+
+	if( PHP_SAPI == 'cli' ) {
+		print_r( $row );
+		echo 'pid: ', $pid, PHP_EOL, PHP_EOL;
+	}
 }
 
 function getNewProductID( $name ) {
@@ -92,7 +99,6 @@ function getConfigOptions() {
 				tblproductconfigoptionssub.`id`,
 				tblproductconfigoptionssub.`configid`,
 				tblproductconfiglinks.`pid`
-				-- *
 			FROM
 				`tblproductconfiggroups`
 			JOIN
