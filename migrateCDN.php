@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/init.php';
-require_once __DIR__ . '/configuration.php';
 require_once __DIR__ . '/includes/onappWrapper/utility.php';
+include __DIR__ . '/configuration.php';
 
 error_reporting( E_ALL ^ E_NOTICE );
 ini_set( 'display_errors', 1 );
@@ -41,17 +41,20 @@ foreach( $db->query( $sql, PDO::FETCH_CLASS, 'User' ) as $row ) {
 			SET
 				`packageid` = :pid,
 				`username` = :username,
-				`password` = :pass';
+				`password` = :pass
+			WHERE
+				`id` = :serviceID';
 	$stm = $db->prepare( $sql );
 	$stm->bindValue( ':pid', $pid = getNewProductID( $row->OldModName ) );
 	$stm->bindValue( ':pass', encrypt( $row->OnAppPassword ) );
 	$stm->bindParam( ':username', $row->OnAppLogin );
+	$stm->bindParam( ':serviceID', $row->WHMCSServiceID );
 	$stm->execute();
 
 	onapp_addCustomFieldValue( 'cdnuserid', $pid, $row->WHMCSServiceID, $row->OnAppUserID );
 
 	# assign configurable option to service
-	$sql = 'INSERT INTO
+	$sql = 'REPLACE INTO
 				`tblhostingconfigoptions`
 			VALUES (
 				NULL,
